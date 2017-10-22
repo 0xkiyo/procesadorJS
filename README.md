@@ -1,6 +1,6 @@
 # procesadorJS
 Consiste en el diseño e implementación de un Procesador de Lenguajes, que realice el Análisis Léxico, Sintáctico y Semántico (incluyendo la Tabla de Símbolos y el Gestor de Errores).
 
-Funcionamiento del procesador:
-	1. Recibirá un fichero fuente cuyo contenido se desea analizar (archivo de texto).
-	2. El procesador tendrá que generar cuatro archivos de texto con los resultados obtenidos: fichero tokens, fichero tabla de símbolos, fichero parse y fichero de errores. 
+# Funcionamiento del procesador:
+	* Recibirá un fichero fuente cuyo contenido se desea analizar (archivo de texto).
+	* El procesador tendrá que generar cuatro archivos de texto con los resultados obtenidos: fichero tokens, fichero tabla de símbolos, fichero parse y fichero de errores. 
