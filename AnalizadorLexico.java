@@ -15,7 +15,7 @@ import token.Token;
 
 /**
 *
-* @author Rodrigo Rosado González
+* @author 
 */
 public class AnalizadorLexico {
 
