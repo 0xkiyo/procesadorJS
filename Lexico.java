@@ -151,14 +151,31 @@ public class Lexico {
             if(contenido[indice] == 'f' && indice < contenido.length) {
                 toReturn = new Token("IF",null);//genera token IF
                 indice++;
-            }
-            else {
-                procJ(contenido,cadena);
-            }
-        } else if (contenido[indice] == 't') {
-            cadena = 't';
+            } else  procJ(contenido,cadena += f);
+        } else if (contenido[indice] == 'e') {
+           String cadena = "e"; 
+           indice++;
+           procM(contenido,cadena);
+        } else if (contenido[indice] == 'f') {
+            String cadena = "e"; 
             indice++;
-           procK(cadena);
+            procN(contenido,cadena);
+        } else if (contenido[indice] == 'w') {
+            String cadena = "w"; 
+            indice++;
+            procO(contenido,cadena);
+        } else if (contenido[indice] == 'p') {
+            String cadena = "p"; 
+            indice++;
+            procP(contenido,cadena);
+        } else if (contenido[indice] == 'r') {
+            String cadena = "r"; 
+            indice++;
+            procR(contenido,cadena);
+        } else if (contenido[indice] == 'v') {
+            String cadena = "v"; 
+            indice++;
+            procS(contenido,cadena);
         }
     }
 
@@ -219,14 +236,189 @@ public class Lexico {
      * param: array con el contenido a comprobar
      * function: detecta si los caracteres son de tipo letra o digito o _ para luego concatenarlos
      */
-    public void procG(char[] contenido) {
+    //este metodo se usa para comprobar si los identificadores existen o en caso contrario crearlos
+    /*public void procG(char[] contenido) {
         if (indice < contenido.length && (isDigit(caracter[indice]) || isLetter(caracter[indice]) || contenido[indice] == '_')) {
             cadena += Character.toString(contenido[indice]);
             indice++;
             procG(contenido);
         }
+    }*/
+
+    /**
+     *  param: array de caracteres y cadena de caracteres
+     *  function: crear cadenas de caracteres
+     */ 
+    public void procJ(char[] contenido, String cadena) {
+        if (indice < contenido.length && (isDigit(caracter[indice]) || isLetter(caracter[indice]))) {
+            cadena += Character.toString(contenido[indice]);
+            indice++;
+            procJ(contenido,cadena);
+        } else if (indice == contenido.length) toReturn = new Token("CHARS",cadena);//genera token (CHARS,LEXEMA)
+    }
+    
+    /**
+     *  param: array de caracteres y cadena de caracteres
+     *  function: generear token else
+     */ 
+    public void procM(char[] contenido, String cadena) {
+        if (indice < contenido.length && (contenido[indice] =='l')) {
+            indice++;
+            if (indice < contenido.length && (contenido[indice] =='s')) {
+                indice++;
+                if (indice < contenido.length && (contenido[indice] =='e')) {
+                    toReturn = new Token("ELSE",null);//genera token ELSE
+                    indice++;
+                } else procJ(contenido,cadena += "e");
+            } else procJ(contenido,cadena += "s");
+        } else procJ(contenido,cadena += "l");
     }
 
-    
+    /**
+     *  param: array de caracteres y cadena de caracteres
+     *  function: generear token function
+     */ 
+    public void procN(char[] contenido, String cadena) {
+            if (indice < contenido.length && (contenido[indice] =='u')) {
+                indice++;
+                if (indice < contenido.length && (contenido[indice] =='n')) {
+                    indice++;
+                    if (indice < contenido.length && (contenido[indice] =='c')) {
+                        indice++;
+                        if (indice < contenido.length && (contenido[indice] =='t')) {
+                            indice++;
+                            if (indice < contenido.length && (contenido[indice] =='i')) {
+                                indice++;
+                                if (indice < contenido.length && (contenido[indice] =='o')) {
+                                    indice++;
+                                    if (indice < contenido.length && (contenido[indice] =='n')) {
+                                        toReturn = new Token("FUNCTION",null);//genera token FUNCTION
+                                        indice++;
+                                    } else procJ(contenido,cadena += "n");
+                                } else procJ(contenido,cadena += "o");
+                            } else procJ(contenido,cadena += "i");
+                        } else procJ(contenido,cadena += "t");
+                    } else procJ(contenido,cadena += "c");
+                } else procJ(contenido,cadena += "n");
+            } else procJ(contenido,cadena += "u");
+    }
 
+    /**
+     *  param: array de caracteres y cadena de caracteres
+     *  function: generear token write
+     */ 
+    public void procO(char[] contenido, String cadena) {
+        if (indice < contenido.length && (contenido[indice] =='r')) {
+            indice++;
+            if (indice < contenido.length && (contenido[indice] =='i')) {
+                indice++;
+                if (indice < contenido.length && (contenido[indice] =='t')) {
+                    indice++;
+                    if (indice < contenido.length && (contenido[indice] =='e')) {
+                            toReturn = new Token("WRITE",null);//genera token WRITE
+                            indice++;
+                        } else procJ(contenido,cadena += "e");
+                    } else procJ(contenido,cadena += "t");
+                } else procJ(contenido,cadena += "i");
+            } else procJ(contenido,cadena += "r");
+    }
+
+    /**
+     *  param: array de caracteres y cadena de caracteres
+     *  function: generear token prompt
+     */ 
+    public void procP(char[] contenido, String cadena) {
+            if (indice < contenido.length && (contenido[indice] =='r')) {
+                indice++;
+                if (indice < contenido.length && (contenido[indice] =='o')) {
+                    indice++;
+                    if (indice < contenido.length && (contenido[indice] =='m')) {
+                        indice++;
+                        if (indice < contenido.length && (contenido[indice] =='p')) {
+                            indice++;
+                            if (indice < contenido.length && (contenido[indice] =='t')) {
+                                toReturn = new Token("PROPMT",null);//genera token PROMPT
+                                indice++;
+                            } else procJ(contenido,cadena += "t");
+                        } else procJ(contenido,cadena += "m");
+                    } else procJ(contenido,cadena += "p");
+                } else procJ(contenido,cadena += "o");
+            } else procJ(contenido,cadena += "r");
+    }
+
+    /**
+     *  param: array de caracteres y cadena de caracteres
+     *  function: generear token return
+     */ 
+    public void procR(char[] contenido, String cadena) {
+            if (indice < contenido.length && (contenido[indice] =='e')) {
+                indice++;
+                if (indice < contenido.length && (contenido[indice] =='t')) {
+                    indice++;
+                    if (indice < contenido.length && (contenido[indice] =='u')) {
+                        indice++;
+                        if (indice < contenido.length && (contenido[indice] =='r')) {
+                            indice++;
+                            if (indice < contenido.length && (contenido[indice] =='n')) {
+                                toReturn = new Token("RETURN",null);//genera token RETURN
+                                indice++;
+                            } else procJ(contenido,cadena);
+                        } else procJ(contenido,cadena);
+                    } else procJ(contenido,cadena);
+                } else procJ(contenido,cadena);
+            } else procJ(contenido,cadena);
+    }
+
+    /**
+     *  param: array de caracteres y cadena de caracteres
+     *  function: generear token var
+     */ 
+    public void procS(char[] contenido, String cadena) {
+            if (indice < contenido.length && (contenido[indice] =='a')) {
+                indice++;
+                if (indice < contenido.length && (contenido[indice] =='r')) {
+                    toReturn = new Token("VAR",null);//genera token VAR
+                    indice++;
+                } else procJ(contenido,cadena += "r");
+            } else procJ(contenido,cadena += "a");
+    }
+
+    //GETTERS 
+    public static int getIndice() {
+        return indice;
+    }
+
+    public static int getDigit() {
+       return digit; 
+    }
+
+    public char[] getA() {
+        return a;
+    }
+
+    public static String getCadena() {
+        return cadena; 
+     }
+     
+     public File getArchivo() {
+         return archivo;
+     }
+
+     public BufferedWritter getBw() {
+         return bw;
+     }
+     
+     public void setBw(BufferedWriter bw) {
+        this.bw = bw;
+     } 
+
+     public Token al(TablaSimbolos tabla_simbolos) {
+       Token toReturn = null;
+       while (toReturn == null) {
+           toReturn = this.procS(this.getA(), tablaSimbolos);
+       }
+       this.bw.write(toReturn.toString());
+       this.bw.newLine();
+       return toReturn;
+     }
 }
