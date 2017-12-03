@@ -1,32 +1,31 @@
 package lexico;
 
-//Paquetes internos
-import lexico.*;
-import sun.security.pkcs.ContentInfo;
+//Paquetes externos
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+
 import error.*;
-import jdk.nashorn.internal.parser.TokenStream;
 import tabla_simbolos.*;
 import token.*;
-
-//Paquetes externos
-import java.io.*;
-
-import analizadorLexico.AnalizadorLexico;
 
 public class Lexico {
     
     private File archivo = null;
     private FileReader fr = null;
+    private char[] a;
     private BufferedWriter bw;
     public static Integer linea = 0;//Para recorrer las lineas
     public static int indice = 0;//Para recorrer el array
     public static Long digit = (long) 0;//Para detectar digitos
+    public static String cadena = "";
     
     /** 
-	 * param: fichero a leer
-     * funcion: lee ficheros
+     * @funcion: lee ficheros
+     * @param fichero 
 	 */
-	public void leeFicheros(){
+	public void leeFicheros(File fichero){
 		try {
         // Apertura del fichero e inicializacion de FileReader para leerlo
         this.archivo = fichero;
@@ -44,8 +43,8 @@ public class Lexico {
 	}
 
     /** 
-    * param: caracter a comprobar
-    * funcion: evalua si el caracter es un digito
+    * @param: caracter a comprobar
+    * @funcion: evalua si el caracter es un digito
     */
     private boolean isDigit(char caracter){
         return caracter > 47 && caracter < 58;
@@ -146,7 +145,7 @@ public class Lexico {
             } toReturn = new Token("ID",cadena);
         
         } */else if (contenido[indice] == 'i' ) {
-            cadena = 'i';
+            String cadena = "i";
             indice++;
             if(contenido[indice] == 'f' && indice < contenido.length) {
                 toReturn = new Token("IF",null);//genera token IF
@@ -157,7 +156,7 @@ public class Lexico {
            indice++;
            procM(contenido,cadena);
         } else if (contenido[indice] == 'f') {
-            String cadena = "e"; 
+            String cadena = "f"; 
             indice++;
             procN(contenido,cadena);
         } else if (contenido[indice] == 'w') {
@@ -176,7 +175,10 @@ public class Lexico {
             String cadena = "v"; 
             indice++;
             procS(contenido,cadena);
+        }  else {
+            //Error gramatica en contenido[indiceBu]
         }
+        return toReturn;
     }
 
     /** 
@@ -250,11 +252,11 @@ public class Lexico {
      *  function: crear cadenas de caracteres
      */ 
     public void procJ(char[] contenido, String cadena) {
-        if (indice < contenido.length && (isDigit(caracter[indice]) || isLetter(caracter[indice]))) {
+        if (indice < contenido.length && (isDigit(contenido[indice]) || isLetter(contenido[indice]))) {
             cadena += Character.toString(contenido[indice]);
             indice++;
             procJ(contenido,cadena);
-        } else if (indice == contenido.length) toReturn = new Token("CHARS",cadena);//genera token (CHARS,LEXEMA)
+        } else if (indice == contenido.length) new Token("CHARS",cadena);//genera token (CHARS,LEXEMA)
     }
     
     /**
@@ -267,7 +269,7 @@ public class Lexico {
             if (indice < contenido.length && (contenido[indice] =='s')) {
                 indice++;
                 if (indice < contenido.length && (contenido[indice] =='e')) {
-                    toReturn = new Token("ELSE",null);//genera token ELSE
+                     new Token("ELSE",null);//genera token ELSE
                     indice++;
                 } else procJ(contenido,cadena += "e");
             } else procJ(contenido,cadena += "s");
@@ -292,7 +294,7 @@ public class Lexico {
                                 if (indice < contenido.length && (contenido[indice] =='o')) {
                                     indice++;
                                     if (indice < contenido.length && (contenido[indice] =='n')) {
-                                        toReturn = new Token("FUNCTION",null);//genera token FUNCTION
+                                        new Token("FUNCTION",null);//genera token FUNCTION
                                         indice++;
                                     } else procJ(contenido,cadena += "n");
                                 } else procJ(contenido,cadena += "o");
@@ -315,7 +317,7 @@ public class Lexico {
                 if (indice < contenido.length && (contenido[indice] =='t')) {
                     indice++;
                     if (indice < contenido.length && (contenido[indice] =='e')) {
-                            toReturn = new Token("WRITE",null);//genera token WRITE
+                            new Token("WRITE",null);//genera token WRITE
                             indice++;
                         } else procJ(contenido,cadena += "e");
                     } else procJ(contenido,cadena += "t");
@@ -337,7 +339,7 @@ public class Lexico {
                         if (indice < contenido.length && (contenido[indice] =='p')) {
                             indice++;
                             if (indice < contenido.length && (contenido[indice] =='t')) {
-                                toReturn = new Token("PROPMT",null);//genera token PROMPT
+                                new Token("PROPMT",null);//genera token PROMPT
                                 indice++;
                             } else procJ(contenido,cadena += "t");
                         } else procJ(contenido,cadena += "m");
@@ -360,13 +362,13 @@ public class Lexico {
                         if (indice < contenido.length && (contenido[indice] =='r')) {
                             indice++;
                             if (indice < contenido.length && (contenido[indice] =='n')) {
-                                toReturn = new Token("RETURN",null);//genera token RETURN
+                                new Token("RETURN",null);//genera token RETURN
                                 indice++;
-                            } else procJ(contenido,cadena);
-                        } else procJ(contenido,cadena);
-                    } else procJ(contenido,cadena);
-                } else procJ(contenido,cadena);
-            } else procJ(contenido,cadena);
+                            } else procJ(contenido,cadena +="n");
+                        } else procJ(contenido,cadena +="r");
+                    } else procJ(contenido,cadena +="u");
+                } else procJ(contenido,cadena +="t");
+            } else procJ(contenido,cadena +="e");
     }
 
     /**
