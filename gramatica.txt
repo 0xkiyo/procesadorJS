@@ -66,8 +66,8 @@ Q -> lambda
 S -> id S1
 S -> prompt ( id ) ;
 S -> write ( E ) ;
-S1 -> ( L ) ;
 S1 -> = E ;
+S1 -> ( L ) ;
 S1 -> /= E ;
 
 X -> E ;

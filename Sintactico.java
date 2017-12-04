@@ -133,7 +133,112 @@ public class Sintactico {
       procedG();
     }
     //B -> S
-    
-  }
+    else if ("WRITE".equals(this.getTokenDevuelto().getId()) || "PROMPT".equals(this.getTokenDevuelto().getId()) || "ID".equals(this.getTokenDevuelto().getId())) {
+      this.setParse(this.getParse() + "6 ");
+
+      procedS();
+    }
+    else {
+      System.out.println("Error en procedB");
+    }
+
+    //ProcedS:
+    //First de S: id prompt write
+    public void procedS() {
+
+      //S -> id S1
+      if ("ID".equals(this.getTokenDevuelto().getId())) {
+            this.setParse(this.getParse() + "7 ");
+
+            tokenLlamador = tokenDevuelto;
+            empareja(new Token("ID", null));
+            procedS1();
+        }
+        //S -> prompt ( id )
+        else if ("PROMPT".equals(this.getTokenDevuelto().getId())) {
+            this.setParse(this.getParse() + "8 ");
+            
+            empareja(new Token("PROMPT", null));
+            empareja(new Token("PARENTABIERTO", null));
+
+            //Varible no declarada: en este caso es global y entera.
+            if (tS.getTipo(tokenDevuelto) == null) {
+              tS.addTipo(tokenDevuelto, "ENTERA");
+              tS.addDireccion(tokenDevuelto, 2);
+            }
+
+            empareja(new Token("ID", null));
+            empareja(new Token("PARENTCERRADO", null));
+        }
+        //S -> write ( E )
+        else if ("WRITE".equals(this.getTokenDevuelto().getId())) {
+            this.setParse(this.getParse() + "9 ");
+            
+            empareja(new Token("WRITE", null));
+            empareja(new Token("PARENTABIERTO", null));
+            procedE();
+            empareja(new Token("PARENTCERRADO", null));
+        }
+        else {
+          System.out.println("Error en procedS");
+        }
+
+    }
+
+    //ProcedS1:
+    //First de S1: ( = /
+    public void procedS1() {
+
+      //S1 -> = E ;
+      if ("IGUAL".equals(this.getTokenDevuelto().getId())) {
+        this.setParse(this.getParse() + "10 ");
+
+        empareja(new Token("IGUAL", null));
+        procedE();
+        if ("VOID".equals(tipo)) {
+          System.out.println("Error de asignacion en el metodo de procedS1");
+        }
+
+        tS.addTipo(tokenLlamador, tipo);
+        tS.addDireccion(tokenLlamador, ancho);
+        empareja(new Token("PUNTOYCOMA",  null));
+      }
+      //S1 -> ( L ) ;
+      else if ("PARENTABIERTO".equals(this.getTokenDevuelto().getId())) {
+        this.setParse(this.getParse() + "11 ");
+
+        int contParam = 0;
+        
+        empareja(new Token("PARENTABIERTO", null));
+
+        contParam = procedL();
+        if (nombreFuncion != null && nombreFuncion.equals(tokenLlamador) && tS.getNParametrosGlobal(tokenLlamador) == contParam) {
+                tS.buscaTSGlobal(tokenLlamador.getValor());
+        }
+        else if (tS.buscaTS(tokenLlamador.getValor())[0] == null || !"FUNC".equals(tS.getTipo(tokenLlamador))) {//tipo != FUNC porque si es variable o no declarada tiene que dar error.
+            System.out.println("La funcion no ha sido declarada en el metodo procedS1");
+        }
+        else if (tS.getNParametros(tokenLlamador) != contParam) {
+            System.out.println("Error en los parametros de la funcion que ha sido llamada");
+        }
+        empareja(new Token("PARENTCERRADO", null));
+        empareja(new Token("PUNTOYCOMA", null));
+      }
+      //S1 -> /= E ;
+      else if ("ASIGDIV".equals(this.getTokenDevuelto().getId())) {
+        this.setParse(this.getParse() + "12 ");
+
+        empareja(new Token("ASIGDIV", null));
+        procedE();
+        if ("VOID".equals(tipo)) {
+          System.out.println("Error de asignacion en el metodo de procedS1");
+        }
+        tS.addTipo(tokenLlamador, tipo);
+        tS.addDireccion(tokenLlamador, ancho);
+      }
+      else {
+        System.out.println("Error en procedS1");
+      }
+    }
 
 }
