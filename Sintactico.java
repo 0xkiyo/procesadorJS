@@ -75,7 +75,65 @@ public class Sintactico {
 
   } 
 
-  //procedP:
-  
+  //ProcedP: 
+  //First de P: var if id prompt write function eof
+  public void procedP() {
+
+    //P -> B Z P
+    if ("VAR".equals(this.getTokenDevuelto().getId()) || "IF".equals(this.getTokenDevuelto().getId()) || "ID".equals(this.getTokenDevuelto().getId()) || "PROMPT".equals(this.getTokenDevuelto().getId()) || "WRITE".equals(this.getTokenDevuelto().getId())) {
+      this.setParse(this.getParse() + "1 ");
+      
+      procedB();
+      procedZ();
+      procedP();
+    }
+    //P -> Fq Z P
+    else if ("FUNCTION".equals(this.getTokenDevuelto().getId())) {
+      this.setParse(this.getParse() + "2 ");
+      
+      procedFq();
+      procedZ();
+      procedP();
+    }
+    //P -> eof
+    else if ("EOF".equals(this.getTokenDevuelto().getId())) {
+      this.setParse(this.getParse() + "3 ");
+    }
+    else {
+      System.out.println("Error en procedP");
+    }
+
+  }
+
+  //ProcedB:
+  //First de B: var if id prompt write
+  public void procedB() {
+
+    //B -> var F id D D1
+    if ("VAR".equals(this.getTokenDevuelto().getId())) {
+      this.setParse(this.getParse() + "4 ");
+      
+      flagDeclaracion = true;
+      empareja(new Token("VAR", null));
+      flagDeclaracion = false;
+
+      procedF();
+      empareja(new Token("ID", null));
+      procedD();
+      procedD1();
+    }
+    //B -> if ( E ) G
+    else if ("IF".equals(this.getTokenDevuelto().getId())) {
+      this.setParse(this.getParse() + "5 ");
+
+      empareja(new Token("IF", null));
+      empareja(new Token("PARARENTABIERTO", null));
+      procedE();
+      empareja(new Token("PARARENTCERRADO", null));
+      procedG();
+    }
+    //B -> S
+    
+  }
 
 }
