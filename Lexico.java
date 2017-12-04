@@ -33,7 +33,11 @@ public class Lexico {
 			//Leer fichero
 			this.a = new char [(int) archivo.length()];//Este Array nos almacena los caracteres
 			this.fr.read(a); //añade el contenido al array
+<<<<<<< HEAD
 			String ruta = Sintactico.miDir.getCanonicalPath()+"\\tokens.txt";
+=======
+			String ruta = Lexico.miDir.getCanonicalPath()+"\\tokens.txt";
+>>>>>>> 746c8cdce265c6a27bf2c698d0d1612c076f80c4
 			File archivoTokens = new File(ruta);
 			this.bw = new BufferedWriter(new FileWriter(archivoTokens));//leemos el fichero
 			linea++;
@@ -131,8 +135,26 @@ public class Lexico {
 			cadena = Character.toString(contenido[indice]);//Devuelve un objeto String del caracter
 			indice++;
 			procG(contenido);
+
+			-----------------> COMPROBACIONES <-----------------
+
+			if (cadena.equals("if")){
+        	   toReturn = new Token("IF", null);
+			}
+
+
+
+
 			toReturn = new Token("ID",cadena);//genera token (ID,LEXEMA)
-		}else if (contenido[indice] == 'i' ) {
+		}
+
+
+
+----------------------> CORRECCION <----------------------
+
+
+
+		else if (contenido[indice] == 'i' ) {
 			cadena = "i";
 			indice++;
 			if(contenido[indice] == 'f') {
