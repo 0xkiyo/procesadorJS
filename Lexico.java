@@ -102,27 +102,19 @@ public class Lexico {
 			toReturn = new Token("SUMA",null);//genera token SUMA
 		} else if (contenido[indice] == '(') {
 			indice++;
-			toReturn = new Token("PARARENTABIERTO",null);//genera token PARARENTABIERTO
+			toReturn = new Token("PARENTABIERTO",null);//genera token PARARENTABIERTO
 		} else if (contenido[indice] == ')') {
 			indice++;
-			toReturn = new Token("PARARENTCERRADO",null);//genera token PARARENTCERRADO
+			toReturn = new Token("PARENTCERRADO",null);//genera token PARARENTCERRADO
 		} else if (contenido[indice] == '<') {
 			indice++;
 			toReturn = new Token("MENORQUE",null);//genera token MENORQUE
-		} else if (contenido[indice] == '&') {
-			indice++;
-			if (contenido[indice] == '&') {
-				toReturn = new Token("AND",null);//genera token AND
-				indice++;
-			} else {
-				//Error se esperaba detectar el caracter &
-			}
 		} else if (contenido[indice] == '=') {
 			indice++;
 			toReturn = new Token("IGUAL",null);//genera token IGUAL
 		} else if (contenido[indice] == ';') {
 			indice++;
-			toReturn = new Token("PUNTOYCOMA",null);
+			toReturn = new Token("PUNTOYCOMA",null);//genera token PUNTOYCOMA
 		} else if (contenido[indice] == ',') {
 			indice++;
 			toReturn = new Token("COMA",null);//genera token COMA
@@ -131,57 +123,39 @@ public class Lexico {
 			cadena = Character.toString(contenido[indice]);//Devuelve un objeto String del caracter
 			indice++;
 			procG(contenido);
-			toReturn = new Token("ID",cadena);//genera token (ID,LEXEMA)
-		}else if (contenido[indice] == 'i' ) {
-			cadena = "i";
+
+			if (cadena.equals("if")) {
+				toReturn = new Token("IF", null);//genera token IF
+			}
+			else if (cadena.equals("int")) {
+				toReturn = new Token("INT", null);//genera token INT
+			}
+			else if (cadena.equals("else")) {
+				toReturn = new Token("ELSE",null);//genera token ELSE
+			}
+			else if (cadena.equals("write")) {
+				toReturn = new Token("WRITE",null);//genera token WRITE
+			}
+			else if (cadena.equals("function")) {
+				toReturn = new Token("FUNCTION",null);//genera token FUNCTION
+			}
+			else if (cadena.equals("prompt")) {
+				toReturn = new Token("PROMPT",null);//genera token PROMPT
+			}
+			else if (cadena.equals("return")) {
+				toReturn = new Token("RETURN",null);//genera token RETURN
+			}
+			else if (cadena.equals("var")) {
+				toReturn = new Token("VAR",null);//genera token VAR
+			}
+			else if (cadena.equals("chars")) {
+				toReturn = new Token("CHARS",null);//genera token CHARS
+			} else toReturn = new Token("ID",cadena);//genera token (ID,LEXEMA)
+		}
+		else if (contenido[indice] == '&') {
 			indice++;
-			if(contenido[indice] == 'f') {
-				cadena += Character.toString(contenido[indice]);
-				indice++;
-				toReturn = new Token("IF",null);//genera token IF
-			} else if (contenido[indice] == 'n') {
-				cadena += Character.toString(contenido[indice]);
-				indice++;
-				procQ(contenido);
-				toReturn = new Token("INT",null);//genera token INT
-			} else  procG(contenido);
-		} else if (contenido[indice] == 'e') {
-			cadena = "e"; 
-			indice++;
-			procM(contenido);
-			new Token("ELSE",null);//genera token ELSE
-		} else if (contenido[indice] == 'f') {
-			cadena = "f"; 
-			indice++;
-			procN(contenido);
-			new Token("FUNCTION",null);//genera token FUNCTION
-		} else if (contenido[indice] == 'w') {
-			cadena = "w"; 
-			indice++;
-			procO(contenido);
-			new Token("WRITE",null);//genera token WRITE
-		} else if (contenido[indice] == 'p') {
-			cadena = "p"; 
-			indice++;
-			procP(contenido);
-			new Token("PROMPT",null);//genera token PROMPT
-		} else if (contenido[indice] == 'r') {
-			cadena = "r"; 
-			indice++;
-			procR(contenido);
-			new Token("RETURN",null);//genera token RETURN
-		} else if (contenido[indice] == 'v') {
-			cadena = "v"; 
-			indice++;
-			procU(contenido);
-			new Token("VAR",null);//genera token VAR
-		} else if (contenido[indice] == 'c') {
-			cadena = "c"; 
-			indice++;
-			procT(contenido);
-			new Token("CHARS",null);//genera token CHARS
-		} else {
-			//Error gramatica en contenido[indiceBu]
+			procH(contenido);
+			toReturn = new Token("AND",null);//genera token AND
 		}
 		return toReturn;
 	}
@@ -252,183 +226,17 @@ public class Lexico {
 	}
 
 	/**
-	 *  param: array de caracteres y cadena de caracteres
-	 *  function: generear token else
-	 */ 
-	public void procM(char[] contenido) {
-		if (indice < contenido.length && (contenido[indice] =='l')) {
-			cadena += Character.toString(contenido[indice]);
+	 *  param: array con el contenido a comprobar
+	 * 	function: comprueba si el siguiente caracter es &
+	 */
+	public void procH(char [] contenido) {
+		if (contenido[indice] == '&') {
+			toReturn = new Token("AND",null);//genera token AND
 			indice++;
-			if (indice < contenido.length && (contenido[indice] =='s')) {
-				cadena += Character.toString(contenido[indice]);
-				indice++;
-				if (indice < contenido.length && (contenido[indice] =='e')) {
-					cadena += Character.toString(contenido[indice]);
-					indice++;
-				} else procG(contenido);
-			} else procG(contenido);
-		} else procG(contenido);
-	}
+		} else {
+			//Error se esperaba detectar el caracter &
+		}
 
-	/**
-	 *  param: array de caracteres y cadena de caracteres
-	 *  function: generear token function
-	 */ 
-	public void procN(char[] contenido) {
-		if (indice < contenido.length && (contenido[indice] =='u')) {
-			cadena += Character.toString(contenido[indice]);
-			indice++;
-			if (indice < contenido.length && (contenido[indice] =='n')) {
-				cadena += Character.toString(contenido[indice]);
-				indice++;
-				if (indice < contenido.length && (contenido[indice] =='c')) {
-					cadena += Character.toString(contenido[indice]);
-					indice++;
-					if (indice < contenido.length && (contenido[indice] =='t')) {
-						cadena += Character.toString(contenido[indice]);
-						indice++;
-						if (indice < contenido.length && (contenido[indice] =='i')) {
-							cadena += Character.toString(contenido[indice]);
-							indice++;
-							if (indice < contenido.length && (contenido[indice] =='o')) {
-								cadena += Character.toString(contenido[indice]);
-								indice++;
-								if (indice < contenido.length && (contenido[indice] =='n')) {
-									cadena += Character.toString(contenido[indice]);
-									indice++;
-								} else procG(contenido);
-							} else procG(contenido);
-						} else procG(contenido);
-					} else procG(contenido);
-				} else procG(contenido);
-			} else procG(contenido);
-		} else procG(contenido);
-	}
-
-	/**
-	 *  param: array de caracteres y cadena de caracteres
-	 *  function: generear token write
-	 */ 
-	public void procO(char[] contenido) {
-		if (indice < contenido.length && (contenido[indice] =='r')) {
-			cadena += Character.toString(contenido[indice]);
-			indice++;
-			if (indice < contenido.length && (contenido[indice] =='i')) {
-				cadena += Character.toString(contenido[indice]);
-				indice++;
-				if (indice < contenido.length && (contenido[indice] =='t')) {
-					cadena += Character.toString(contenido[indice]);
-					indice++;
-					if (indice < contenido.length && (contenido[indice] =='e')) {
-						cadena += Character.toString(contenido[indice]);
-						indice++;
-					} else procG(contenido);
-				} else procG(contenido);
-			} else procG(contenido);
-		} else procG(contenido);
-	}
-
-	/**
-	 *  param: array de caracteres y cadena de caracteres
-	 *  function: generear token prompt
-	 */ 
-	public void procP(char[] contenido) {
-		if (indice < contenido.length && (contenido[indice] =='r')) {
-			cadena += Character.toString(contenido[indice]);
-			indice++;
-			if (indice < contenido.length && (contenido[indice] =='o')) {
-				cadena += Character.toString(contenido[indice]);
-				indice++;
-				if (indice < contenido.length && (contenido[indice] =='m')) {
-					cadena += Character.toString(contenido[indice]);
-					indice++;
-					if (indice < contenido.length && (contenido[indice] =='p')) {
-						cadena += Character.toString(contenido[indice]);
-						indice++;
-						if (indice < contenido.length && (contenido[indice] =='t')) {
-							cadena += Character.toString(contenido[indice]);
-							indice++;
-						} else procG(contenido);
-					} else procG(contenido);
-				} else procG(contenido);
-			} else procG(contenido);
-		} else procG(contenido);
-	}
-
-	/**
-	 *  param: array de caracteres y cadena de caracteres
-	 *  function: generear token return
-	 */ 
-	public void procR(char[] contenido) {
-		if (indice < contenido.length && (contenido[indice] =='e')) {
-			cadena += Character.toString(contenido[indice]);
-			indice++;
-			if (indice < contenido.length && (contenido[indice] =='t')) {
-				cadena += Character.toString(contenido[indice]);
-				indice++;
-				if (indice < contenido.length && (contenido[indice] =='u')) {
-					cadena += Character.toString(contenido[indice]);
-					indice++;
-					if (indice < contenido.length && (contenido[indice] =='r')) {
-						cadena += Character.toString(contenido[indice]);
-						indice++;
-						if (indice < contenido.length && (contenido[indice] =='n')) {
-							cadena += Character.toString(contenido[indice]);
-							indice++;
-						} else procG(contenido);
-					} else procG(contenido);
-				} else procG(contenido);
-			} else procG(contenido);
-		} else procG(contenido);
-	}
-
-	/**
-	 *  param: array de caracteres y cadena de caracteres
-	 *  function: generear token var
-	 */ 
-	public void procU(char[] contenido) {
-		if (indice < contenido.length && (contenido[indice] =='a')) {
-			cadena += Character.toString(contenido[indice]);
-			indice++;
-			if (indice < contenido.length && (contenido[indice] =='r')) {
-				cadena += Character.toString(contenido[indice]);
-				indice++;
-			} else procG(contenido);
-		} else procG(contenido);
-	}
-
-	/**
-	 *  param: array de caracteres y cadena de caracteres
-	 *  function: generear token int
-	 */ 
-	public void procQ(char[] contenido) {
-		if (indice < contenido.length && (contenido[indice] =='t')) {
-			cadena += Character.toString(contenido[indice]);
-			indice++;
-		} else procG(contenido);
-	}
-
-	/**
-	 *  param: array de caracteres y cadena de caracteres
-	 *  function: generear token chars
-	 */ 
-	public void procT(char[] contenido) {
-		if (indice < contenido.length && (contenido[indice] =='h')) {
-			cadena += Character.toString(contenido[indice]);
-			indice++;    
-			if (indice < contenido.length && (contenido[indice] =='a')) {
-				cadena += Character.toString(contenido[indice]);
-				indice++;
-				if (indice < contenido.length && (contenido[indice] =='r')) {
-					cadena += Character.toString(contenido[indice]);
-					indice++;
-					if (indice < contenido.length && (contenido[indice] =='s')) {
-						cadena += Character.toString(contenido[indice]);
-						indice++;
-					} else procG(contenido);
-				} else procG(contenido);
-			} else procG(contenido);
-		}else procG(contenido);
 	}
 
 	//GETTERS 
