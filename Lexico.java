@@ -11,8 +11,10 @@ import org.omg.PortableServer.IdAssignmentPolicy;
 import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.HeaderTokenizer.Token;
 
 import error.*;
+import errores.ComentarioException;
 import javafx.scene.transform.Rotate;
 import jdk.management.resource.internal.TotalResourceContext;
+import sintactico.Sintactico;
 import tabla_simbolos.*;
 import token.*;
 
@@ -68,7 +70,7 @@ public class Lexico {
 	 * param: array con el contenido para crear los tokens y tabla de simbolos
 	 * function: dependiendo de las condciones genera los tokens
 	 */
-	public Token procS(char [] contenido ,TablaSimbolos tS){
+	public Token procS(char [] contenido ,TablaSimbolos tS) throws ComentarioException, CadenaException, OpLogicoException, OtroSimboloException, FueraDeRangoException, IdException, DeclaracionIncompatibleException { 
 		Token toReturn = null;
 		if (indice == contenido.length) {
 			toReturn = new Token("EOF", null);//genera el token eof
@@ -96,7 +98,7 @@ public class Lexico {
 			if (digit < Math.pow(2, 15)) {//resticcion maximo numero
 				toReturn = new Token("NUM",Long.toString(digit));//genera token (NUM,Valor)
 			} else {
-				//Error fuera de rango
+				throw new FueraDeRangoException("Error en linea: " + linea.toString() + " El numero " + Long.toString(digit) + " sobrepasa el maximo representable");
 			}
 		} else if (contenido[indice] == '\"') {
 			cadena = "";
@@ -160,10 +162,24 @@ public class Lexico {
 			}
 			else if (cadena.equals("chars")) {
 				toReturn = new Token("CHARS",null);//genera token CHARS
-			} else toReturn = new Token("ID",cadena);//genera token (ID,LEXEMA)
+			} else {
+				Integer[] p = tS.buscaTS(cadena);
+				if (p[0] == null) {//comprueba zona de declaracion
+					tS.addTs(new Token("ID", cadena));
+				}else if(p[0] != null && p[1] == 0 && Sintactico.flagDeclaracionLocal){
+					tS.addTs(new Token("ID", cadena));//local
+				}else if(p[0] != null && (Sintactico.flagDeclaracion || Sintactico.flagDeclaracionLocal)){
+					throw new DeclaracionIncompatibleException("Error en linea "+Lexico.linea+". La variable o funcion '"+cadena+"' ha sido declarada previamente.");
+				}
+				toReturn = new Token("ID",cadena);//genera token (ID,LEXEMA)
+			}
+			
+			//else toReturn = new Token("ID",cadena);//genera token (ID,LEXEMA)
 		} else if (contenido[indice] == '&') {
 			indice++;
 			procH(contenido);
+		} else {
+			throw new OtroSimboloException("Error en linea: " + linea.toString() + " Se ha encontrado un simbolo que no pertenece a la gramatica: " + contenido[indice]);
 		}
 		return toReturn;
 	}
@@ -184,7 +200,7 @@ public class Lexico {
 	 * param: array con el contenido a comprobar
 	 * function: detecta letras y las concatena en una cadena
 	 */
-	public void procE(char[] contenido) {
+	public void procE(char[] contenido) throws CadenaException {
 		if (indice < contenido.length && contenido[indice] != '\"' && contenido[indice] != '\n' && contenido[indice] != '\r') {
 			cadena += Character.toString(contenido[indice]);
 			indice++;
@@ -192,7 +208,7 @@ public class Lexico {
 		} else if (indice < contenido.length && contenido[indice] == '\"') {
 			indice++;
 		} else {
-			//Error salto de linea mientras se analizaba una cadena
+			throw new CadenaException("Error en linea: " + linea.toString() + " Se ha encontrado un salto de linea mientras se analizaba una cadena");
 		}
 	}
 
@@ -200,7 +216,7 @@ public class Lexico {
 	 * param: array con el contenido a comprobar
 	 * function: detecta si los caracteres son de tipo letra o digito o _ para luego concatenarlos
 	 */
-	public void procG(char[] contenido) {
+	public void procG(char[] contenido) throws IdException {
 		if (indice < contenido.length && (isDigit(contenido[indice]) || isLetter(contenido[indice]) || contenido[indice] == '_')) {
 			cadena += Character.toString(contenido[indice]);
 			indice++;
@@ -212,12 +228,12 @@ public class Lexico {
 	 *  param: array con el contenido a comprobar
 	 * 	function: comprueba si el siguiente caracter es &
 	 */
-	public void procH(char [] contenido) {
+	public void procH(char [] contenido) throws OpLogicoException {
 		if (contenido[indice] == '&') {
 			toReturn = new Token("AND",null);//genera token AND
 			indice++;
 		} else {
-			//Error se esperaba detectar el caracter &
+			throw new OpLogicoException("Error en linea: " + linea.toString() + " Se esperaba detectar o '&' ");
 		}
 	}
 
@@ -225,7 +241,7 @@ public class Lexico {
 	 *  param: array con el contenido a comprobar
 	 *  function: comprueba si el siguiente caracter es = o /
 	 */
-	public void procI(char [] contenido) {
+	public void procI(char [] contenido) throws ComentarioException {
 		if (contenido[indice] == '=') {
 			toReturn = new Token("ASIGDIV",null);//genera token ASIGDIV
 			indice++;
@@ -233,7 +249,7 @@ public class Lexico {
 			indice++;
 			procJ(contenido);//el resto de comentario se ignora
 		} else {
-			//Error se esperaba detectar el caracter = o el caracter /
+			throw new ComentarioException("Error en linea: " + linea.toString() + " Se esperaba detectar el simbolo '/' o '=' ");
 		}
 	}
 
@@ -281,7 +297,7 @@ public class Lexico {
 		this.bw = bw;
 	} 
 
-	public Token al(TablaSimbolos tabla_simbolos) {
+	public Token al(TablaSimbolos tabla_simbolos) throws ComentarioException, CadenaException, OpLogicoException, OtroSimboloException, FueraDeRangoException, IdException, IOException, DeclaracionIncompatibleException {
 		Token toReturn = null;
 		while (toReturn == null) {
 			toReturn = this.procS(this.getA(), tablaSimbolos);
