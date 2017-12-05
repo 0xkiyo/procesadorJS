@@ -68,11 +68,11 @@ H -> F1 H1
 H1 -> + F1 H1
 H1 -> lambda
 F -> int
-F -> bool
 F -> chars
+F -> bool
 F1 -> id F2
-F1 -> d
 F1 -> l
+F1 -> d
 F1 -> ( E )
 F2 -> ( L )
 F2 -> lambda
