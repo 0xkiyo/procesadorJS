@@ -33,7 +33,7 @@ Z1 -> lambda
 
 A -> F id A1
 A -> lambda
-A1 -> , A
+A1 -> , F id A1
 A1 ->lambda
 
 D -> = E
