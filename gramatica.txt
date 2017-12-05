@@ -14,21 +14,53 @@ P -> B Z P
 P -> Fq Z P
 P -> eof
 
+B -> var F id D D1
+B -> if ( E ) G
+B -> S
+
+S -> id S1
+S -> prompt ( id ) ;
+S -> write ( E ) ;
+S1 -> = E ;
+S1 -> ( L ) ;
+S1 -> /= E ;
+
+Fq -> function F id ( A ) Z { Z Cfun }
+
+Z -> cr Z1
+Z1 -> Z
+Z1 -> lambda
+
 A -> F id A1
 A -> lambda
 A1 -> , A
 A1 ->lambda
-
-B -> var F id D D1
-B -> if ( E ) G
-B -> S
 
 D -> = E
 D -> lambda
 D1 -> , id D1
 D1 -> ;
 
+G -> { S } G1
+G -> S
+G1 -> else { S }
+G1 -> lambda
+G2 -> { Sfun } G3
+G2 -> Sfun
+G3 -> else { Sfun }
+G3 -> lambda
+
+L -> E Q
+L -> lambda
+
+Q -> , E Q
+Q -> lambda
+
+X -> E ;
+X -> ;
 E -> T R1
+R1 -> && T R1
+R1 -> lambda
 T -> H T1
 T1 -> < H T1
 T1 -> lambda
@@ -44,41 +76,6 @@ F1 -> l
 F1 -> ( E )
 F2 -> ( L )
 F2 -> lambda
-R1 -> && T R1
-R1 -> lambda
-
-Fq -> function F id ( A ) Z { Z Cfun }
-
-G -> { S } G1
-G -> S
-G1 -> else { S }
-G1 -> lambda
-G2 -> { Sfun } G3
-G2 -> Sfun
-G3 -> else { Sfun }
-G3 -> lambda
-L -> E Q
-L -> lambda
-
-Q -> , E Q
-Q -> lambda
-
-S -> id S1
-S -> prompt ( id ) ;
-S -> write ( E ) ;
-S1 -> = E ;
-S1 -> ( L ) ;
-S1 -> /= E ;
-
-X -> E ;
-X -> ;
-
-Z -> cr Z1
-Z1 -> Z
-Z1 -> lambda
-
-Cfun -> Bfun Z Cfun
-Cfun -> lambda
 
 Bfun -> var F id D D1
 Bfun -> if ( E ) G2
@@ -88,5 +85,8 @@ Sfun -> id S1
 Sfun -> prompt ( id ) ;
 Sfun -> write ( E ) ;
 Sfun -> return X
+
+Cfun -> Bfun Z Cfun
+Cfun -> lambda
 
 }
