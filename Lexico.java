@@ -131,8 +131,31 @@ public class Lexico {
 			cadena = Character.toString(contenido[indice]);//Devuelve un objeto String del caracter
 			indice++;
 			procG(contenido);
+<<<<<<< HEAD
 			toReturn = new Token("ID",cadena);//genera token (ID,LEXEMA)
 		}else if (contenido[indice] == 'i' ) {
+=======
+
+			-----------------> COMPROBACIONES <-----------------
+
+			if (cadena.equals("if")){
+        	   toReturn = new Token("IF", null);
+			}
+
+
+
+
+			toReturn = new Token("ID",cadena);//genera token (ID,LEXEMA)
+		}
+
+
+
+----------------------> CORRECCION <----------------------
+
+
+
+		else if (contenido[indice] == 'i' ) {
+>>>>>>> 746c8cdce265c6a27bf2c698d0d1612c076f80c4
 			cadena = "i";
 			indice++;
 			if(contenido[indice] == 'f') {
