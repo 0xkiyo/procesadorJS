@@ -6,7 +6,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 
+import org.omg.PortableServer.IdAssignmentPolicy;
+
+import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.HeaderTokenizer.Token;
+
 import error.*;
+import javafx.scene.transform.Rotate;
+import jdk.management.resource.internal.TotalResourceContext;
 import tabla_simbolos.*;
 import token.*;
 
@@ -66,14 +72,14 @@ public class Lexico {
 		Token toReturn = null;
 		if (indice == contenido.length) {
 			toReturn = new Token("EOF", null);//genera el token eof
-		} else if (contenido[indice] == '/') {
-			indice++;
-			procA(contenido);
 		} else if (contenido[indice] == '\n') {
 			linea++;
 			indice++;//en este caso no se genera token
 		} else if (contenido[indice] == ' ' || contenido[indice] == '\t') {//tabuladores o espacios
 			indice++;
+		} else if (contenido[indice] == '\r') {
+			indice++;
+			toReturn = new Token("CR",null);//genera token CR
 		} else if (contenido[indice] == '{') {
 			indice++;
 			toReturn = new Token("LLAVEABIERTA",null);//genera el token LLAVEABIERTA
@@ -96,7 +102,6 @@ public class Lexico {
 			cadena = "";
 			indice++;
 			procE(contenido);
-			toReturn = new Token("",cadena);//genera token (CHARS,LEXEMA)
 		} else if (contenido[indice] == '+') {
 			indice++;
 			toReturn = new Token("SUMA",null);//genera token SUMA
@@ -118,8 +123,10 @@ public class Lexico {
 		} else if (contenido[indice] == ',') {
 			indice++;
 			toReturn = new Token("COMA",null);//genera token COMA
-		} 
-		else if (isLetter(contenido[indice])) {
+		} else if (contenido[indice] == '/') {
+			indice++;
+			procI(contenido);
+		} else if (isLetter(contenido[indice])) {
 			cadena = Character.toString(contenido[indice]);//Devuelve un objeto String del caracter
 			indice++;
 			procG(contenido);
@@ -129,6 +136,9 @@ public class Lexico {
 			}
 			else if (cadena.equals("int")) {
 				toReturn = new Token("INT", null);//genera token INT
+			} 
+			else if (cadena.equals("bool")) {
+				toReturn = new Token("BOOL", null);//genera token BOOL
 			}
 			else if (cadena.equals("else")) {
 				toReturn = new Token("ELSE",null);//genera token ELSE
@@ -151,38 +161,11 @@ public class Lexico {
 			else if (cadena.equals("chars")) {
 				toReturn = new Token("CHARS",null);//genera token CHARS
 			} else toReturn = new Token("ID",cadena);//genera token (ID,LEXEMA)
-		}
-		else if (contenido[indice] == '&') {
+		} else if (contenido[indice] == '&') {
 			indice++;
 			procH(contenido);
-			toReturn = new Token("AND",null);//genera token AND
 		}
 		return toReturn;
-	}
-
-	/** 
-	 * param: array con el contenido a comprobar
-	 * function: detecta comentarios
-	 */
-	public void procA(char[] contenido) {
-		if (contenido[indice] == '/') {
-			indice++;
-			procB(contenido);
-		}
-		else{
-			//Error porque se esperaba /
-		}
-	}
-
-	/** 
-	 * param: array con el contenido a comprobar
-	 * function: avanza en caso de no detecte retorno de carro y no este apuntado al final del array
-	 */
-	public void procB(char [] contenido) {
-		if (indice < contenido.length && contenido[indice] != '\r') {
-			indice++;
-			procB(contenido);
-		}
 	}
 
 	/** 
@@ -236,7 +219,37 @@ public class Lexico {
 		} else {
 			//Error se esperaba detectar el caracter &
 		}
+	}
 
+	/**
+	 *  param: array con el contenido a comprobar
+	 *  function: comprueba si el siguiente caracter es = o /
+	 */
+	public void procI(char [] contenido) {
+		if (contenido[indice] == '=') {
+			toReturn = new Token("ASIGDIV",null);//genera token ASIGDIV
+			indice++;
+		} else if (contenido[indice] == '/') {
+			indice++;
+			procJ(contenido);//el resto de comentario se ignora
+		} else {
+			//Error se esperaba detectar el caracter = o el caracter /
+		}
+	}
+
+	/**
+	 *  param: array con el contenido a comprobar
+	 *  function: detecta caracteres hasta encontra un cr
+	 */
+	public void procJ(char [] contenido) {
+		if (contenido[indice] == '\r') {
+			indice++;
+			toReturn = new Token("CR",null);//genera token CR
+			procS(contenido);
+		} else {
+			indice++;
+			procJ(contenido);
+		}
 	}
 
 	//GETTERS 
@@ -273,8 +286,10 @@ public class Lexico {
 		while (toReturn == null) {
 			toReturn = this.procS(this.getA(), tablaSimbolos);
 		}
-		this.bw.write(toReturn.toString());
-		this.bw.newLine();
+		if ("CR".equals(toReturn.getValue())!=true) {//comprobamos que el token a devolver no sea CR
+			this.bw.write(toReturn.toString());
+			this.bw.newLine();
+		}
 		return toReturn;
 	}
 }
