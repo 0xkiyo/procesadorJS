@@ -126,8 +126,15 @@ public class Lexico {
 			indice++;
 			toReturn = new Token("COMA",null);//genera token COMA
 		} else if (contenido[indice] == '/') {
+			cadena = Character.toString(contenido[indice]);
 			indice++;
 			procI(contenido);
+			if(cadena.equals("/=")){
+				toReturn = new Token("ASIGDIV",null);//genera token ASIGDIV
+			} else if (cadena.equals("\r")) {
+				toReturn = new Token("CR",null);//genera token CR
+				procS(contenido);
+			}
 		} else if (isLetter(contenido[indice])) {
 			cadena = Character.toString(contenido[indice]);//Devuelve un objeto String del caracter
 			indice++;
@@ -178,6 +185,7 @@ public class Lexico {
 		} else if (contenido[indice] == '&') {
 			indice++;
 			procH(contenido);
+			toReturn = new Token("AND",null);//genera token AND
 		} else {
 			throw new OtroSimboloException("Error en linea: " + linea.toString() + " Se ha encontrado un simbolo que no pertenece a la gramatica: " + contenido[indice]);
 		}
@@ -230,7 +238,6 @@ public class Lexico {
 	 */
 	public void procH(char [] contenido) throws OpLogicoException {
 		if (contenido[indice] == '&') {
-			toReturn = new Token("AND",null);//genera token AND
 			indice++;
 		} else {
 			throw new OpLogicoException("Error en linea: " + linea.toString() + " Se esperaba detectar o '&' ");
@@ -243,7 +250,7 @@ public class Lexico {
 	 */
 	public void procI(char [] contenido) throws ComentarioException {
 		if (contenido[indice] == '=') {
-			toReturn = new Token("ASIGDIV",null);//genera token ASIGDIV
+			cadena += Character.toString(contenido[indice]);
 			indice++;
 		} else if (contenido[indice] == '/') {
 			indice++;
@@ -259,9 +266,8 @@ public class Lexico {
 	 */
 	public void procJ(char [] contenido) {
 		if (contenido[indice] == '\r') {
+			cadena += Character.toString(contenido[indice]);//guardamos el caracter cr en la cadena
 			indice++;
-			toReturn = new Token("CR",null);//genera token CR
-			procS(contenido);
 		} else {
 			indice++;
 			procJ(contenido);
