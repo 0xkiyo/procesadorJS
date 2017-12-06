@@ -170,7 +170,7 @@ public class Lexico {
 			else if (cadena.equals("chars")) {
 				toReturn = new Token("CHARS",null);//genera token CHARS
 			} else {
-				Integer[] p = tS.busca_Tabla(cadena);
+				Integer[] p = tS.busca_Tabla_Local(cadena);
 				if (p[0] == null) {//comprueba zona de declaracion
 					tS.add_Tabla(new Token("ID", cadena));
 				}else if(p[0] != null && p[1] == 0 && Sintactico.flagDeclaracionLocal){
