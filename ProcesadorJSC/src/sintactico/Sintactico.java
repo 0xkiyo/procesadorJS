@@ -1069,6 +1069,7 @@ public class Sintactico {
       this.errorWriter = errorWriter;
   }
 
+  //Metodo main
   public static void main(String[] args) {
    
     Sintactico as = null;
@@ -1076,7 +1077,7 @@ public class Sintactico {
     try {
         File ficheroAAnalizar=null;
         if (args != null) {
-            ficheroAAnalizar = new File(miDir.getCanonicalPath() + "\\" + args[0]);
+            ficheroAAnalizar = new File(miDir.getCanonicalPath() + "//pruebas//" + args[0]);
         }
         as = new Sintactico();
         if (args.length != 1) {
@@ -1108,8 +1109,10 @@ public class Sintactico {
         } catch (IOException exc) {
             System.out.println("Error escribiendo en el fichero de error.");
         }
-
-    } catch (IOException ex) {
+        
+    }
+    //Error en la escritura/tratamiento de los ficheros generados
+    catch (IOException ex) {
         System.out.println("Error con la escritura o tratamiento de alguno de los ficheros generados.");
         try {
             if (as != null) {
@@ -1119,7 +1122,9 @@ public class Sintactico {
         } catch (IOException exc) {
             System.out.println("Error escribiendo en el fichero de error.");
         }
-    } catch (Exception ex) {
+    }
+    //Excepcion no controlada
+    catch (Exception ex) {
         System.out.println("Excepcion no controlada.");
         try {
             if (as != null) {

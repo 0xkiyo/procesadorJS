@@ -1,12 +1,9 @@
 package lexico;
 
 //Paquetes externos
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
+//Paquetes internos;
 import error.*;
 import sintactico.*;
 import tabla_simbolos.*;
@@ -18,8 +15,8 @@ public class Lexico {
 	private FileReader fr = null;
 	private char[] a;
 	private BufferedWriter bw;
-	public static Integer linea = 0;//Para recorrer las lineas
-	public static int indice = 0;//Para recorrer el array
+	public static Integer linea = 0;    //Para recorrer las lineas
+	public static int indice = 0;       //Para recorrer el array
 	public static Long digit = (long) 0;//Para detectar digitos
 	public static String cadena = "";
 
