@@ -304,7 +304,7 @@ public class TablaSimbolos {
   return "IF".equals(cadena) || "ELSE".equals(cadena) || "FUNCTION".equals(cadena) || "WRITE".equals(cadena) || "PROMPT".equals(cadena) || "RETURN".equals(cadena) || "VAR".equals(cadena) || "INT".equals(cadena) || "CHARS".equals(cadena) || "BOOL".equals(cadena) || "ID".equals(cadena); 
  }
 
- public int getContadorRegistros() {
+ public int getContadorRegistro() {
   return contador_registros;
  }
 
