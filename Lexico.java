@@ -5,11 +5,16 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 
 import org.omg.PortableServer.IdAssignmentPolicy;
+
+import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.HeaderTokenizer.Token;
+
 import error.*;
-import sintactico.*;
+import errores.ComentarioException;
+import javafx.scene.transform.Rotate;
+import jdk.management.resource.internal.TotalResourceContext;
+import sintactico.Sintactico;
 import tabla_simbolos.*;
 import token.*;
 
@@ -28,7 +33,7 @@ public class Lexico {
 	 * @funcion: lee ficheros
 	 * @param fichero 
 	 */
-	public void leerFicheros(File fichero){
+	public void leeFicheros(File fichero){
 		try {
 			// Apertura del fichero e inicializacion de FileReader para leerlo
 			this.archivo = fichero;
@@ -130,7 +135,7 @@ public class Lexico {
 				toReturn = new Token("ASIGDIV",null);//genera token ASIGDIV
 			} else if (cadena.equals("\r")) {
 				toReturn = new Token("CR",null);//genera token CR
-				procS(contenido,tS);
+				procS(contenido);
 			}
 		} else if (isLetter(contenido[indice])) {
 			cadena = Character.toString(contenido[indice]);//Devuelve un objeto String del caracter
@@ -301,9 +306,9 @@ public class Lexico {
 	public Token al(TablaSimbolos tabla_simbolos) throws ComentarioException, CadenaException, OpLogicoException, OtroSimboloException, FueraDeRangoException, IdException, IOException, DeclaracionIncompatibleException {
 		Token toReturn = null;
 		while (toReturn == null) {
-			toReturn = this.procS(this.getA(), tabla_simbolos);
+			toReturn = this.procS(this.getA(), tablaSimbolos);
 		}
-		if ("CR".equals(toReturn.getValor())!=true) {//comprobamos que el token a devolver no sea CR
+		if ("CR".equals(toReturn.getValue())!=true) {//comprobamos que el token a devolver no sea CR
 			this.bw.write(toReturn.toString());
 			this.bw.newLine();
 		}
