@@ -7,6 +7,8 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.sun.xml.internal.ws.wsdl.parser.InaccessibleWSDLException;
+
 public class TablaSimbolos {
  private int contador_registros = 0;
  private ArrayList<Object[]> tabla_simbolos;
@@ -138,7 +140,7 @@ public class TablaSimbolos {
  public void addTipo(Token token, String tipo) throws DeclaracionIncompatibleException {
   if (this.buscaTS(token.getValor())[0] != null) {
    if (this.getTipo(token) != null && !this.getTipo(token).equals(tipo) && ("FUNC".equals(tipo) || "FUNC".equals(this.getTipo(token)))) {
-    throw new DeclaracionIncompatibleException("Error: linea " + Lexico.linea + ". \nVariable/funcion: " + token.getValor() + ", ya ha sido declarado con anterioridad.");
+    throw new DeclaracionIncompatibleException("Error: linea " + lexico.linea + ". \nVariable/funcion: " + token.getValor() + ", ya ha sido declarado con anterioridad.");
    }
 
    Integer[] aux = buscaTS(token.getValor());
@@ -179,7 +181,7 @@ public class TablaSimbolos {
   }
  }
 
- public Integer[] buscaTS(String palabra) {
+ public integer[] buscaTS(String palabra) {
   Integer[] esta_local = new Integer[2];
   if (contador_registros > 0 && this.tabla_simbolos.get(contador_registros -1)[0] instanceof TablaSimbolos) {
    TablaSimbolos tabla_local = (TablaSimbolos) this.tabla_simbolos.get(contador_registros - 1)[0];
@@ -207,6 +209,7 @@ public class TablaSimbolos {
  }
 
  public Integer[] buscaTSGlobal(String palabra) {
+  Integer[] esta_local = new Integer[2];
   Integer[] contador = new Integer[2];
   contador[0] = 0;
   contador[1] = 0;
@@ -247,7 +250,7 @@ public class TablaSimbolos {
   int a_devolver = -1;
   Integer[] pos_Y_tabla = this.buscaTS(token.getValor());
   if (pos_Y_tabla[1] == 1) {
-   System.out.println("Error en getNParametros. \nAccediendo a la tabla local.");
+   SYstem.out.println("Error en getNParametros. \nAccediendo a la tabla local.");
   } else {
    Integer numero_params = (Integer) this.tabla_simbolos.get(pos_Y_tabla[0].intValue())[3];
    a_devolver = numero_params;
@@ -256,7 +259,7 @@ public class TablaSimbolos {
  }
 
  public int getNParametrosGlobal(Token token) {
-  Integer[] pos_Y_tabla = this.buscaTSGlobal(token.getValor());
+  Integer[] pos_Y_tabla = this.buscaTSGlobal(toke.getValor());
   Integer num_params = null;
   if (pos_Y_tabla[0] != null) {
    num_params = (Integer) this.tabla_simbolos.get(pos_Y_tabla[0].intValue())[3];
@@ -316,7 +319,7 @@ public class TablaSimbolos {
   return tabla_simbolos;
  }
 
- public void setTablaSimbolos(ArrayList<Object[]> tabla_simbolos) {
+ public void setTablaSimbolos(ArrayLIst<Object[]> tabla_simbolos) {
   this.tabla_simbolos = tabla_simbolos;
  }
 }
