@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.omg.PortableServer.IdAssignmentPolicy;
 import error.*;
 import sintactico.*;
 import tabla_simbolos.*;
