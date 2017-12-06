@@ -170,11 +170,11 @@ public class Lexico {
 			else if (cadena.equals("chars")) {
 				toReturn = new Token("CHARS",null);//genera token CHARS
 			} else {
-				Integer[] p = tS.busca_Tabla_Local(cadena);
+				Integer[] p = tS.buscaTS(cadena);
 				if (p[0] == null) {//comprueba zona de declaracion
-					tS.add_Tabla(new Token("ID", cadena));
+					tS.addTs(new Token("ID", cadena));
 				}else if(p[0] != null && p[1] == 0 && Sintactico.flagDeclaracionLocal){
-					tS.add_Tabla(new Token("ID", cadena));//añadido a local
+					tS.addTs(new Token("ID", cadena));//añadido a local
 				}else if(p[0] != null && (Sintactico.flagDeclaracion || Sintactico.flagDeclaracionLocal)){
 					throw new DeclaracionIncompatibleException("Error en linea "+Lexico.linea+". La variable o funcion '"+cadena+"' ha sido declarada previamente.");
 				}
