@@ -1,0 +1,1 @@
+Error en linea: 5. Los tipos de los operandos no coinciden.

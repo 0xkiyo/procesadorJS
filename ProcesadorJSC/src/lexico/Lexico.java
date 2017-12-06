@@ -67,14 +67,14 @@ public class Lexico {
 		Token toReturn = null;
 		if (indice == contenido.length) {
 			toReturn = new Token("EOF", null);//genera el token eof
-		} else if (contenido[indice] == '\n') {
-			linea++;
-			indice++;//en este caso no se genera token
-		} else if (contenido[indice] == ' ' || contenido[indice] == '\t') {//tabuladores o espacios
+		} else if (contenido[indice] == '\r' || contenido[indice] == '\n') {
 			indice++;
-		} else if (contenido[indice] == '\r') {
-			indice++;
+                        linea++;
+                        
 			toReturn = new Token("CR",null);//genera token CR
+                } else if (contenido[indice] == ' ' || contenido[indice] == '\t') {//tabuladores o espacios
+			indice++;
+		
 		} else if (contenido[indice] == '{') {
 			indice++;
 			toReturn = new Token("LLAVEABIERTA",null);//genera el token LLAVEABIERTA
@@ -97,6 +97,7 @@ public class Lexico {
 			cadena = "";
 			indice++;
 			procE(contenido);
+                        toReturn = new Token("CADENA", cadena);
 		} else if (contenido[indice] == '+') {
 			indice++;
 			toReturn = new Token("SUMA",null);//genera token SUMA
@@ -132,7 +133,7 @@ public class Lexico {
 			cadena = Character.toString(contenido[indice]);//Devuelve un objeto String del caracter
 			indice++;
 			procG(contenido);
-
+                        
 			if (cadena.equals("if")) {
 				toReturn = new Token("IF", null);//genera token IF
 			}
@@ -303,7 +304,6 @@ public class Lexico {
 		while (toReturn == null) {
 			toReturn = this.procS(this.getA(), tabla_simbolos);
 		}
-                
 		if ("CR".equals(toReturn.getId()) != true) {//comprobamos que el token a devolver no sea CR
                     System.out.println(toReturn.toString());
                     this.bw.write(toReturn.toString());

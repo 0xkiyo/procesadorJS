@@ -127,9 +127,9 @@ public class Sintactico {
       this.setParse(this.getParse() + "5 ");
 
       empareja(new Token("IF", null));
-      empareja(new Token("PARARENTABIERTO", null));
+      empareja(new Token("PARENTABIERTO", null));
       procedE();
-      empareja(new Token("PARARENTCERRADO", null));
+      empareja(new Token("PARENTCERRADO", null));
       procedG();
     }
     //B -> S
@@ -310,7 +310,7 @@ public class Sintactico {
     //Z -> cr Z1
     if ("CR".equals(this.getTokenDevuelto().getId())) {
       this.setParse(this.getParse() + "14 ");
-
+      
       empareja(new Token("CR", null));
       procedZ1();
     }
@@ -698,6 +698,7 @@ public class Sintactico {
                 tipoT1 = "ENTERA";
                 break;
         }
+        System.out.println(tipoT1);
         empareja(new Token("MENORQUE", null));
         procedH();
         if ("VOID".equals(tipo) || "VOID".equals(tipoT1)) {
@@ -807,10 +808,13 @@ public class Sintactico {
     Token tokenAuxiliar = tokenLlamador;
     
     //F1 -> id F2
+    System.out.println("ProcedF1:"+this.getTokenDevuelto().getId());
     if ("ID".equals(this.getTokenDevuelto().getId())) {
         this.setParse(this.getParse() + "51 ");
         
         tokenLlamador = tokenDevuelto;
+        
+        System.out.println("Estoy en id de F1: ");
         if (tS.getTipo(tokenDevuelto) == null) {
             tS.addTipo(tokenDevuelto, "ENTERA");
             tS.addDireccion(tokenDevuelto, 2);
@@ -919,9 +923,9 @@ public class Sintactico {
       this.setParse(this.getParse() + "58 ");
 
       empareja(new Token("IF", null));
-      empareja(new Token("PARARENTABIERTO", null));
+      empareja(new Token("PARENTABIERTO", null));
       procedE();
-      empareja(new Token("PARARENTCERRADO", null));
+      empareja(new Token("PARENTCERRADO", null));
       procedG2();
       flagReturn = true;
     }

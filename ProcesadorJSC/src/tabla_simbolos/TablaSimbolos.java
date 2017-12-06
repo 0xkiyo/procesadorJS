@@ -3,9 +3,8 @@ package tabla_simbolos;
 import lexico.*;
 import error.*;
 import token.*;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.io.*;
+import java.util.*;
 
 public class TablaSimbolos {
  private int contador_registros = 0;
@@ -15,47 +14,44 @@ public class TablaSimbolos {
  private void addPalabrasReservadas() throws DeclaracionIncompatibleException {
   this.addTs(new Token("IF", null));
   this.addDireccion(new Token("IF", null), "IF".length());
-  this.addTipo(new Token("IF", null), "IF");
+  this.addTipo(new Token("IF", null), "PALABRA RESERVADA");
 
   this.addTs(new Token("ELSE", null));
   this.addDireccion(new Token("ELSE", null), "ELSE".length());
-  this.addTipo(new Token("ELSE", null), "ELSE");
+  this.addTipo(new Token("ELSE", null), "PALABRA RESERVADA");
 
   this.addTs(new Token("FUNCTION", null));
   this.addDireccion(new Token("FUNCTION", null), "FUNCTION".length());
-  this.addTipo(new Token("FUNCTION", null), "FUNCTION");
+  this.addTipo(new Token("FUNCTION", null), "PALABRA RESERVADA");
 
   this.addTs(new Token("WRITE", null));
   this.addDireccion(new Token("WRITE", null), "WRITE".length());
-  this.addTipo(new Token("WRITE", null), "WRITE");
+  this.addTipo(new Token("WRITE", null), "PALABRA RESERVADA");
 
   this.addTs(new Token("PROMPT", null));
   this.addDireccion(new Token("PROMPT", null), "PROMPT".length());
-  this.addTipo(new Token("PROMPT", null), "PROMPT");
+  this.addTipo(new Token("PROMPT", null), "PALABRA RESERVADA");
 
   this.addTs(new Token("RETURN", null));
   this.addDireccion(new Token("RETURN", null), "RETURN".length());
-  this.addTipo(new Token("RETURN", null), "RETURN");
+  this.addTipo(new Token("RETURN", null), "PALABRA RESERVADA");
 
   this.addTs(new Token("VAR", null));
   this.addDireccion(new Token("VAR", null), "VAR".length());
-  this.addTipo(new Token("VAR", null), "VAR");
+  this.addTipo(new Token("VAR", null), "PALABRA RESERVADA");
 
   this.addTs(new Token("INT", null));
   this.addDireccion(new Token("INT", null), "INT".length());
-  this.addTipo(new Token("INT", null), "INT");
+  this.addTipo(new Token("INT", null), "PALABRA RESERVADA");
 
   this.addTs(new Token("CHARS", null));
   this.addDireccion(new Token("CHARS", null), "CHARS".length());
-  this.addTipo(new Token("CHARS", null), "CHARS");
+  this.addTipo(new Token("CHARS", null), "PALABRA RESERVADA");
 
   this.addTs(new Token("BOOL", null));
   this.addDireccion(new Token("BOOL", null), "BOOL".length());
-  this.addTipo(new Token("BOOL", null), "BOOL");
+  this.addTipo(new Token("BOOL", null), "PALABRA RESERVADA");
 
-  this.addTs(new Token("ID", null));
-  this.addDireccion(new Token("ID", null), "ID".length());
-  this.addTipo(new Token("ID", null), "ID");
  }
 
  public TablaSimbolos() throws DeclaracionIncompatibleException{
@@ -301,7 +297,7 @@ public class TablaSimbolos {
  }
 
  public boolean isPR(String cadena) {
-  return "IF".equals(cadena) || "ELSE".equals(cadena) || "FUNCTION".equals(cadena) || "WRITE".equals(cadena) || "PROMPT".equals(cadena) || "RETURN".equals(cadena) || "VAR".equals(cadena) || "INT".equals(cadena) || "CHARS".equals(cadena) || "BOOL".equals(cadena) || "ID".equals(cadena); 
+  return "IF".equals(cadena) || "ELSE".equals(cadena) || "FUNCTION".equals(cadena) || "WRITE".equals(cadena) || "PROMPT".equals(cadena) || "RETURN".equals(cadena) || "VAR".equals(cadena) || "INT".equals(cadena) || "CHARS".equals(cadena) || "BOOL".equals(cadena); 
  }
 
  public int getContadorRegistro() {

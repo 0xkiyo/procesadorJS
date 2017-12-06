@@ -1,6 +1,6 @@
 var int x = 2;
 var chars y = "Bienvenidos";
-var bool;
+var bool z;
 
 if( x < 2 ) {
 }
