@@ -1,5 +1,4 @@
 
-
 package error;
 
 public class CadenaException extends Exception {
