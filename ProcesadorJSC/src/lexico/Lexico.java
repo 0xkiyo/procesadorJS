@@ -11,7 +11,6 @@ import org.omg.PortableServer.IdAssignmentPolicy;
 import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.HeaderTokenizer.Token;
 
 import error.*;
-import errores.ComentarioException;
 import javafx.scene.transform.Rotate;
 import jdk.management.resource.internal.TotalResourceContext;
 import sintactico.Sintactico;
@@ -33,7 +32,7 @@ public class Lexico {
 	 * @funcion: lee ficheros
 	 * @param fichero 
 	 */
-	public void leeFicheros(File fichero){
+	public void leerFicheros(File fichero){
 		try {
 			// Apertura del fichero e inicializacion de FileReader para leerlo
 			this.archivo = fichero;
