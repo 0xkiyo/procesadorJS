@@ -275,19 +275,23 @@ public class Lexico {
 	}
 
 	public static Long getDigit() {
-		return digit; 
-	}
-
-	public char[] getA() {
-		return a;
+		return digit;
 	}
 
 	public static String getCadena() {
-		return cadena; 
+		return cadena;
 	}
 
 	public File getArchivo() {
 		return archivo;
+	}
+
+	public FileReader getFr() {
+		return fr;
+	}
+
+	public char[] getA() {
+		return a;
 	}
 
 	public BufferedWriter getBw() {
