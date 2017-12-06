@@ -43,7 +43,6 @@ public class Lexico {
 			this.fr.read(a); //añade el contenido al array
 
 			String ruta = Sintactico.miDir.getCanonicalPath()+"\\tokens.txt";
-			String ruta = Lexico.miDir.getCanonicalPath()+"\\tokens.txt";
 
 			File archivoTokens = new File(ruta);
 			this.bw = new BufferedWriter(new FileWriter(archivoTokens));//leemos el fichero
