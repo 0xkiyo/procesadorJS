@@ -303,9 +303,11 @@ public class Lexico {
 		while (toReturn == null) {
 			toReturn = this.procS(this.getA(), tabla_simbolos);
 		}
+                
 		if ("CR".equals(toReturn.getId()) != true) {//comprobamos que el token a devolver no sea CR
-			this.bw.write(toReturn.toString());
-			this.bw.newLine();
+                    System.out.println(toReturn.toString());
+                    this.bw.write(toReturn.toString());
+                    this.bw.newLine();
 		}
 		return toReturn;
 	}

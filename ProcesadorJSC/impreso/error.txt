@@ -1,1 +1,0 @@
-Error en linea: 2 Se esperaba detectar el token < CR , _ > pero se ha detectado: < VAR , _ >

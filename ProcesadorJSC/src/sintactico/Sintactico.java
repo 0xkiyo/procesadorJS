@@ -315,7 +315,7 @@ public class Sintactico {
       procedZ1();
     }
     else {
-      throw new FirstNoCoincideException("Error en linea: " + Integer.toString(Lexico.linea) + " Se esperaba detectar el token < CR , _ > pero se ha detectado: " + this.getTokenDevuelto().toString());
+      throw new FirstNoCoincideException("ProcedZ():Error en linea: " + Integer.toString(Lexico.linea) + " Se esperaba detectar el token < CR , _ > pero se ha detectado: " + this.getTokenDevuelto().toString());
     }
 
   }
@@ -437,7 +437,7 @@ public class Sintactico {
       empareja(new Token("PUNTOYCOMA", null));      
     }
     else {
-      throw new FirstNoCoincideException("Error en linea: " + Integer.toString(Lexico.linea) + " Se esperaba detectar el token < CR , _ > pero se ha detectado: " + this.getTokenDevuelto().toString());
+      throw new FirstNoCoincideException("ProcedD1:Error en linea: " + Integer.toString(Lexico.linea) + " Se esperaba detectar el token < CR , _ > pero se ha detectado: " + this.getTokenDevuelto().toString());
     }
 
   }
@@ -462,7 +462,7 @@ public class Sintactico {
       procedS();
     }
     else {
-      throw new FirstNoCoincideException("Error en linea: " + Integer.toString(Lexico.linea) + " Se esperaba detectar el token < CR , _ > pero se ha detectado: " + this.getTokenDevuelto().toString());
+      throw new FirstNoCoincideException("ProcedG:Error en linea: " + Integer.toString(Lexico.linea) + " Se esperaba detectar el token < CR , _ > pero se ha detectado: " + this.getTokenDevuelto().toString());
     }
 
   }
@@ -507,7 +507,7 @@ public class Sintactico {
       procedSfun();
     }
     else {
-      throw new FirstNoCoincideException("Error en linea: " + Integer.toString(Lexico.linea) + " Se esperaba detectar el token < CR , _ > pero se ha detectado: " + this.getTokenDevuelto().toString());
+      throw new FirstNoCoincideException("ProcedG2:Error en linea: " + Integer.toString(Lexico.linea) + " Se esperaba detectar el token < CR , _ > pero se ha detectado: " + this.getTokenDevuelto().toString());
     }
 
   }
@@ -601,7 +601,7 @@ public class Sintactico {
           empareja(new Token("PUNTOYCOMA", null));
       }
       else {
-        throw new FirstNoCoincideException("Error en linea: " + Integer.toString(Lexico.linea) + " Se esperaba detectar el token < CR , _ > pero se ha detectado: " + this.getTokenDevuelto().toString());
+        throw new FirstNoCoincideException("ProcedX:Error en linea: " + Integer.toString(Lexico.linea) + " Se esperaba detectar el token < CR , _ > pero se ha detectado: " + this.getTokenDevuelto().toString());
       }
 
   }
