@@ -6,7 +6,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 
+import org.omg.PortableServer.IdAssignmentPolicy;
+
+import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.HeaderTokenizer.Token;
+
 import error.*;
+import errores.ComentarioException;
+import javafx.scene.transform.Rotate;
+import jdk.management.resource.internal.TotalResourceContext;
+import sintactico.Sintactico;
 import tabla_simbolos.*;
 import token.*;
 
@@ -33,11 +41,10 @@ public class Lexico {
 			//Leer fichero
 			this.a = new char [(int) archivo.length()];//Este Array nos almacena los caracteres
 			this.fr.read(a); //añade el contenido al array
-<<<<<<< HEAD
+
 			String ruta = Sintactico.miDir.getCanonicalPath()+"\\tokens.txt";
-=======
 			String ruta = Lexico.miDir.getCanonicalPath()+"\\tokens.txt";
->>>>>>> 746c8cdce265c6a27bf2c698d0d1612c076f80c4
+
 			File archivoTokens = new File(ruta);
 			this.bw = new BufferedWriter(new FileWriter(archivoTokens));//leemos el fichero
 			linea++;
@@ -66,18 +73,18 @@ public class Lexico {
 	 * param: array con el contenido para crear los tokens y tabla de simbolos
 	 * function: dependiendo de las condciones genera los tokens
 	 */
-	public Token procS(char [] contenido ,TablaSimbolos tS){
+	public Token procS(char [] contenido ,TablaSimbolos tS) throws ComentarioException, CadenaException, OpLogicoException, OtroSimboloException, FueraDeRangoException, IdException, DeclaracionIncompatibleException { 
 		Token toReturn = null;
 		if (indice == contenido.length) {
 			toReturn = new Token("EOF", null);//genera el token eof
-		} else if (contenido[indice] == '/') {
-			indice++;
-			procA(contenido);
 		} else if (contenido[indice] == '\n') {
 			linea++;
 			indice++;//en este caso no se genera token
 		} else if (contenido[indice] == ' ' || contenido[indice] == '\t') {//tabuladores o espacios
 			indice++;
+		} else if (contenido[indice] == '\r') {
+			indice++;
+			toReturn = new Token("CR",null);//genera token CR
 		} else if (contenido[indice] == '{') {
 			indice++;
 			toReturn = new Token("LLAVEABIERTA",null);//genera el token LLAVEABIERTA
@@ -94,148 +101,101 @@ public class Lexico {
 			if (digit < Math.pow(2, 15)) {//resticcion maximo numero
 				toReturn = new Token("NUM",Long.toString(digit));//genera token (NUM,Valor)
 			} else {
-				//Error fuera de rango
+				throw new FueraDeRangoException("Error en linea: " + linea.toString() + " El numero " + Long.toString(digit) + " sobrepasa el maximo representable");
 			}
 		} else if (contenido[indice] == '\"') {
 			cadena = "";
 			indice++;
 			procE(contenido);
-			toReturn = new Token("",cadena);//genera token (CHARS,LEXEMA)
 		} else if (contenido[indice] == '+') {
 			indice++;
 			toReturn = new Token("SUMA",null);//genera token SUMA
 		} else if (contenido[indice] == '(') {
 			indice++;
-			toReturn = new Token("PARARENTABIERTO",null);//genera token PARARENTABIERTO
+			toReturn = new Token("PARENTABIERTO",null);//genera token PARARENTABIERTO
 		} else if (contenido[indice] == ')') {
 			indice++;
-			toReturn = new Token("PARARENTCERRADO",null);//genera token PARARENTCERRADO
+			toReturn = new Token("PARENTCERRADO",null);//genera token PARARENTCERRADO
 		} else if (contenido[indice] == '<') {
 			indice++;
 			toReturn = new Token("MENORQUE",null);//genera token MENORQUE
-		} else if (contenido[indice] == '&') {
-			indice++;
-			if (contenido[indice] == '&') {
-				toReturn = new Token("AND",null);//genera token AND
-				indice++;
-			} else {
-				//Error se esperaba detectar el caracter &
-			}
 		} else if (contenido[indice] == '=') {
 			indice++;
 			toReturn = new Token("IGUAL",null);//genera token IGUAL
 		} else if (contenido[indice] == ';') {
 			indice++;
-			toReturn = new Token("PUNTOYCOMA",null);
+			toReturn = new Token("PUNTOYCOMA",null);//genera token PUNTOYCOMA
 		} else if (contenido[indice] == ',') {
 			indice++;
 			toReturn = new Token("COMA",null);//genera token COMA
-		} 
-		else if (isLetter(contenido[indice])) {
+		} else if (contenido[indice] == '/') {
+			cadena = Character.toString(contenido[indice]);
+			indice++;
+			procI(contenido);
+			if(cadena.equals("/=")){
+				toReturn = new Token("ASIGDIV",null);//genera token ASIGDIV
+			} else if (cadena.equals("\r")) {
+				toReturn = new Token("CR",null);//genera token CR
+				procS(contenido);
+			}
+		} else if (isLetter(contenido[indice])) {
 			cadena = Character.toString(contenido[indice]);//Devuelve un objeto String del caracter
 			indice++;
 			procG(contenido);
 
-			-----------------> COMPROBACIONES <-----------------
-
-			if (cadena.equals("if")){
-        	   toReturn = new Token("IF", null);
+			if (cadena.equals("if")) {
+				toReturn = new Token("IF", null);//genera token IF
 			}
-
-
-
-
-			toReturn = new Token("ID",cadena);//genera token (ID,LEXEMA)
-		}
-
-
-
-----------------------> CORRECCION <----------------------
-
-
-
-		else if (contenido[indice] == 'i' ) {
-			cadena = "i";
+			else if (cadena.equals("int")) {
+				toReturn = new Token("INT", null);//genera token INT
+			} 
+			else if (cadena.equals("bool")) {
+				toReturn = new Token("BOOL", null);//genera token BOOL
+			}
+			else if (cadena.equals("else")) {
+				toReturn = new Token("ELSE",null);//genera token ELSE
+			}
+			else if (cadena.equals("write")) {
+				toReturn = new Token("WRITE",null);//genera token WRITE
+			}
+			else if (cadena.equals("function")) {
+				toReturn = new Token("FUNCTION",null);//genera token FUNCTION
+			}
+			else if (cadena.equals("prompt")) {
+				toReturn = new Token("PROMPT",null);//genera token PROMPT
+			}
+			else if (cadena.equals("return")) {
+				toReturn = new Token("RETURN",null);//genera token RETURN
+			}
+			else if (cadena.equals("var")) {
+				toReturn = new Token("VAR",null);//genera token VAR
+			}
+			else if (cadena.equals("chars")) {
+				toReturn = new Token("CHARS",null);//genera token CHARS
+			} else {
+				Integer[] p = tS.buscaTS(cadena);
+				if (p[0] == null) {//comprueba zona de declaracion
+					tS.addTs(new Token("ID", cadena));
+				}else if(p[0] != null && p[1] == 0 && Sintactico.flagDeclaracionLocal){
+					tS.addTs(new Token("ID", cadena));//añadido a local
+				}else if(p[0] != null && (Sintactico.flagDeclaracion || Sintactico.flagDeclaracionLocal)){
+					throw new DeclaracionIncompatibleException("Error en linea "+Lexico.linea+". La variable o funcion '"+cadena+"' ha sido declarada previamente.");
+				}
+				toReturn = new Token("ID",cadena);//genera token (ID,LEXEMA)
+			}
+		} else if (contenido[indice] == '&') {
 			indice++;
-			if(contenido[indice] == 'f') {
-				cadena += Character.toString(contenido[indice]);
-				indice++;
-				toReturn = new Token("IF",null);//genera token IF
-			} else if (contenido[indice] == 'n') {
-				cadena += Character.toString(contenido[indice]);
-				indice++;
-				procQ(contenido);
-				toReturn = new Token("INT",null);//genera token INT
-			} else  procG(contenido);
-		} else if (contenido[indice] == 'e') {
-			cadena = "e"; 
-			indice++;
-			procM(contenido);
-			new Token("ELSE",null);//genera token ELSE
-		} else if (contenido[indice] == 'f') {
-			cadena = "f"; 
-			indice++;
-			procN(contenido);
-			new Token("FUNCTION",null);//genera token FUNCTION
-		} else if (contenido[indice] == 'w') {
-			cadena = "w"; 
-			indice++;
-			procO(contenido);
-			new Token("WRITE",null);//genera token WRITE
-		} else if (contenido[indice] == 'p') {
-			cadena = "p"; 
-			indice++;
-			procP(contenido);
-			new Token("PROMPT",null);//genera token PROMPT
-		} else if (contenido[indice] == 'r') {
-			cadena = "r"; 
-			indice++;
-			procR(contenido);
-			new Token("RETURN",null);//genera token RETURN
-		} else if (contenido[indice] == 'v') {
-			cadena = "v"; 
-			indice++;
-			procU(contenido);
-			new Token("VAR",null);//genera token VAR
-		} else if (contenido[indice] == 'c') {
-			cadena = "c"; 
-			indice++;
-			procT(contenido);
-			new Token("CHARS",null);//genera token CHARS
+			procH(contenido);
+			toReturn = new Token("AND",null);//genera token AND
 		} else {
-			//Error gramatica en contenido[indiceBu]
+			throw new OtroSimboloException("Error en linea: " + linea.toString() + " Se ha encontrado un simbolo que no pertenece a la gramatica: " + contenido[indice]);
 		}
 		return toReturn;
 	}
 
 	/** 
 	 * param: array con el contenido a comprobar
-	 * function: detecta comentarios
-	 */
-	public void procA(char[] contenido) {
-		if (contenido[indice] == '/') {
-			indice++;
-			procB(contenido);
-		}
-		else{
-			//Error porque se esperaba /
-		}
-	}
-
-	/** 
-	 * param: array con el contenido a comprobar
-	 * function: avanza en caso de no detecte retorno de carro y no este apuntado al final del array
-	 */
-	public void procB(char [] contenido) {
-		if (indice < contenido.length && contenido[indice] != '\r') {
-			indice++;
-			procB(contenido);
-		}
-	}
-
-	/** 
-	 * param: array con el contenido a comprobar
-	 * function: detecta digitios y los concatena 
+	 * function: detecta digitos y los concatena 
 	 */
 	public void procD(char[] contenido){
 		if (indice < contenido.length && isDigit(contenido[indice])) {
@@ -249,7 +209,7 @@ public class Lexico {
 	 * param: array con el contenido a comprobar
 	 * function: detecta letras y las concatena en una cadena
 	 */
-	public void procE(char[] contenido) {
+	public void procE(char[] contenido) throws CadenaException {
 		if (indice < contenido.length && contenido[indice] != '\"' && contenido[indice] != '\n' && contenido[indice] != '\r') {
 			cadena += Character.toString(contenido[indice]);
 			indice++;
@@ -257,7 +217,7 @@ public class Lexico {
 		} else if (indice < contenido.length && contenido[indice] == '\"') {
 			indice++;
 		} else {
-			//Error salto de linea mientras se analizaba una cadena
+			throw new CadenaException("Error en linea: " + linea.toString() + " Se ha encontrado un salto de linea mientras se analizaba una cadena");
 		}
 	}
 
@@ -265,7 +225,7 @@ public class Lexico {
 	 * param: array con el contenido a comprobar
 	 * function: detecta si los caracteres son de tipo letra o digito o _ para luego concatenarlos
 	 */
-	public void procG(char[] contenido) {
+	public void procG(char[] contenido) throws IdException {
 		if (indice < contenido.length && (isDigit(contenido[indice]) || isLetter(contenido[indice]) || contenido[indice] == '_')) {
 			cadena += Character.toString(contenido[indice]);
 			indice++;
@@ -274,183 +234,45 @@ public class Lexico {
 	}
 
 	/**
-	 *  param: array de caracteres y cadena de caracteres
-	 *  function: generear token else
-	 */ 
-	public void procM(char[] contenido) {
-		if (indice < contenido.length && (contenido[indice] =='l')) {
-			cadena += Character.toString(contenido[indice]);
+	 *  param: array con el contenido a comprobar
+	 * 	function: comprueba si el siguiente caracter es &
+	 */
+	public void procH(char [] contenido) throws OpLogicoException {
+		if (contenido[indice] == '&') {
 			indice++;
-			if (indice < contenido.length && (contenido[indice] =='s')) {
-				cadena += Character.toString(contenido[indice]);
-				indice++;
-				if (indice < contenido.length && (contenido[indice] =='e')) {
-					cadena += Character.toString(contenido[indice]);
-					indice++;
-				} else procG(contenido);
-			} else procG(contenido);
-		} else procG(contenido);
+		} else {
+			throw new OpLogicoException("Error en linea: " + linea.toString() + " Se esperaba detectar o '&' ");
+		}
 	}
 
 	/**
-	 *  param: array de caracteres y cadena de caracteres
-	 *  function: generear token function
-	 */ 
-	public void procN(char[] contenido) {
-		if (indice < contenido.length && (contenido[indice] =='u')) {
+	 *  param: array con el contenido a comprobar
+	 *  function: comprueba si el siguiente caracter es = o /
+	 */
+	public void procI(char [] contenido) throws ComentarioException {
+		if (contenido[indice] == '=') {
 			cadena += Character.toString(contenido[indice]);
 			indice++;
-			if (indice < contenido.length && (contenido[indice] =='n')) {
-				cadena += Character.toString(contenido[indice]);
-				indice++;
-				if (indice < contenido.length && (contenido[indice] =='c')) {
-					cadena += Character.toString(contenido[indice]);
-					indice++;
-					if (indice < contenido.length && (contenido[indice] =='t')) {
-						cadena += Character.toString(contenido[indice]);
-						indice++;
-						if (indice < contenido.length && (contenido[indice] =='i')) {
-							cadena += Character.toString(contenido[indice]);
-							indice++;
-							if (indice < contenido.length && (contenido[indice] =='o')) {
-								cadena += Character.toString(contenido[indice]);
-								indice++;
-								if (indice < contenido.length && (contenido[indice] =='n')) {
-									cadena += Character.toString(contenido[indice]);
-									indice++;
-								} else procG(contenido);
-							} else procG(contenido);
-						} else procG(contenido);
-					} else procG(contenido);
-				} else procG(contenido);
-			} else procG(contenido);
-		} else procG(contenido);
+		} else if (contenido[indice] == '/') {
+			indice++;
+			procJ(contenido);//el resto de comentario se ignora
+		} else {
+			throw new ComentarioException("Error en linea: " + linea.toString() + " Se esperaba detectar el simbolo '/' o '=' ");
+		}
 	}
 
 	/**
-	 *  param: array de caracteres y cadena de caracteres
-	 *  function: generear token write
-	 */ 
-	public void procO(char[] contenido) {
-		if (indice < contenido.length && (contenido[indice] =='r')) {
-			cadena += Character.toString(contenido[indice]);
+	 *  param: array con el contenido a comprobar
+	 *  function: detecta caracteres hasta encontra un cr
+	 */
+	public void procJ(char [] contenido) {
+		if (contenido[indice] == '\r') {
+			cadena = Character.toString(contenido[indice]);//guardamos el caracter cr en la cadena
 			indice++;
-			if (indice < contenido.length && (contenido[indice] =='i')) {
-				cadena += Character.toString(contenido[indice]);
-				indice++;
-				if (indice < contenido.length && (contenido[indice] =='t')) {
-					cadena += Character.toString(contenido[indice]);
-					indice++;
-					if (indice < contenido.length && (contenido[indice] =='e')) {
-						cadena += Character.toString(contenido[indice]);
-						indice++;
-					} else procG(contenido);
-				} else procG(contenido);
-			} else procG(contenido);
-		} else procG(contenido);
-	}
-
-	/**
-	 *  param: array de caracteres y cadena de caracteres
-	 *  function: generear token prompt
-	 */ 
-	public void procP(char[] contenido) {
-		if (indice < contenido.length && (contenido[indice] =='r')) {
-			cadena += Character.toString(contenido[indice]);
+		} else {
 			indice++;
-			if (indice < contenido.length && (contenido[indice] =='o')) {
-				cadena += Character.toString(contenido[indice]);
-				indice++;
-				if (indice < contenido.length && (contenido[indice] =='m')) {
-					cadena += Character.toString(contenido[indice]);
-					indice++;
-					if (indice < contenido.length && (contenido[indice] =='p')) {
-						cadena += Character.toString(contenido[indice]);
-						indice++;
-						if (indice < contenido.length && (contenido[indice] =='t')) {
-							cadena += Character.toString(contenido[indice]);
-							indice++;
-						} else procG(contenido);
-					} else procG(contenido);
-				} else procG(contenido);
-			} else procG(contenido);
-		} else procG(contenido);
-	}
-
-	/**
-	 *  param: array de caracteres y cadena de caracteres
-	 *  function: generear token return
-	 */ 
-	public void procR(char[] contenido) {
-		if (indice < contenido.length && (contenido[indice] =='e')) {
-			cadena += Character.toString(contenido[indice]);
-			indice++;
-			if (indice < contenido.length && (contenido[indice] =='t')) {
-				cadena += Character.toString(contenido[indice]);
-				indice++;
-				if (indice < contenido.length && (contenido[indice] =='u')) {
-					cadena += Character.toString(contenido[indice]);
-					indice++;
-					if (indice < contenido.length && (contenido[indice] =='r')) {
-						cadena += Character.toString(contenido[indice]);
-						indice++;
-						if (indice < contenido.length && (contenido[indice] =='n')) {
-							cadena += Character.toString(contenido[indice]);
-							indice++;
-						} else procG(contenido);
-					} else procG(contenido);
-				} else procG(contenido);
-			} else procG(contenido);
-		} else procG(contenido);
-	}
-
-	/**
-	 *  param: array de caracteres y cadena de caracteres
-	 *  function: generear token var
-	 */ 
-	public void procU(char[] contenido) {
-		if (indice < contenido.length && (contenido[indice] =='a')) {
-			cadena += Character.toString(contenido[indice]);
-			indice++;
-			if (indice < contenido.length && (contenido[indice] =='r')) {
-				cadena += Character.toString(contenido[indice]);
-				indice++;
-			} else procG(contenido);
-		} else procG(contenido);
-	}
-
-	/**
-	 *  param: array de caracteres y cadena de caracteres
-	 *  function: generear token int
-	 */ 
-	public void procQ(char[] contenido) {
-		if (indice < contenido.length && (contenido[indice] =='t')) {
-			cadena += Character.toString(contenido[indice]);
-			indice++;
-		} else procG(contenido);
-	}
-
-	/**
-	 *  param: array de caracteres y cadena de caracteres
-	 *  function: generear token chars
-	 */ 
-	public void procT(char[] contenido) {
-		if (indice < contenido.length && (contenido[indice] =='h')) {
-			cadena += Character.toString(contenido[indice]);
-			indice++;    
-			if (indice < contenido.length && (contenido[indice] =='a')) {
-				cadena += Character.toString(contenido[indice]);
-				indice++;
-				if (indice < contenido.length && (contenido[indice] =='r')) {
-					cadena += Character.toString(contenido[indice]);
-					indice++;
-					if (indice < contenido.length && (contenido[indice] =='s')) {
-						cadena += Character.toString(contenido[indice]);
-						indice++;
-					} else procG(contenido);
-				} else procG(contenido);
-			} else procG(contenido);
-		}else procG(contenido);
+			procJ(contenido);
+		}
 	}
 
 	//GETTERS 
@@ -482,13 +304,15 @@ public class Lexico {
 		this.bw = bw;
 	} 
 
-	public Token al(TablaSimbolos tabla_simbolos) {
+	public Token al(TablaSimbolos tabla_simbolos) throws ComentarioException, CadenaException, OpLogicoException, OtroSimboloException, FueraDeRangoException, IdException, IOException, DeclaracionIncompatibleException {
 		Token toReturn = null;
 		while (toReturn == null) {
 			toReturn = this.procS(this.getA(), tablaSimbolos);
 		}
-		this.bw.write(toReturn.toString());
-		this.bw.newLine();
+		if ("CR".equals(toReturn.getValue())!=true) {//comprobamos que el token a devolver no sea CR
+			this.bw.write(toReturn.toString());
+			this.bw.newLine();
+		}
 		return toReturn;
 	}
 }
