@@ -170,11 +170,11 @@ public class Lexico {
 			else if (cadena.equals("chars")) {
 				toReturn = new Token("CHARS",null);//genera token CHARS
 			} else {
-				Integer[] p = tS.buscaTS(cadena);
+				Integer[] p = tS.busca_Tabla(cadena);
 				if (p[0] == null) {//comprueba zona de declaracion
-					tS.addTs(new Token("ID", cadena));
+					tS.add_Tabla(new Token("ID", cadena));
 				}else if(p[0] != null && p[1] == 0 && Sintactico.flagDeclaracionLocal){
-					tS.addTs(new Token("ID", cadena));//añadido a local
+					tS.add_Tabla(new Token("ID", cadena));//añadido a local
 				}else if(p[0] != null && (Sintactico.flagDeclaracion || Sintactico.flagDeclaracionLocal)){
 					throw new DeclaracionIncompatibleException("Error en linea "+Lexico.linea+". La variable o funcion '"+cadena+"' ha sido declarada previamente.");
 				}
@@ -192,7 +192,7 @@ public class Lexico {
 
 	/** 
 	 * param: array con el contenido a comprobar
-	 * function: detecta digitios y los concatena 
+	 * function: detecta digitos y los concatena 
 	 */
 	public void procD(char[] contenido){
 		if (indice < contenido.length && isDigit(contenido[indice])) {
