@@ -49,9 +49,9 @@ public class Sintactico {
     this.tabla = 0;
 
     //Nuevos archivos
-    File archivoTablas = new File(miDir + "\\tablas.txt");
-    File archivoParse = new File(miDir + "\\parse.txt");
-    File archivoError = new File(miDir + "\\error.txt");
+    File archivoTablas = new File(miDir + "//impreso//tablas.txt");
+    File archivoParse = new File(miDir + "//impreso//parse.txt");
+    File archivoError = new File(miDir + "//impreso//error.txt");
 
     try {
       this.tablasWriter = new BufferedWriter(new FileWriter(archivoTablas));
