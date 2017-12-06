@@ -174,14 +174,12 @@ public class Lexico {
 				if (p[0] == null) {//comprueba zona de declaracion
 					tS.addTs(new Token("ID", cadena));
 				}else if(p[0] != null && p[1] == 0 && Sintactico.flagDeclaracionLocal){
-					tS.addTs(new Token("ID", cadena));//local
+					tS.addTs(new Token("ID", cadena));//añadido a local
 				}else if(p[0] != null && (Sintactico.flagDeclaracion || Sintactico.flagDeclaracionLocal)){
 					throw new DeclaracionIncompatibleException("Error en linea "+Lexico.linea+". La variable o funcion '"+cadena+"' ha sido declarada previamente.");
 				}
 				toReturn = new Token("ID",cadena);//genera token (ID,LEXEMA)
 			}
-			
-			//else toReturn = new Token("ID",cadena);//genera token (ID,LEXEMA)
 		} else if (contenido[indice] == '&') {
 			indice++;
 			procH(contenido);
@@ -266,7 +264,7 @@ public class Lexico {
 	 */
 	public void procJ(char [] contenido) {
 		if (contenido[indice] == '\r') {
-			cadena += Character.toString(contenido[indice]);//guardamos el caracter cr en la cadena
+			cadena = Character.toString(contenido[indice]);//guardamos el caracter cr en la cadena
 			indice++;
 		} else {
 			indice++;
