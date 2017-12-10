@@ -1,0 +1,29 @@
+TABLA LOCAL DE LA FUNCION: null
+
+LEXEMA					TIPO					DIRECCION					NUMERODEPARAMETROS					TIPODEVUELTO					ETIQUETA
+constructor																																		
+x																																				
+r																																				
+y																																				
+t																																				
+b																																				
+
+VOLCADO DE LA TABLA GLOBAL DEL PROGRAMA
+
+LEXEMA					TIPO					DIRECCION					NUMERODEPARAMETROS					TIPODEVUELTO					ETIQUETA
+																																				
+																																				
+																																				
+																																				
+																																				
+																																				
+																																				
+																																				
+																																				
+																																				
+																																				
+x																																				
+y																																				
+z																																				
+x																		5						VOID					FUNC.x					
+

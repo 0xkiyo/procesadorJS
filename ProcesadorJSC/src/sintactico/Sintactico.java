@@ -70,7 +70,7 @@ public class Sintactico {
       tokenDevuelto = analizador.al(tS);
     } 
     else {
-      throw new EmparejaException("Error en linea: " + Integer.toString(Lexico.linea) + " Se esperaba detectar el token " + valor.toString() + " y se ha encontrado el token " + this.getTokenDevuelto().toString());
+      throw new EmparejaException(" Empareja: Error en linea: " + Integer.toString(Lexico.linea) + " Se esperaba detectar el token " + valor.toString() + " y se ha encontrado el token " + this.getTokenDevuelto().toString());
     }
 
   } 
@@ -100,7 +100,7 @@ public class Sintactico {
       this.setParse(this.getParse() + "3 ");
     }
     else {
-      throw new FirstNoCoincideException("Error en linea: " + Integer.toString(Lexico.linea) + " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < EOF , _ >, < PR , for >, < PR , function >, < ID , id >, < PR , if >, < PR , prompt >,  < PR , var >) pero se ha detectado: " + this.getTokenDevuelto().toString());
+      throw new FirstNoCoincideException("procedP: Error en linea: " + Integer.toString(Lexico.linea) + " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < EOF , _ >, < PR , for >, < PR , function >, < ID , id >, < PR , if >, < PR , prompt >,  < PR , var >) pero se ha detectado: " + this.getTokenDevuelto().toString());
     }
 
   }
@@ -143,7 +143,7 @@ public class Sintactico {
     }
   }
   //ProcedS:
-  //First de S: id prompt write
+  //First de S: id prompt write lambda
   public void procedS() throws FirstNoCoincideException, EmparejaException, ComentarioException, FueraDeRangoException, OtroSimboloException, CadenaException, IdException, IOException, OpLogicoException, FuncionNoDeclaradaException, VariableNoDeclaradaException, TiposDiferentesException, DeclaracionIncompatibleException, ConcatenacionNoImplementadaException, TipoIncorrectoException {
 
     //S -> id S1
@@ -179,8 +179,9 @@ public class Sintactico {
           procedE();
           empareja(new Token("PARENTCERRADO", null));
       }
+      //S -> lambda
       else {
-          throw new FirstNoCoincideException("Error en linea: " + Integer.toString(Lexico.linea) + " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < ID , id >, < PR , prompt >) pero se ha detectado: " + this.getTokenDevuelto().toString());
+          this.setParse(this.getParse() + " 10");
       }
 
   }
@@ -267,7 +268,7 @@ public class Sintactico {
         tLocal.vaciarTabla();
       }
 
-      procedF();
+      procedF3();
       empareja(new Token("ID", null));
 
       flagDeclaracion = true;
@@ -307,7 +308,7 @@ public class Sintactico {
   //First de Z: cr
   public void procedZ() throws FirstNoCoincideException, EmparejaException, ComentarioException, OpLogicoException, OtroSimboloException, IdException, CadenaException, FueraDeRangoException, IOException, DeclaracionIncompatibleException {
 
-    //Z -> cr Z1
+      //Z -> cr Z1
     if ("CR".equals(this.getTokenDevuelto().getId())) {
       this.setParse(this.getParse() + "14 ");
       
@@ -344,14 +345,14 @@ public class Sintactico {
     int contParam = 0;
 
     //A -> F id A1
-    if ("NUM".equals(this.getTokenDevuelto().getId()) || "CHARS".equals(this.getTokenDevuelto().getId()) || "BOOL".equals(this.getTokenDevuelto().getId())) {
+    if ("INT".equals(this.getTokenDevuelto().getId()) || "CHARS".equals(this.getTokenDevuelto().getId()) || "BOOL".equals(this.getTokenDevuelto().getId())) {
       this.setParse(this.getParse() + "17 ");
 
       //Incluimos en la tabla de simbolos la variable.
       procedF();
       empareja(new Token("ID", null));
 
-      if ("NUM".equals(this.getTokenDevuelto().getId())) {
+      if ("INT".equals(this.getTokenDevuelto().getId())) {
         tS.addTipo(tokenDevuelto, "NUM");
         tS.addDireccion(tokenDevuelto, 2);
       }
@@ -443,16 +444,19 @@ public class Sintactico {
   }
 
   //ProcedG: CORREGIR EL ERROR POR MENSAJE
-  //First de G: { id prompt write
+  //First de G: cr id prompt write lambda
   public void procedG() throws FirstNoCoincideException, EmparejaException, ComentarioException, OtroSimboloException, IdException, OpLogicoException, FueraDeRangoException, IOException, CadenaException, FuncionNoDeclaradaException, VariableNoDeclaradaException, TiposDiferentesException, DeclaracionIncompatibleException, ConcatenacionNoImplementadaException, TipoIncorrectoException {
 
-    //G -> { S } G1
-    if ("LLAVEABIERTA".equals(this.getTokenDevuelto().getId())) {
+      //G -> Z { Z S } Z G1
+    if ("CR".equals(this.getTokenDevuelto().getId())) {
       this.setParse(this.getParse() + "25 ");
-
+      
+      procedZ();
       empareja(new Token("LLAVEABIERTA", null));
+      procedZ();
       procedS();
       empareja(new Token("LLAVECERRADA", null));
+      procedZ();
       procedG1();
     }
     //G -> S
@@ -462,7 +466,7 @@ public class Sintactico {
       procedS();
     }
     else {
-      throw new FirstNoCoincideException("ProcedG:Error en linea: " + Integer.toString(Lexico.linea) + " Se esperaba detectar el token < CR , _ > pero se ha detectado: " + this.getTokenDevuelto().toString());
+            this.setParse(this.getParse() + "27 ");
     }
 
   }
@@ -471,12 +475,14 @@ public class Sintactico {
   //First de G1: else lambda
   public void procedG1() throws FirstNoCoincideException, EmparejaException, ComentarioException, OtroSimboloException, IdException, OpLogicoException, FueraDeRangoException, IOException, CadenaException, FuncionNoDeclaradaException, VariableNoDeclaradaException, TiposDiferentesException, DeclaracionIncompatibleException, ConcatenacionNoImplementadaException, TipoIncorrectoException {
 
-    //G1 -> else { S }
-    if ("LLAVEABIERTA".equals(this.getTokenDevuelto().getId())) {
+      //G1 -> else Z { Z S }
+    if ("ELSE".equals(this.getTokenDevuelto().getId())) {
       this.setParse(this.getParse() + "27 ");
 
       empareja(new Token("ELSE", null));
+      procedZ();
       empareja(new Token("LLAVEABIERTA", null));
+      procedZ();
       procedS();
       empareja(new Token("LLAVECERRADA", null));
     }
@@ -618,7 +624,7 @@ public class Sintactico {
           procedR1();
       }
       else {
-          throw new FirstNoCoincideException("Error en linea: " + Integer.toString(Lexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < NUM , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
+          throw new FirstNoCoincideException("Error en linea: " + Integer.toString(Lexico.linea) + "ProcedE: Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < NUM , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
       }
   }
 
@@ -673,7 +679,7 @@ public class Sintactico {
         procedT1();
     }
     else {
-        throw new FirstNoCoincideException("Error en linea: " + Integer.toString(Lexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < NUM , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
+        throw new FirstNoCoincideException("Error en linea: " + Integer.toString(Lexico.linea) + "ProcedT: Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < NUM , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
     }
   }
 
@@ -697,7 +703,6 @@ public class Sintactico {
                 tipoT1 = "NUM";
                 break;
         }
-        System.out.println(tipoT1);
         empareja(new Token("MENORQUE", null));
         procedH();
         if ("VOID".equals(tipo) || "VOID".equals(tipoT1)) {
@@ -729,7 +734,7 @@ public class Sintactico {
         procedH1();
     }
     else {
-      throw new FirstNoCoincideException("Error en linea: " + Integer.toString(Lexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < NUM , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
+      throw new FirstNoCoincideException("Error en linea: " + Integer.toString(Lexico.linea) + "ProcedH: Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < NUM , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
     }
   }
 
@@ -776,7 +781,7 @@ public class Sintactico {
   //First de F: int bool chars
   public void procedF() throws FirstNoCoincideException, EmparejaException, ComentarioException, OpLogicoException, CadenaException, FueraDeRangoException, OtroSimboloException, IdException, IOException, FuncionNoDeclaradaException, VariableNoDeclaradaException, TiposDiferentesException, DeclaracionIncompatibleException, ConcatenacionNoImplementadaException, TipoIncorrectoException {
 
-    //F -> int
+      //F -> int
     if ("INT".equals(this.getTokenDevuelto().getId())) {
       this.setParse(this.getParse() + "48 ");
 
@@ -795,7 +800,7 @@ public class Sintactico {
       empareja(new Token("BOOL", null));
     }
     else {
-      throw new FirstNoCoincideException("Error en linea: " + Integer.toString(Lexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < NUM , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
+      throw new FirstNoCoincideException("Error en linea: " + Integer.toString(Lexico.linea) + " ProcedF: Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < NUM , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
     }
 
   }
@@ -831,7 +836,7 @@ public class Sintactico {
     //F1 -> l
     else if ("CADENA".equals(this.getTokenDevuelto().getId())) {
         this.setParse(this.getParse() + "52 ");
-        System.out.println("Estoy en cadena");
+
         tipo = "CADENA";
         ancho = this.tokenDevuelto.getValor().length();
         empareja(new Token("CADENA", null));
@@ -858,7 +863,7 @@ public class Sintactico {
         empareja(new Token("PARENTCERRADO", null));
     }
     else {
-        throw new FirstNoCoincideException("Error en linea: " + Integer.toString(Lexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < NUM , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
+        throw new FirstNoCoincideException("Error en linea: " + Integer.toString(Lexico.linea) + " ProcedF1: Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < NUM , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
     }
 
     tokenLlamador = tokenAuxiliar;
@@ -900,6 +905,40 @@ public class Sintactico {
     }
 
   }
+  
+  //ProcedF3: CORREGIR EL ERROR POR MENSAJE.
+  //First de F3: int bool chars void
+  public void procedF3() throws FirstNoCoincideException, EmparejaException, ComentarioException, OpLogicoException, CadenaException, FueraDeRangoException, OtroSimboloException, IdException, IOException, FuncionNoDeclaradaException, VariableNoDeclaradaException, TiposDiferentesException, DeclaracionIncompatibleException, ConcatenacionNoImplementadaException, TipoIncorrectoException {
+
+      //F -> int
+    if ("INT".equals(this.getTokenDevuelto().getId())) {
+      this.setParse(this.getParse() + "48 ");
+
+      empareja(new Token("INT", null));
+    }
+    //F -> chars
+    else if ("CHARS".equals(this.getTokenDevuelto().getId())) {
+      this.setParse(this.getParse() + "49 ");
+
+      empareja(new Token("CHARS", null));
+    }
+    //F -> bool
+    else if ("BOOL".equals(this.getTokenDevuelto().getId())) {
+      this.setParse(this.getParse() + "50 ");
+
+      empareja(new Token("BOOL", null));
+    }
+    //F -> bool
+    else if ("VOID".equals(this.getTokenDevuelto().getId())) {
+      this.setParse(this.getParse() + "50 ");
+
+      empareja(new Token("VOID", null));
+    }
+    else {
+      throw new FirstNoCoincideException("Error en linea: " + Integer.toString(Lexico.linea) + " ProcedF: Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < NUM , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
+    }
+
+  }
 
   //ProcedBfun: CORREGIR EL ERROR POR MENSAJE.
   //First de Bfun: var if id prompt write return
@@ -926,7 +965,7 @@ public class Sintactico {
       empareja(new Token("PARENTABIERTO", null));
       procedE();
       empareja(new Token("PARENTCERRADO", null));
-      procedG2();
+      procedG();
       flagReturn = true;
     }
     //Bfun -> Sfun

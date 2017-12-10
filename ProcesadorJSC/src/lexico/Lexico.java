@@ -78,7 +78,7 @@ public class Lexico {
 		} else if (contenido[indice] == '{') {
 			indice++;
 			toReturn = new Token("LLAVEABIERTA",null);//genera el token LLAVEABIERTA
-		} else if (contenido[indice] == '{') {
+		} else if (contenido[indice] == '}') {
 			indice++;
 			toReturn = new Token("LLAVECERRADA",null);//genera el token LLAVECERRADA
 		} else if (isDigit(contenido[indice])) {//si es un digito
@@ -146,6 +146,9 @@ public class Lexico {
 			else if (cadena.equals("else")) {
 				toReturn = new Token("ELSE",null);//genera token ELSE
 			}
+                        else if (cadena.equals("void")) {
+				toReturn = new Token("VOID",null);//genera token ELSE
+                        }
 			else if (cadena.equals("write")) {
 				toReturn = new Token("WRITE",null);//genera token WRITE
 			}

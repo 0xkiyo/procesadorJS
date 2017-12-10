@@ -51,6 +51,10 @@ public class TablaSimbolos {
   this.addTs(new Token("BOOL", null));
   this.addDireccion(new Token("BOOL", null), "BOOL".length());
   this.addTipo(new Token("BOOL", null), "PALABRA RESERVADA");
+  
+  this.addTs(new Token("VOID", null));
+  this.addDireccion(new Token("VOID", null), "VOID".length());
+  this.addTipo(new Token("VOID", null), "PALABRA RESERVADA");
 
  }
 

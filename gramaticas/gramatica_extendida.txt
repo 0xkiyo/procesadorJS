@@ -1,8 +1,8 @@
 //// Conjunto de símbolos terminales
-Terminales = { eof var id if else ( ) ; { } prompt write /= = , int bool chars d l return < + function cr && }
+Terminales = { eof var id if else ( ) ; { } prompt write /= = , int bool chars d l return < + function cr && void }
 
 //// Conjunto de símbolos no terminales
-NoTerminales = { P A A1 B D D1 E T T1 H H1 F F1 F2 R1 Fq G G1 G2 G3 Q L S S1 X Z Z1 Cfun Bfun Sfun }
+NoTerminales = { P A A1 B D D1 E T T1 H H1 F F1 F2 F3 R1 Fq G G1 G2 G3 Q L S S1 X Z Z1 Cfun Bfun Sfun }
 
 //// Axioma
 Axioma = P
@@ -21,11 +21,12 @@ B -> S
 S -> id S1
 S -> prompt ( id ) ;
 S -> write ( E ) ;
+S -> lambda
 S1 -> = E ;
 S1 -> ( L ) ;
 S1 -> /= E ;
 
-Fq -> function F id ( A ) Z { Z Cfun }
+Fq -> function F3 id ( A ) Z { Z Cfun }
 
 Z -> cr Z1
 Z1 -> Z
@@ -34,17 +35,18 @@ Z1 -> lambda
 A -> F id A1
 A -> lambda
 A1 -> , F id A1
-A1 ->lambda
+A1 -> lambda
 
 D -> = E
 D -> lambda
 D1 -> , id D1
 D1 -> ;
 
-G -> { S } G1
+G -> Z { Z S } Z G1
 G -> S
-G1 -> else { S }
+G1 -> else Z { Z S }
 G1 -> lambda
+
 G2 -> { Sfun } G3
 G2 -> Sfun
 G3 -> else { Sfun }
@@ -76,6 +78,10 @@ F1 -> l
 F1 -> ( E )
 F2 -> ( L )
 F2 -> lambda
+F3 -> int
+F3 -> bool
+F3 -> chars
+F3 -> void
 
 Bfun -> var F id D D1
 Bfun -> if ( E ) G2
