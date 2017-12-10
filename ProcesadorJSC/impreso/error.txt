@@ -1,1 +1,1 @@
-Error en linea: 5. Los tipos de los operandos no coinciden.
+Error en linea: 6 Se esperaba detectar uno de los siguientes tokens (< PR , write >, < ID , id >, < PR , prompt >) pero se ha detectado: < CR , _ >

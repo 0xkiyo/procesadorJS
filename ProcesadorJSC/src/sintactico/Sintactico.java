@@ -163,7 +163,7 @@ public class Sintactico {
 
           //Varible no declarada: en este caso es global y entera.
           if (tS.getTipo(tokenDevuelto) == null) {
-            tS.addTipo(tokenDevuelto, "ENTERA");
+            tS.addTipo(tokenDevuelto, "NUM");
             tS.addDireccion(tokenDevuelto, 2);
           }
 
@@ -352,7 +352,7 @@ public class Sintactico {
       empareja(new Token("ID", null));
 
       if ("NUM".equals(this.getTokenDevuelto().getId())) {
-        tS.addTipo(tokenDevuelto, "ENTERA");
+        tS.addTipo(tokenDevuelto, "NUM");
         tS.addDireccion(tokenDevuelto, 2);
       }
       else if ("CHARS".equals(this.getTokenDevuelto().getId())) {
@@ -640,7 +640,7 @@ public class Sintactico {
                     tipoR1 = "VOID";
                     break;
                 default:
-                    tipoR1 = "ENTERA";
+                    tipoR1 = "NUM";
                     break;
             }
             empareja(new Token("AND", null));
@@ -686,7 +686,6 @@ public class Sintactico {
     //T1 -> < H T1
     if ("MENORQUE".equals(this.getTokenDevuelto().getId())) {
         this.setParse(this.getParse() + "43 ");
-
         switch (tipo) {
             case "CADENA":
                 tipoT1 = "CADENA";
@@ -695,7 +694,7 @@ public class Sintactico {
                 tipoT1 = "VOID";
                 break;
             default:
-                tipoT1 = "ENTERA";
+                tipoT1 = "NUM";
                 break;
         }
         System.out.println(tipoT1);
@@ -706,7 +705,7 @@ public class Sintactico {
         } else if (!tipo.equals(tipoT1)) {
             throw new TiposDiferentesException("Error en linea: " + Integer.toString(Lexico.linea) + ". Los tipos de los operandos no coinciden.");
         } else if (tipo.equals(tipoT1) && "CADENA".equals(tipo)) {
-            tipo = "ENTERA";
+            tipo = "NUM";
             ancho = 2;
         }
         procedT1();
@@ -752,7 +751,7 @@ public class Sintactico {
                 tipoH1 = "VOID";
                 break;
             default:
-                tipoH1 = "ENTERA";
+                tipoH1 = "NUM";
                 break;
         }
         empareja(new Token("SUMA", null));
@@ -808,21 +807,22 @@ public class Sintactico {
     Token tokenAuxiliar = tokenLlamador;
     
     //F1 -> id F2
-    System.out.println("ProcedF1:"+this.getTokenDevuelto().getId());
     if ("ID".equals(this.getTokenDevuelto().getId())) {
         this.setParse(this.getParse() + "51 ");
         
         tokenLlamador = tokenDevuelto;
         
-        System.out.println("Estoy en id de F1: ");
         if (tS.getTipo(tokenDevuelto) == null) {
-            tS.addTipo(tokenDevuelto, "ENTERA");
+            //Hemos añadido tipo y ancho para poder realizar la comparacion de tipos en la condicion del if
+            tipo = "NUM";
+            ancho = 2;
+            tS.addTipo(tokenDevuelto, "NUM");
             tS.addDireccion(tokenDevuelto, 2);
         } else if ("CADENA".equals(tS.getTipo(tokenDevuelto))) {
             tipo = "CADENA";
             ancho = tokenDevuelto.getValor().length();
         } else if ("NUM".equals(tS.getTipo(tokenDevuelto))) {
-            tipo = "ENTERA";
+            tipo = "NUM";
             ancho = 2;
         }
         empareja(new Token("ID", null));
@@ -831,7 +831,7 @@ public class Sintactico {
     //F1 -> l
     else if ("CADENA".equals(this.getTokenDevuelto().getId())) {
         this.setParse(this.getParse() + "52 ");
-        
+        System.out.println("Estoy en cadena");
         tipo = "CADENA";
         ancho = this.tokenDevuelto.getValor().length();
         empareja(new Token("CADENA", null));
@@ -841,7 +841,7 @@ public class Sintactico {
         this.setParse(this.getParse() + "53 ");
         
         ancho = 2;
-        tipo = "ENTERA";
+        tipo = "NUM";
         empareja(new Token("NUM", null));
     }
     //F1 -> ( E )
@@ -963,7 +963,7 @@ public class Sintactico {
         empareja(new Token("PROMPT", null));
         empareja(new Token("PARENTABIERTO", null));
         if (tS.getTipo(tokenDevuelto) == null) {
-            tS.addTipo(tokenDevuelto, "ENTERA");
+            tS.addTipo(tokenDevuelto, "NUM");
             tS.addDireccion(tokenDevuelto, 2);
         } else if ("FUNCTION".equals(tS.getTipo(tokenDevuelto))) {
             throw new DeclaracionIncompatibleException("Error en linea " + Lexico.linea + ". La variable o funcion '" + tokenDevuelto.getValor() + "' ha sido declarada previamente.");
