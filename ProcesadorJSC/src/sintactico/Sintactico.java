@@ -39,11 +39,13 @@ public class Sintactico {
 
     //Inicializando atributos de clase
     this.analizador = new Lexico();
+    System.out.println("Estoy en el constructor de Sintactico: voy a crear la tS");
     this.tS = new TablaSimbolos();
+    System.out.println("Ya he creado la tS");
     this.tokenDevuelto = new Token(null, null);
     this.tokenLlamador = new Token(null, null);
     this.nombreFuncion = new Token(null, null);
-
+    
     //Inicializando los atributos basicos
     this.parse = "";
     this.tabla = 0;
@@ -79,20 +81,19 @@ public class Sintactico {
   //First de P: var if id prompt write function eof
   public void procedP() throws FirstNoCoincideException, EmparejaException, CadenaException, OpLogicoException, ComentarioException, FueraDeRangoException, OtroSimboloException, IdException, IOException, FuncionNoDeclaradaException, VariableNoDeclaradaException, DevuelveCadenaException, TiposDiferentesException, CodigoMuertoException, DeclaracionIncompatibleException, ConcatenacionNoImplementadaException, TipoIncorrectoException {
 
-    //P -> B Z P
+    //P -> B ; P
     if ("VAR".equals(this.getTokenDevuelto().getId()) || "IF".equals(this.getTokenDevuelto().getId()) || "ID".equals(this.getTokenDevuelto().getId()) || "PROMPT".equals(this.getTokenDevuelto().getId()) || "WRITE".equals(this.getTokenDevuelto().getId())) {
       this.setParse(this.getParse() + "1 ");
       
       procedB();
-      procedZ();
+      empareja(new Token("PUNTOYCOMA", null));
       procedP();
     }
-    //P -> Fq Z P
+    //P -> Fq P
     else if ("FUNCTION".equals(this.getTokenDevuelto().getId())) {
       this.setParse(this.getParse() + "2 ");
       
       procedFq();
-      procedZ();
       procedP();
     }
     //P -> eof
@@ -109,18 +110,34 @@ public class Sintactico {
   //First de B: var if id prompt write
   public void procedB() throws FirstNoCoincideException, EmparejaException, CadenaException, OpLogicoException, OtroSimboloException, ComentarioException, FueraDeRangoException, IdException, IOException, FuncionNoDeclaradaException, VariableNoDeclaradaException, TiposDiferentesException, DeclaracionIncompatibleException, ConcatenacionNoImplementadaException, TipoIncorrectoException {
 
-    //B -> var F id D D1
+    //B -> var F id
     if ("VAR".equals(this.getTokenDevuelto().getId())) {
       this.setParse(this.getParse() + "4 ");
       
       flagDeclaracion = true;
       empareja(new Token("VAR", null));
       flagDeclaracion = false;
-
-      procedF();
+      
+      this.tokenLlamador = this.tokenDevuelto;
+      
+      procedF();    
+      if ("INT".equals(this.tokenLlamador.getId())) {
+          this.tipo = "ENTERA";
+          this.ancho = 2;
+      }
+      else if ("CHARS".equals(this.tokenLlamador.getId())) {
+          this.tipo = "CADENA";
+          this.ancho = 4;
+      }
+      else {
+          this.tipo = "BOOL";
+          this.ancho = 1;
+      }
+      
+      tS.addTipo(this.tokenDevuelto, this.tipo);
+      tS.addDireccion(tokenDevuelto, ancho);
+      
       empareja(new Token("ID", null));
-      procedD();
-      procedD1();
     }
     //B -> if ( E ) G
     else if ("IF".equals(this.getTokenDevuelto().getId())) {
@@ -151,26 +168,28 @@ public class Sintactico {
           this.setParse(this.getParse() + "7 ");
 
           tokenLlamador = tokenDevuelto;
+          
           empareja(new Token("ID", null));
           procedS1();
       }
-      //S -> prompt ( id )
-      else if ("PROMPT".equals(this.getTokenDevuelto().getId())) {
-          this.setParse(this.getParse() + "8 ");
-          
-          empareja(new Token("PROMPT", null));
-          empareja(new Token("PARENTABIERTO", null));
+    //S -> prompt ( id ) ;
+    else if ("PROMPT".equals(this.getTokenDevuelto().getId())) {
+        this.setParse(this.getParse() + "8 ");
 
-          //Varible no declarada: en este caso es global y entera.
-          if (tS.getTipo(tokenDevuelto) == null) {
-            tS.addTipo(tokenDevuelto, "NUM");
-            tS.addDireccion(tokenDevuelto, 2);
-          }
+        empareja(new Token("PROMPT", null));
+        empareja(new Token("PARENTABIERTO", null));
 
-          empareja(new Token("ID", null));
-          empareja(new Token("PARENTCERRADO", null));
+        //Varible no declarada: en este caso es global y entera.
+        if (tS.getTipo(tokenDevuelto) == null) {
+          tS.addTipo(tokenDevuelto, "NUM");
+          tS.addDireccion(tokenDevuelto, 2);
+        }
+
+        empareja(new Token("ID", null));
+        empareja(new Token("PARENTCERRADO", null));
+        empareja(new Token("PUNTOYCOMA", null));
       }
-      //S -> write ( E )
+      //S -> write ( E ) ;
       else if ("WRITE".equals(this.getTokenDevuelto().getId())) {
           this.setParse(this.getParse() + "9 ");
           
@@ -178,6 +197,7 @@ public class Sintactico {
           empareja(new Token("PARENTABIERTO", null));
           procedE();
           empareja(new Token("PARENTCERRADO", null));
+          empareja(new Token("PUNTOYCOMA", null));
       }
       //S -> lambda
       else {
@@ -411,6 +431,9 @@ public class Sintactico {
 
       empareja(new Token("IGUAL", null));
       procedE();
+      
+      tS.addTipo(tokenLlamador, tipo);
+      tS.addDireccion(tokenLlamador, ancho);
     }
     //D -> lambda
     else {
@@ -810,14 +833,16 @@ public class Sintactico {
   public void procedF1() throws FirstNoCoincideException, EmparejaException, ComentarioException, OpLogicoException, CadenaException, FueraDeRangoException, OtroSimboloException, IdException, IOException, FuncionNoDeclaradaException, VariableNoDeclaradaException, TiposDiferentesException, DeclaracionIncompatibleException, ConcatenacionNoImplementadaException, TipoIncorrectoException {
     
     Token tokenAuxiliar = tokenLlamador;
-    
+
     //F1 -> id F2
     if ("ID".equals(this.getTokenDevuelto().getId())) {
         this.setParse(this.getParse() + "51 ");
         
         tokenLlamador = tokenDevuelto;
         
+        
         if (tS.getTipo(tokenDevuelto) == null) {
+            System.out.println("Estamos dentro de ID en procedF1: "+this.getTokenDevuelto().toString());
             //Hemos añadido tipo y ancho para poder realizar la comparacion de tipos en la condicion del if
             tipo = "NUM";
             ancho = 2;
@@ -1123,6 +1148,7 @@ public class Sintactico {
             ficheroAAnalizar = new File(miDir.getCanonicalPath() + "//pruebas//" + args[0]);
         }
         as = new Sintactico();
+      
         if (args.length != 1) {
             throw new FileNotFoundException("Se han pasado " + args.length + " ficheros para analizar y solo debe pasarse un fichero.");
         } else if (!ficheroAAnalizar.exists()) {
@@ -1133,11 +1159,13 @@ public class Sintactico {
         while (!"EOF".equals(as.getTokenDevuelto().getId())) {
             as.procedP();
         }
+        
         as.gettS().volcarTabla(as.getTablasWriter());
         as.getParseWriter().write("DescendenteParser " + as.getParse());
         as.getAnalizador().getBw().close();
         as.getTablasWriter().close();
         as.getParseWriter().close();
+        
         if (as.getAnalizador().getFr() != null) {
             as.getAnalizador().getFr().close();
         }

@@ -1,29 +1,17 @@
-TABLA LOCAL DE LA FUNCION: null
-
-LEXEMA					TIPO					DIRECCION					NUMERODEPARAMETROS					TIPODEVUELTO					ETIQUETA
-constructor																																		
-x																																				
-r																																				
-y																																				
-t																																				
-b																																				
-
 VOLCADO DE LA TABLA GLOBAL DEL PROGRAMA
 
-LEXEMA					TIPO					DIRECCION					NUMERODEPARAMETROS					TIPODEVUELTO					ETIQUETA
-																																				
-																																				
-																																				
-																																				
-																																				
-																																				
-																																				
-																																				
-																																				
-																																				
-																																				
-x																																				
-y																																				
-z																																				
-x																		5						VOID					FUNC.x					
+LEXEMA				TIPO				DIRECCION				NUMERODEPARAMETROS				TIPODEVUELTO				ETIQUETA
+FUNCTION				PALABRA RESERVADA		14																								
+IF						PALABRA RESERVADA		8																								
+ELSE					PALABRA RESERVADA		10																								
+FUNCTION																																		
+WRITE					PALABRA RESERVADA		22																								
+PROMPT					PALABRA RESERVADA		27																								
+RETURN					PALABRA RESERVADA		33																								
+VAR						PALABRA RESERVADA		39																								
+INT						PALABRA RESERVADA		42																								
+CHARS					PALABRA RESERVADA		45																								
+BOOL					PALABRA RESERVADA		50																								
+VOID					PALABRA RESERVADA		54																								
+ID						BOOL					58																								
 

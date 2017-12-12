@@ -1,0 +1,27 @@
+TABLA DE LA FUNCION suma #1
+
+LEX				TIPO				DIR				NUMPARAM				TIPODEV				ETIQ
+x						BOOL					0																								
+r						CADENA					6																								
+u						BOOL					5																								
+
+TABLA PRINCIPAL #2
+
+LEX				TIPO				DIR				NUMPARAM				TIPODEV				ETIQ
+function				PR						0																								
+if						PR						8																								
+else					PR						10																								
+write					PR						14																								
+prompt					PR						19																								
+return					PR						25																								
+var						PR						31																								
+void					PR						34																								
+int						PR						38																								
+chars					PR						41																								
+bool					PR						46																								
+x						BOOL					54																								
+y						ENTERA					51																								
+z						CADENA					53																								
+buenos dias																																		
+suma					FUNC					55						0						VOID					FUNC.suma				
+

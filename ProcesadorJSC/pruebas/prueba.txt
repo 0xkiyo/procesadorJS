@@ -1,14 +1,1 @@
-var int x = 2;
-var chars y = "Bienvenidos";
-var bool z;
-
-if( x < 2 )
-{
-}
-else
-{
-}
-
-function void constructor(int x, int r, chars y, chars t, bool b)
-{
-}
+var bool x;

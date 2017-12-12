@@ -10,18 +10,18 @@ Axioma = P
 //// Lista de producciones
 Producciones = {
 
-P -> B Z P
+//P -> B ; P
 P -> Fq Z P
 P -> eof
 
-B -> var F id D D1
-B -> if ( E ) G
-B -> S
+//B -> var F id
+//B -> if ( E ) G
+//B -> S
 
 S -> id S1
 S -> prompt ( id ) ;
 S -> write ( E ) ;
-S -> lambda
+S -> lambda//
 S1 -> = E ;
 S1 -> ( L ) ;
 S1 -> /= E ;

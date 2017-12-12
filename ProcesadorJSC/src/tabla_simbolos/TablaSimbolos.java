@@ -12,10 +12,17 @@ public class TablaSimbolos {
  private int desplazamiento = 0;
 
  private void addPalabrasReservadas() throws DeclaracionIncompatibleException {
+
+    this.addTs(new Token("FUNCTION", null));
+    this.addDireccion(new Token("FUNCTION", null), "function".length());
+    System.out.println("Palabras reservadas: addTipo");
+    this.addTipo(new Token("FUNCTION", null), "PALABRA RESERVADA");
+    System.out.println("Palabras reservadas: una pr creada");
+    
   this.addTs(new Token("IF", null));
   this.addDireccion(new Token("IF", null), "IF".length());
   this.addTipo(new Token("IF", null), "PALABRA RESERVADA");
-
+  
   this.addTs(new Token("ELSE", null));
   this.addDireccion(new Token("ELSE", null), "ELSE".length());
   this.addTipo(new Token("ELSE", null), "PALABRA RESERVADA");
@@ -55,25 +62,27 @@ public class TablaSimbolos {
   this.addTs(new Token("VOID", null));
   this.addDireccion(new Token("VOID", null), "VOID".length());
   this.addTipo(new Token("VOID", null), "PALABRA RESERVADA");
-
+System.out.println("Palabras reservadas: fin");
  }
 
  public TablaSimbolos() throws DeclaracionIncompatibleException{
   this.tabla_simbolos = new ArrayList<Object[]>();
   this.addPalabrasReservadas();
+  System.out.println("Ya he agregado las palabras reservadas.");
+  
  }
 
  private void escribirCabecera(BufferedWriter escritor_tabla) throws IOException {
   escritor_tabla.write("LEXEMA");
-  escritor_tabla.write("\t\t\t\t\t");
+  escritor_tabla.write("\t\t\t\t");
   escritor_tabla.write("TIPO");
-  escritor_tabla.write("\t\t\t\t\t");
+  escritor_tabla.write("\t\t\t\t");
   escritor_tabla.write("DIRECCION");
-  escritor_tabla.write("\t\t\t\t\t");
+  escritor_tabla.write("\t\t\t\t");
   escritor_tabla.write("NUMERODEPARAMETROS");
-  escritor_tabla.write("\t\t\t\t\t");
+  escritor_tabla.write("\t\t\t\t");
   escritor_tabla.write("TIPODEVUELTO");
-  escritor_tabla.write("\t\t\t\t\t");
+  escritor_tabla.write("\t\t\t\t");
   escritor_tabla.write("ETIQUETA");
   escritor_tabla.newLine();
  }
@@ -130,25 +139,28 @@ public class TablaSimbolos {
   }
   if (!local_add) {
    this.tabla_simbolos.add(new Object[6]);
-   this.tabla_simbolos.get(contador_registros)[0] = (String) token.getValor();
+   //Introducimos a la TS las palabras reservadas con el formato: <PR,->
+   this.tabla_simbolos.get(contador_registros)[0] = (String) token.getId();
    contador_registros++;
   }
  }
 
  public void addTipo(Token token, String tipo) throws DeclaracionIncompatibleException {
-  if (this.buscaTS(token.getValor())[0] != null) {
-   if (this.getTipo(token) != null && !this.getTipo(token).equals(tipo) && ("FUNC".equals(tipo) || "FUNC".equals(this.getTipo(token)))) {
-    throw new DeclaracionIncompatibleException("Error: linea " + Lexico.linea + ". \nVariable/funcion: " + token.getValor() + ", ya ha sido declarado con anterioridad.");
-   }
+  System.out.println("Estoy en addtipo recibiendo el tipo: "+tipo + " del token: "+token.getId() + " con valor: "+token.getValor());
 
-   Integer[] aux = buscaTS(token.getValor());
-   if (aux[1] == 1) {
-    TablaSimbolos tabla_local = (TablaSimbolos) this.tabla_simbolos.get(contador_registros -1)[0];
-    tabla_local.getTablaSimbolos().get(aux[0])[1] = tipo;
-   } else {
-    this.tabla_simbolos.get(aux[0])[1] = tipo;
-   }
-  }
+  if (this.buscaTS(token.getId())[0] != null) {//Solo entra si esta en la tabla
+      System.out.println("addTipo: solo entra si esta en la tabla");
+           if (this.getTipo(token) != null && !this.getTipo(token).equals(tipo) && ("FUNCTION".equals(tipo) || "FUNCTION".equals(this.getTipo(token)))) {
+               throw new DeclaracionIncompatibleException("Error en linea " + Lexico.linea + ". La variable o funcion '" + token.getValor() + "' ha sido declarada previamente.");
+           }
+           Integer[] contTemporal = buscaTS(token.getId());
+           if (contTemporal[1] == 1) {
+               TablaSimbolos tLocal = (TablaSimbolos) this.tabla_simbolos.get(contador_registros - 1)[0];
+               tLocal.getTablaSimbolos().get(contTemporal[0])[1] = tipo;
+           } else {
+               this.tabla_simbolos.get(contTemporal[0])[1] = tipo;
+           }
+       }
  }
 
  public void addParametros(int num_params) {
@@ -165,45 +177,47 @@ public class TablaSimbolos {
   this.tabla_simbolos.get(contador_registros -1 )[4] = tipo;
  }
 
- public void addDireccion(Token token, int longitud) {
-  if (this.buscaTS(token.getValor())[0] != null) {
-   Integer[] aux = buscaTS(token.getValor());
-   if (aux[1] == 1) {
-    TablaSimbolos tabla_local = (TablaSimbolos) this.tabla_simbolos.get(contador_registros - 1)[0];
-    tabla_local.tabla_simbolos.get(aux[0])[2] = tabla_local.desplazamiento;
-    tabla_local.desplazamiento += longitud;
-   } else {
-    this.tabla_simbolos.get(aux[0])[2] = desplazamiento;
-    desplazamiento += longitud;
-   }
-  }
+ public void addDireccion(Token token, int ancho) {
+     System.out.println("Estamos en add direccion con el token: "+token.toString());
+  if (this.buscaTS(token.getId())[0] != null) {
+           Integer[] contTemporal = buscaTS(token.getId());
+           if (contTemporal[1] == 1) {
+               TablaSimbolos tLocal = (TablaSimbolos) this.tabla_simbolos.get(contador_registros - 1)[0];
+               tLocal.tabla_simbolos.get(contTemporal[0])[2] = tLocal.desplazamiento;
+               tLocal.desplazamiento += ancho;
+           } else {
+               this.tabla_simbolos.get(contTemporal[0])[2] = desplazamiento;
+               desplazamiento += ancho;
+           }
+    }
  }
 
  public Integer[] buscaTS(String palabra) {
-  Integer[] esta_local = new Integer[2];
-  if (contador_registros > 0 && this.tabla_simbolos.get(contador_registros -1)[0] instanceof TablaSimbolos) {
-   TablaSimbolos tabla_local = (TablaSimbolos) this.tabla_simbolos.get(contador_registros - 1)[0];
-   esta_local = tabla_local.buscaTS(palabra);
-   esta_local[1] = 1;
-  }
-  if (esta_local[0] == null) {
-   Integer[] contador = new Integer[2];
-   contador[0] = 0;
-   contador[1] = 0;
-   boolean encontrado = false;
-   while (contador[0] > this.tabla_simbolos.size() && !encontrado) {
-    if (this.tabla_simbolos.get(contador[0])[0].equals(palabra)) {
-     encontrado = true;
-    } else {
-     contador[0]++;
-    }
-   }
-   if (!encontrado) {
-    contador[0] = null;
-   }
-   return contador;
-  }
-  return esta_local;
+     System.out.println("Estamos en BUSCATS en busca de la palabra: "+palabra);
+    Integer[] estaEnLocal = new Integer[2];
+       if (contador_registros > 0 && this.tabla_simbolos.get(contador_registros - 1)[0] instanceof TablaSimbolos) {//Estamos en la tabla local
+           TablaSimbolos tLocal = (TablaSimbolos) this.tabla_simbolos.get(contador_registros - 1)[0];
+           estaEnLocal = tLocal.buscaTS(palabra);
+           estaEnLocal[1] = 1;
+       }
+       if (estaEnLocal[0] == null) {
+           Integer[] contador = new Integer[2];
+           contador[0] = 0;//Pos
+           contador[1] = 0;//Tabla global
+           boolean encontrado = false;
+           while (contador[0] < this.tabla_simbolos.size() && !encontrado) {
+               if (this.tabla_simbolos.get(contador[0])[0].equals(palabra)) {//comparamos con el lexema
+                   encontrado = true;
+               } else {
+                   contador[0]++;
+               }
+           }
+           if (!encontrado) {
+               contador[0] = null;
+           }
+           return contador;
+       }
+       return estaEnLocal;
  }
 
  public Integer[] buscaTSGlobal(String palabra) {
@@ -244,8 +258,9 @@ public class TablaSimbolos {
  }
 
  public int getNParametros(Token token) {
+     System.out.println("getNParametros: "+token.getValor());
   int a_devolver = -1;
-  Integer[] pos_Y_tabla = this.buscaTS(token.getValor());
+  Integer[] pos_Y_tabla = this.buscaTS(token.getValor());   //Posible error
   if (pos_Y_tabla[1] == 1) {
    System.out.println("Error en getNParametros. \nAccediendo a la tabla local.");
   } else {
@@ -256,7 +271,8 @@ public class TablaSimbolos {
  }
 
  public int getNParametrosGlobal(Token token) {
-  Integer[] pos_Y_tabla = this.buscaTSGlobal(token.getValor());
+    System.out.println("getNParametrosGlobal: "+token.getValor());
+  Integer[] pos_Y_tabla = this.buscaTSGlobal(token.getValor()); //Posible error
   Integer num_params = null;
   if (pos_Y_tabla[0] != null) {
    num_params = (Integer) this.tabla_simbolos.get(pos_Y_tabla[0].intValue())[3];
@@ -269,14 +285,19 @@ public class TablaSimbolos {
  }
 
  public String getTipo(Token token) {
-  Integer[] pos_Y_tabla = this.buscaTS(token.getValor());
+  Integer[] pos_Y_tabla = this.buscaTS(token.getId());
+  System.out.println("getTipo(): del token "+token.getId());
+
   String tipo = null;
   if (pos_Y_tabla[1] == 0 && pos_Y_tabla[0] != null) {
-   tipo = (String) this.tabla_simbolos.get(pos_Y_tabla[0])[1];
+      System.out.println("getTipo(): if con pos_y_tabla de "+(String) this.tabla_simbolos.get(pos_Y_tabla[0])[1]); //[0]: posicion del id. [1]: posicion del valor.
+   tipo = (String) this.tabla_simbolos.get(pos_Y_tabla[0])[1];  //Posbile error
   } else if (pos_Y_tabla[1] == 1 && pos_Y_tabla[0] != null) {
+      System.out.println("getTipo(): else-if");
    TablaSimbolos tabla_local = (TablaSimbolos) this.tabla_simbolos.get(contador_registros - 1)[0];
    tipo = (String) tabla_local.tabla_simbolos.get(pos_Y_tabla[0])[1];
   }
+  System.out.println("getTipo(): el tipo a devolver es: "+tipo);
   return tipo;
  }
 
