@@ -19,7 +19,7 @@
 < ID , suma >
 < PARENTABIERTO , _ >
 < PR , int >
-< ID , x >
+< ID , n >
 < COMA , _ >
 < PR , chars >
 < ID , r >

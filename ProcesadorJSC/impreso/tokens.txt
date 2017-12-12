@@ -1,5 +1,0 @@
-< VAR , _ >
-< BOOL , _ >
-< ID , x >
-< PUNTOYCOMA , _ >
-< EOF , _ >

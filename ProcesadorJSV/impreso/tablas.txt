@@ -1,11 +1,11 @@
-TABLA DE LA FUNCION suma #1
+TABLA DE LA FUNCION suma #2
 
 LEX				TIPO				DIR				NUMPARAM				TIPODEV				ETIQ
-x						BOOL					0																								
+n						BOOL					0																								
 r						CADENA					6																								
 u						BOOL					5																								
 
-TABLA PRINCIPAL #2
+TABLA PRINCIPAL #1
 
 LEX				TIPO				DIR				NUMPARAM				TIPODEV				ETIQ
 function				PR						0																								

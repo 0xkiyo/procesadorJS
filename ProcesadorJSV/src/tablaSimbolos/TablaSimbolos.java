@@ -12,7 +12,7 @@ public class TablaSimbolos {
    private int contadorRegistros = 0;
    private ArrayList<Object[]> tablaSimbolos;
    private int desplazamiento = 0;
-   public static int indice = 1;
+   public static int indice = 2;
 
    private void addPalabrasReservadas() throws DeclaracionIncompatibleException {
        
@@ -95,7 +95,7 @@ public class TablaSimbolos {
        } else {
            //tabla global
            tablaAVolcar = this;
-           tablaWriter.write("TABLA PRINCIPAL #"+indice++);
+           tablaWriter.write("TABLA PRINCIPAL #1");
            tablaWriter.newLine();
            tablaWriter.newLine();
            escribirCabecera(tablaWriter);
