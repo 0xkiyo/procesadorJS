@@ -1,6 +1,6 @@
 var bool x;var int y;var chars z;
 //buenos dias
 x = true;
-function void suma(int x, chars r, bool u) {
+function void suma(int n, chars r, bool u) {
   r = "Adios";
 }
