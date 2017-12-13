@@ -132,10 +132,8 @@ public class AnalizadorSintactico {
             empareja(new Token("PR", "if"));
             empareja(new Token("PARENTABIERTO", null));
             procedE();
-            if ("CADENA".equals(tipo)) {
+            if (!tS.getTipo(tokenLlamador).equals(tipo) || (!"BOOL".equals(tipo) && !"ENTERA".equals(tipo))) {
                 throw new TipoIncorrectoException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + ". La condicion de la sentencia 'if' no puede ser una cadena.");
-            } else if ("VOID".equals(tipo)) {
-                throw new TipoIncorrectoException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + ". La condicion de la sentencia 'if' no puede llamar a una funcion que puede ser 'VOID'.");
             }
             empareja(new Token("PARENTCERRADO", null));
             procedC();
@@ -838,10 +836,8 @@ public class AnalizadorSintactico {
             empareja(new Token("PR", "if"));
             empareja(new Token("PARENTABIERTO", null));
             procedE();
-            if ("CADENA".equals(tipo)) {
+            if (!tS.getTipo(tokenLlamador).equals(tipo) || (!"BOOL".equals(tipo) && !"ENTERA".equals(tipo))) {
                 throw new TipoIncorrectoException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + ". La condicion de la sentencia 'if' no puede ser una cadena.");
-            } else if ("VOID".equals(tipo)) {
-                throw new TipoIncorrectoException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + ". La condicion de la sentencia 'if' no puede llamar a una funcion que puede ser 'VOID'.");
             }
             empareja(new Token("PARENTCERRADO", null));
             procedC2();
