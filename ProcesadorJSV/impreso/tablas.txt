@@ -1,27 +1,102 @@
 TABLA DE LA FUNCION suma #2
 
-LEX				TIPO				DIR				NUMPARAM				TIPODEV				ETIQ
-n						ENTERA					0																								
-r						CADENA					7																								
-u						BOOL					6																								
+*LEXEMA : 'n'
+	ATRIBUTOS : 
+		+ tipo : 'ENTERA'
+		+ dirección : 0
 
+*LEXEMA : 'r'
+	ATRIBUTOS : 
+		+ tipo : 'CADENA'
+		+ dirección : 7
+
+*LEXEMA : 'u'
+	ATRIBUTOS : 
+		+ tipo : 'BOOL'
+		+ dirección : 6
+
+---------------------------------------------------
 TABLA PRINCIPAL #1
 
-LEX				TIPO				DIR				NUMPARAM				TIPODEV				ETIQ
-function				PR						0																								
-if						PR						8																								
-else					PR						10																								
-write					PR						14																								
-prompt					PR						19																								
-return					PR						25																								
-var						PR						31																								
-void					PR						34																								
-int						PR						38																								
-chars					PR						41																								
-bool					PR						46																								
-x						BOOL					60																								
-y						ENTERA					51																								
-z						CADENA					53																								
-buenos dias																																		
-suma					FUNC					56						0						VOID					FUNC.suma				
+*LEXEMA : 'function'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 0
 
+*LEXEMA : 'if'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 8
+
+*LEXEMA : 'else'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 10
+
+*LEXEMA : 'write'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 14
+
+*LEXEMA : 'prompt'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 19
+
+*LEXEMA : 'return'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 25
+
+*LEXEMA : 'var'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 31
+
+*LEXEMA : 'void'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 34
+
+*LEXEMA : 'int'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 38
+
+*LEXEMA : 'chars'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 41
+
+*LEXEMA : 'bool'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 46
+
+*LEXEMA : 'x'
+	ATRIBUTOS : 
+		+ tipo : 'BOOL'
+		+ dirección : 60
+
+*LEXEMA : 'y'
+	ATRIBUTOS : 
+		+ tipo : 'ENTERA'
+		+ dirección : 51
+
+*LEXEMA : 'z'
+	ATRIBUTOS : 
+		+ tipo : 'CADENA'
+		+ dirección : 53
+
+*LEXEMA : 'buenos dias'
+	ATRIBUTOS : 
+
+*LEXEMA : 'suma'
+	ATRIBUTOS : 
+		+ tipo : 'FUNC'
+		+ dirección : 56
+		+ número de parámetros : 0
+		+ tipo devuelto : 'VOID'
+		+ etiqueta : 'FUNC.suma'
+
+---------------------------------------------------
