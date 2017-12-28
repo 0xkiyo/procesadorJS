@@ -11,17 +11,18 @@ Axioma = P
 //// Lista de producciones
 Producciones = {
 
-P -> B ; P
+P -> B P
+P -> if ( E ) C P
 P -> Fq P
 P -> eof
 
-B -> var F2 id
-B -> if ( E ) C
+B -> var F2 id ;
 B -> S
 
-S -> id S1
-S -> prompt ( id )
-S -> write ( E )
+S -> id S1 ;
+S -> prompt ( id ) ;
+S -> write ( E ) ;
+S -> if ( E ) C
 S1 -> = E
 S1 -> ( L )
 S1 -> /= E
@@ -79,19 +80,18 @@ F3 -> bool
 F3 -> chars
 F3 -> void
 
-Bfun -> var F2 id
-Bfun -> if ( E ) C2
+Bfun -> var F2 id ;
 Bfun -> Sfun
 
-Sfun -> id S1
-Sfun -> prompt ( id )
-Sfun -> write ( E )
-Sfun -> return X
+Sfun -> id S1 ;
+Sfun -> prompt ( id ) ;
+Sfun -> write ( E ) ;
+Sfun -> if ( E ) C2 C1fun
+Sfun -> return X ;
 
-Cfun -> Bfun ; C1fun
+Cfun -> Bfun C1fun
+Cfun -> if ( E ) C2 C1fun
 C1fun -> Cfun
 C1fun -> lambda
 
 }
-
-SEGURAMENTE NECESITEMOS INTRODUCIR EL IF EN OTRA ESTRUCTURA QUE NO SEA B, YA QUE ESTOS FINALIZAN CON ; Y EL IF FINALIZA CON LLAVE CERRADA
