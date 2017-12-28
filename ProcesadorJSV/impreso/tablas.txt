@@ -1,9 +1,9 @@
 TABLA DE LA FUNCION suma #2
 
 LEX				TIPO				DIR				NUMPARAM				TIPODEV				ETIQ
-n						BOOL					0																								
-r						CADENA					6																								
-u						BOOL					5																								
+n						ENTERA					0																								
+r						CADENA					7																								
+u						BOOL					6																								
 
 TABLA PRINCIPAL #1
 
@@ -19,9 +19,9 @@ void					PR						34
 int						PR						38																								
 chars					PR						41																								
 bool					PR						46																								
-x						BOOL					54																								
+x						BOOL					60																								
 y						ENTERA					51																								
 z						CADENA					53																								
 buenos dias																																		
-suma					FUNC					55						0						VOID					FUNC.suma				
+suma					FUNC					56						0						VOID					FUNC.suma				
 

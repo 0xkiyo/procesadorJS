@@ -1,6 +1,24 @@
 var bool x;var int y;var chars z;
 //buenos dias
 x = true;
+if (y < 3) {
+    x = false;
+ }
+ else {
+ 	prompt(x);
+ }
+
 function void suma(int n, chars r, bool u) {
   r = "Adios";
+  if (2 < 3) {
+    x = false;
+  }
+  else {
+  	if (n < 2) {
+  		write("adios");
+  	}	
+  	else {
+  		write("hola");
+  	}
+  }
 }
