@@ -128,8 +128,8 @@ public class TablaSimbolos {
 					}
 				}
 			}
-			tablaWriter.newLine();
 		}
+		tablaWriter.newLine();
 		for (int i = 0; i < contcom; i++) {
 			tablaWriter.write("(" + comentario[i] + ")");
 			tablaWriter.newLine();			
