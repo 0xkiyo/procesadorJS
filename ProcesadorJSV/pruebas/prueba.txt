@@ -10,6 +10,12 @@ if (y < 3) {
  	z = "hola mundo";
  }
 
+ function void mult(int multi1, int multi2) {
+	 //Esta funcion multiplica dos valores enteros
+	 //Segundo comentario de prueba
+	 var bool realizado2;
+ }
+
 function void suma(int n, chars r, bool u) {
   //Esta funcion se encarga de realizar la suma de dos valores enteros.
   var bool realizado;
