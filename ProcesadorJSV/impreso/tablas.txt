@@ -8,12 +8,20 @@ TABLA DE LA FUNCION suma #2
 *LEXEMA : 'r'
 	ATRIBUTOS : 
 		+ tipo : 'CADENA'
-		+ dirección : 7
+		+ dirección : 13
 
 *LEXEMA : 'u'
 	ATRIBUTOS : 
 		+ tipo : 'BOOL'
 		+ dirección : 6
+
+*LEXEMA : 'Esta funcion se encarga de realizar la suma de dos valores enteros.'
+	ATRIBUTOS : 
+
+*LEXEMA : 'realizado'
+	ATRIBUTOS : 
+		+ tipo : 'BOOL'
+		+ dirección : 7
 
 ---------------------------------------------------
 TABLA PRINCIPAL #1
@@ -76,25 +84,25 @@ TABLA PRINCIPAL #1
 *LEXEMA : 'x'
 	ATRIBUTOS : 
 		+ tipo : 'BOOL'
-		+ dirección : 60
+		+ dirección : 72
 
 *LEXEMA : 'y'
 	ATRIBUTOS : 
 		+ tipo : 'ENTERA'
-		+ dirección : 51
+		+ dirección : 55
 
 *LEXEMA : 'z'
 	ATRIBUTOS : 
 		+ tipo : 'CADENA'
-		+ dirección : 53
+		+ dirección : 58
 
-*LEXEMA : 'buenos dias'
+*LEXEMA : 'Este es el programa de prueba que comprueba el funcionamiento global del codigo'
 	ATRIBUTOS : 
 
 *LEXEMA : 'suma'
 	ATRIBUTOS : 
 		+ tipo : 'FUNC'
-		+ dirección : 56
+		+ dirección : 68
 		+ número de parámetros : 0
 		+ tipo devuelto : 'VOID'
 		+ etiqueta : 'FUNC.suma'
