@@ -12,7 +12,7 @@
 < PUNTCOM , _ >
 < ID , x >
 < ASIG , _ >
-< BOOL , true >
+< NUM , 2 >
 < PUNTCOM , _ >
 < PR , if >
 < PARENTABIERTO , _ >
