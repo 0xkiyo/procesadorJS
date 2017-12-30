@@ -28,4 +28,8 @@ hs_err_pid*
 /ProcesadorJSC/build/
 /ProcesadorJSV/nbproject/private/
 /ProcesadorJSV/build/
+<<<<<<< HEAD
 /bin/
+=======
+ProcesadorJSV/\.metadata/
+>>>>>>> 26f714d87d159abd6ae334e1065e244cb242b845

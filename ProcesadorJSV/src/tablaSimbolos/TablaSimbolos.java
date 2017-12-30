@@ -66,22 +66,22 @@ public class TablaSimbolos {
        this.addPalabrasReservadas();
    }
 
-   private void escribirCabecera(BufferedWriter tablaWriter) throws IOException {
+    /*    private void escribirCabecera(BufferedWriter tablaWriter) throws IOException {
 
-       tablaWriter.write("LEX");
-       tablaWriter.write("\t\t\t\t");
+        tablaWriter.write("LEX");
+        tablaWriter.write("\t\t\t\t");
 
-       tablaWriter.write("TIPO");
-       tablaWriter.write("\t\t\t\t");
-       tablaWriter.write("DIR");
-       tablaWriter.write("\t\t\t\t");
-       tablaWriter.write("NUMPARAM");
-       tablaWriter.write("\t\t\t\t");
-       tablaWriter.write("TIPODEV");
-       tablaWriter.write("\t\t\t\t");
-       tablaWriter.write("ETIQ");
-       tablaWriter.newLine();
-   }
+        tablaWriter.write("TIPO");
+        tablaWriter.write("\t\t\t\t");
+        tablaWriter.write("DIR");
+        tablaWriter.write("\t\t\t\t");
+        tablaWriter.write("NUMPARAM");
+        tablaWriter.write("\t\t\t\t");
+        tablaWriter.write("TIPODEV");
+        tablaWriter.write("\t\t\t\t");
+        tablaWriter.write("ETIQ");
+        tablaWriter.newLine();
+    } */
 
    public void volcarTabla(BufferedWriter tablaWriter) throws IOException {
        TablaSimbolos tablaAVolcar;
@@ -90,7 +90,6 @@ public class TablaSimbolos {
            tablaAVolcar = (TablaSimbolos) this.tablaSimbolos.get(contadorRegistros - 1)[0];
            tablaWriter.newLine();
            tablaWriter.newLine();
-           escribirCabecera(tablaWriter);
 
        } else {
            //tabla global
@@ -98,7 +97,6 @@ public class TablaSimbolos {
            tablaWriter.write("TABLA PRINCIPAL #1");
            tablaWriter.newLine();
            tablaWriter.newLine();
-           escribirCabecera(tablaWriter);
 
        }
        for (int i = 0; i < tablaAVolcar.tablaSimbolos.size(); i++) {
@@ -106,25 +104,44 @@ public class TablaSimbolos {
            for (int j = 0; j < fila.length; j++) {
                String aImprimir = "";
                if (fila[j] != null) {
-                   aImprimir = fila[j].toString();
-                   tablaWriter.write(aImprimir);
+                   if (j == 0) {
+                       aImprimir = fila[j].toString();
+                       tablaWriter.write("*LEXEMA : '" + aImprimir + "'");
+                       tablaWriter.newLine();
+                       tablaWriter.write("\tATRIBUTOS : ");
+                       tablaWriter.newLine();
+                   }
+                   else if (j == 1) {
+                       aImprimir = fila[j].toString();
+                       tablaWriter.write("\t\t+ tipo : '" + aImprimir + "'");
+                       tablaWriter.newLine();
+                   }
+                   else if (j == 2) {
+                       aImprimir = fila[j].toString();
+                       tablaWriter.write("\t\t+ dirección : " + aImprimir);
+                       tablaWriter.newLine();
+                   }
+                   else if (j == 3) {
+                       aImprimir = fila[j].toString();
+                       tablaWriter.write("\t\t+ número de parámetros : " + aImprimir);
+                       tablaWriter.newLine();
+                   }
+                   else if (j == 4) {
+                       aImprimir = fila[j].toString();
+                       tablaWriter.write("\t\t+ tipo devuelto : '" + aImprimir + "'");
+                       tablaWriter.newLine();
+                   }
+                   else if (j == 5) {
+                       aImprimir = fila[j].toString();
+                       tablaWriter.write("\t\t+ etiqueta : '" + aImprimir + "'");
+                       tablaWriter.newLine();
+                   }
                }
-               if (aImprimir.length() >= 16) {
-                   tablaWriter.write("\t\t");
-               } else if (aImprimir.length() >= 12) {
-                   tablaWriter.write("\t\t\t");
-               } else if (aImprimir.length() >= 8) {
-                   tablaWriter.write("\t\t\t\t");
-               } else if (aImprimir.length() >= 4) {
-                   tablaWriter.write("\t\t\t\t\t");
-               } else {
-                   tablaWriter.write("\t\t\t\t\t\t");
-               }
-
            }
            tablaWriter.newLine();
        }
-       tablaWriter.newLine();
+       tablaWriter.write("---------------------------------------------------");
+       tablaWriter.newLine();   
    }
 
    public void addTs(Token token) {
@@ -153,7 +170,7 @@ public class TablaSimbolos {
    public void addTipo(Token token, String tipo) throws DeclaracionIncompatibleException {
        if (this.buscaTS(token.getValor())[0] != null) {
            if (this.getTipo(token) != null && !this.getTipo(token).equals(tipo) && ("FUNC".equals(tipo) || "FUNC".equals(this.getTipo(token)))) {
-               throw new DeclaracionIncompatibleException("Error en linea " + AnalizadorLexico.linea + ". La variable o funcion '" + token.getValor() + "' ha sido declarada previamente.");
+               System.out.println("Error en linea " + AnalizadorLexico.linea + ". La variable o funcion '" + token.getValor() + "' ha sido declarada previamente.");//Falta escribir en el Buffer errorWriter
            }
            Integer[] contTemporal = buscaTS(token.getValor());
            if (contTemporal[1] == 1) {
