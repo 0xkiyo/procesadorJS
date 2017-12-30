@@ -5,7 +5,6 @@ import analizadorSintactico.AnalizadorSintactico;
 import java.io.*;
 import tablaSimbolos.TablaSimbolos;
 import token.Token;
-
 public class AnalizadorLexico {
 
 	public static int indice = 0;
@@ -215,7 +214,7 @@ public class AnalizadorLexico {
 		if (contenido[indice] == '&') {
 			indice++;
 		} else {
-			System.out.println("Error en linea: " + linea.toString() + " Se esperaba detectar o '&'");//Falta escribir en el Buffer errorWriter
+			System.out.println("Error en linea: " + linea.toString() + " Se esperaba detectar '&'");//Falta escribir en el Buffer errorWriter
 		}
 	}
 
