@@ -1,9 +1,8 @@
 var bool x;
 var int y;var chars z;
 //Este es el programa de prueba que comprueba el funcionamiento global del codigo
-x = false;
+x = 3;
 z = "Esto es un string";
-y = 330;
 if (y < 3 && y < 10) {
 	y /= 3;
 	x = true;
