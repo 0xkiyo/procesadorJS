@@ -3,10 +3,6 @@
 < ID , x >
 < PUNTCOM , _ >
 < PR , var >
-< PR , bool >
-< ID , x >
-< PUNTCOM , _ >
-< PR , var >
 < PR , int >
 < ID , y >
 < PUNTCOM , _ >
@@ -16,7 +12,11 @@
 < PUNTCOM , _ >
 < ID , x >
 < ASIG , _ >
-< BOOL , true >
+< BOOL , false >
+< PUNTCOM , _ >
+< ID , z >
+< ASIG , _ >
+< CADENA , "Esto es un string" >
 < PUNTCOM , _ >
 < PR , if >
 < PARENTABIERTO , _ >

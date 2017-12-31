@@ -94,26 +94,26 @@ TABLA PRINCIPAL #1
 *LEXEMA : 'x'
 	ATRIBUTOS : 
 		+ tipo : 'BOOL'
-		+ dirección : 77
+		+ dirección : 93
 *LEXEMA : 'y'
 	ATRIBUTOS : 
 		+ tipo : 'ENTERA'
-		+ dirección : 56
+		+ dirección : 72
 *LEXEMA : 'z'
 	ATRIBUTOS : 
 		+ tipo : 'CADENA'
-		+ dirección : 59
+		+ dirección : 75
 *LEXEMA : 'mult'
 	ATRIBUTOS : 
 		+ tipo : 'FUNC'
-		+ dirección : 69
+		+ dirección : 85
 		+ número de parámetros : 2
 		+ tipo devuelto : 'VOID'
 		+ etiqueta : 'FUNC.mult'
 *LEXEMA : 'suma'
 	ATRIBUTOS : 
 		+ tipo : 'FUNC'
-		+ dirección : 73
+		+ dirección : 89
 		+ número de parámetros : 3
 		+ tipo devuelto : 'VOID'
 		+ etiqueta : 'FUNC.suma'
