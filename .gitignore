@@ -20,11 +20,7 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
-<<<<<<< HEAD
-.DS_Store
-=======
 /JavaApplication2/nbproject/private/
->>>>>>> 17a07fb8aef658f239a34f256d9448a26e7a7072
 /ProcesadorJSC/build/
 /ProcesadorJSV/nbproject/private/
 /ProcesadorJSV/build/
