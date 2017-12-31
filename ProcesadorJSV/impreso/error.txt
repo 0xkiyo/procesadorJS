@@ -1,1 +1,0 @@
-Error en linea: 23 Se ha encontrado un simbolo que no pertenece a la gramatica: >
