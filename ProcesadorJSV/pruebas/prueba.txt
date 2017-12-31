@@ -1,7 +1,8 @@
-var bool x;var int y;var chars z;
+var bool x;var bool x;
+var int y;var chars z;
 //Este es el programa de prueba que comprueba el funcionamiento global del codigo
 x = true;
-if (y < 3) {
+if (y < 3 && y < 10) {
 	y /= 3;
 	x = true;
  }
@@ -10,10 +11,16 @@ if (y < 3) {
  	z = "hola mundo";
  }
 
- function void mult(int multi1, int multi2) {
+ function int mult(int multi1, int multi2) {
 	 //Esta funcion multiplica dos valores enteros
 	 //Segundo comentario de prueba
-	 var bool realizado2;
+	 var int resultado;
+   resultado = multi1 + multi2;
+
+   if (true) {
+    return resultado;
+   }
+   mult(t, x);
  }
 
 function void suma(int n, chars r, bool u) {
@@ -31,6 +38,7 @@ function void suma(int n, chars r, bool u) {
   	}	
   	else {
   		write("hola");
+      suma(x, y, w);
   	}
   }
 }
