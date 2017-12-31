@@ -1,1 +1,0 @@
-Error en linea: 4. Error de tipos en la asignacion.
