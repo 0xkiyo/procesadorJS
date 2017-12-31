@@ -44,6 +44,10 @@ Thumbs.db
 
 # APP generated files #
 ######################
+error.txt
+tablas.txt
+tokens.txt
+parse.txt
 /JavaApplication2/nbproject/private/
 /ProcesadorJSV/nbproject/private/
 /ProcesadorJSV/build/
