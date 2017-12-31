@@ -1,6 +1,36 @@
 var bool x;var int y;var chars z;
-//buenos dias
+//Este es el programa de prueba que comprueba el funcionamiento global del codigo
 x = true;
+if (y < 3) {
+	y /= 3;
+	x = true;
+ }
+ else {
+ 	prompt(x);
+ 	z = "hola mundo";
+ }
+
+ function void mult(int multi1, int multi2) {
+	 //Esta funcion multiplica dos valores enteros
+	 //Segundo comentario de prueba
+	 var bool realizado2;
+ }
+
 function void suma(int n, chars r, bool u) {
+  //Esta funcion se encarga de realizar la suma de dos valores enteros.
+  var bool realizado;
   r = "Adios";
+  if (2 < 32767) {
+    x = false;
+    r = "dentro de function";
+  }
+  else {
+  	if (n < 2) {
+  		write("adios");
+  		prompt(u);
+  	}	
+  	else {
+  		write("hola");
+  	}
+  }
 }
