@@ -18,6 +18,10 @@
 < ASIG , _ >
 < CADENA , "Esto es un string" >
 < PUNTCOM , _ >
+< ID , y >
+< ASIG , _ >
+< NUM , 330 >
+< PUNTCOM , _ >
 < PR , if >
 < PARENTABIERTO , _ >
 < ID , y >
