@@ -14,6 +14,10 @@
 < ASIG , _ >
 < BOOL , false >
 < PUNTCOM , _ >
+< ID , y >
+< ASIG , _ >
+< NUM , 300 >
+< PUNTCOM , _ >
 < ID , z >
 < ASIG , _ >
 < CADENA , "Esto es un string" >

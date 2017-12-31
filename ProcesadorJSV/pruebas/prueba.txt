@@ -2,6 +2,7 @@ var bool x;
 var int y;var chars z;
 //Este es el programa de prueba que comprueba el funcionamiento global del codigo
 x = false;
+y = 300;
 z = "Esto es un string";
 if (y < 3 && y < 10) {
 	y /= 3;
