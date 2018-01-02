@@ -1,1 +1,0 @@
-Error en linea 24 La funcion 'factorial' debe ser llamada con 0 parametros y se ha llamado con 1.
