@@ -1,5 +1,7 @@
 var bool x;
-var int y;var chars z;
+var int y;
+var chars z;
+
 //Este es el programa de prueba que comprueba el funcionamiento global del codigo
 x = false;
 y = 10;
@@ -15,7 +17,6 @@ if (y < 3 && y < 10) {
 
  function int mult(int multi1, int multi2) {
 	 //Esta funcion multiplica dos valores enteros
-	 //Segundo comentario de prueba
 	 var int resultado;
    resultado = multi1 + multi2;
 
@@ -25,6 +26,7 @@ if (y < 3 && y < 10) {
    mult(t, x);
  }
 
+//Esta es la funcion suma encima de function
 function void suma(int n, chars r, bool u) {
   //Esta funcion se encarga de realizar la suma de dos valores enteros.
   var bool realizado;
@@ -32,6 +34,7 @@ function void suma(int n, chars r, bool u) {
   if (2 < 32767) {
     x = false;
     r = "dentro de function";
+    //Dentro de if
   }
   else {
   	if (n < 2) {
@@ -40,7 +43,7 @@ function void suma(int n, chars r, bool u) {
   	}	
   	else {
   		write("hola");
-      suma(x, y, w);
+      suma(x, y, r);
   	}
   }
 }
