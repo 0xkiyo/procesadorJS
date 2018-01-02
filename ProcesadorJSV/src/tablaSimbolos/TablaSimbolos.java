@@ -82,58 +82,56 @@ public class TablaSimbolos {
 			tablaWriter.newLine();
 
 		}
-		String [] comentario = new String[tablaAVolcar.tablaSimbolos.size()];
+		//String [] comentario = new String[tablaAVolcar.tablaSimbolos.size()];
 		int contcom = 0;
+		boolean inicio = false;
+		boolean comentario = false;
 		for (int i = 0; i < tablaAVolcar.tablaSimbolos.size(); i++) {
 			Object[] fila = tablaAVolcar.tablaSimbolos.get(i);
-			for (int j = 0; j < fila.length; j++) {
-				String aImprimir = "";
-				if (fila[j] != null) {
-					if (fila[1] == null) {
-						comentario[contcom] = fila[0].toString();
-						contcom++;
-					} else {
-						if (j == 0) {
-							aImprimir = fila[j].toString();
-							tablaWriter.write("*LEXEMA : '" + aImprimir + "'");
-							tablaWriter.newLine();
-							tablaWriter.write("\tATRIBUTOS : ");
-							tablaWriter.newLine();
-						}
-						else if (j == 1) {
-							aImprimir = fila[j].toString();
-							tablaWriter.write("\t\t+ tipo : '" + aImprimir + "'");
-							tablaWriter.newLine();
-						}
-						else if (j == 2) {
-							aImprimir = fila[j].toString();
-							tablaWriter.write("\t\t+ dirección : " + aImprimir);
-							tablaWriter.newLine();
-						}
-						else if (j == 3) {
-							aImprimir = fila[j].toString();
-							tablaWriter.write("\t\t+ número de parámetros : " + aImprimir);
-							tablaWriter.newLine();
-						}
-						else if (j == 4) {
-							aImprimir = fila[j].toString();
-							tablaWriter.write("\t\t+ tipo devuelto : '" + aImprimir + "'");
-							tablaWriter.newLine();
-						}
-						else if (j == 5) {
-							aImprimir = fila[j].toString();
-							tablaWriter.write("\t\t+ etiqueta : '" + aImprimir + "'");
-							tablaWriter.newLine();
-						}
-					}
+			
+			//Imprimimos el lexema
+			for (int j = 0; j < fila.length && fila[j] != null; j++) {
+
+				if(inicio == false && comentario == false) { tablaWriter.write("*"); inicio = true;}
+				
+				if (j == 0 && fila[1] == null) {
+					tablaWriter.write(" ( "+fila[j].toString()+" ) ");
+					comentario = true;
 				}
+				else if (j == 0) { 
+					tablaWriter.write(" LEXEMA : '" + fila[j].toString() + "'");
+					comentario = false;
+					inicio = true;
+				}
+				else if (j == 1) {
+					tablaWriter.newLine();
+					tablaWriter.write("\tATRIBUTOS : ");
+					tablaWriter.newLine();
+					tablaWriter.write("\t\t+ tipo : '" + fila[j].toString() + "'");
+					tablaWriter.newLine();
+				}
+				else if (j == 2) {
+					tablaWriter.write("\t\t+ dirección : " + fila[j].toString());
+					tablaWriter.newLine();
+				}
+				else if (j == 3) {
+					tablaWriter.write("\t\t+ número de parámetros : " + fila[j].toString());
+					tablaWriter.newLine();
+				}
+				else if (j == 4) {					
+					tablaWriter.write("\t\t+ tipo devuelto : '" + fila[j].toString() + "'");
+					tablaWriter.newLine();
+				}
+				else if (j == 5) {
+					tablaWriter.write("\t\t+ etiqueta : '" + fila[j].toString() + "'");
+					tablaWriter.newLine();
+				}
+
 			}
+			inicio = false;
+
 		}
 		tablaWriter.newLine();
-		for (int i = 0; i < contcom; i++) {
-			tablaWriter.write("(" + comentario[i] + ")");
-			tablaWriter.newLine();			
-		}
 		tablaWriter.write("---------------------------------------------------");
 		tablaWriter.newLine();   
 	}
