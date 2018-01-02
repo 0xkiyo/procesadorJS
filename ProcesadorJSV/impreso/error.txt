@@ -1,1 +1,1 @@
-Error en linea: 23 Se ha encontrado un simbolo que no pertenece a la gramatica: >
+Error en linea 24 La funcion 'factorial' debe ser llamada con 0 parametros y se ha llamado con 1.

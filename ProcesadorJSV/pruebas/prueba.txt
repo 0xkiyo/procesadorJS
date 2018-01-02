@@ -15,6 +15,19 @@ if (y < 3) {
 	 //Segundo comentario de prueba
 	 var bool realizado2;
  }
+ 
+ var int h;  // global
+function int factorial (int h) 
+{
+  if (h < 1)
+  {
+    return h + factorial (h + 1);
+  }
+  else
+  {
+    return 1;
+  }
+}	// la función devuelve un entero
 
 function void suma(int n, chars r, bool u) {
   //Esta funcion se encarga de realizar la suma de dos valores enteros.
