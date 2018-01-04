@@ -154,7 +154,7 @@ public class AnalizadorLexico {
                //Palabra reservada: genera token
                toReturn = new Token("PR", cadena);
            } else {
-               //Identificador: genera token
+        	   //Identificador: genera token
                if (p[0] == null) {
                    tS.addTs(new Token("ID", cadena));
                }else if(p[0] != null && p[1] == 0 && AnalizadorSintactico.flagDeclaracionLocal){
@@ -216,7 +216,7 @@ public class AnalizadorLexico {
        if (contenido[indice] == '&') {
            indice++;
        } else {
-           throw new OpLogicoException("Error en linea: " + linea.toString() + " Se esperaba detectar o '&'");
+           throw new OpLogicoException("Error en linea: " + linea.toString() + " Se esperaba detectar '&'");
        }
    }
 
