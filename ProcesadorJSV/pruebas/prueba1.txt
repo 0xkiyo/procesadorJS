@@ -1,0 +1,9 @@
+var int x;
+var int x;
+var int y;
+
+function void hola (int z)
+{
+var int y;
+var int x;
+}
