@@ -16,7 +16,7 @@
 < PUNTCOM , _ >
 < ID , y >
 < ASIG , _ >
-< NUM , 300 >
+< NUM , 10 >
 < PUNTCOM , _ >
 < ID , z >
 < ASIG , _ >
@@ -163,7 +163,7 @@
 < COMA , _ >
 < ID , y >
 < COMA , _ >
-< ID , w >
+< ID , r >
 < PARENTCERRADO , _ >
 < PUNTCOM , _ >
 < LLAVECERRADA , _ >
