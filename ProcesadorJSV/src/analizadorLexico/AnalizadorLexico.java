@@ -153,14 +153,16 @@ public class AnalizadorLexico {
            else if (tS.isPR(cadena)) {
                //Palabra reservada: genera token
                toReturn = new Token("PR", cadena);
-           } else {
-               //Identificador: genera token
+           } else {    
+        	   //Identificador: genera token
                if (p[0] == null) {
-                   tS.addTs(new Token("ID", cadena));
+            	       tS.addTs(new Token("ID", cadena));
                }else if(p[0] != null && p[1] == 0 && AnalizadorSintactico.flagDeclaracionLocal){
                    tS.addTs(new Token("ID", cadena));//Se añade en la local
                }else if(p[0] != null && (AnalizadorSintactico.flagDeclaracion || AnalizadorSintactico.flagDeclaracionLocal)){
                    throw new DeclaracionIncompatibleException("Error en linea "+AnalizadorLexico.linea+". La variable o funcion '"+cadena+"' ha sido declarada previamente.");
+               } else if(p[0] != null && AnalizadorSintactico.flagDeclaracionLocal==false) {
+            	   	   throw new DeclaracionIncompatibleException("Error en linea "+AnalizadorLexico.linea+". La variable o funcion '"+cadena+"' ha sido declarada previamente.");
                }
                toReturn = new Token("ID", cadena);
            }
@@ -216,7 +218,7 @@ public class AnalizadorLexico {
        if (contenido[indice] == '&') {
            indice++;
        } else {
-           throw new OpLogicoException("Error en linea: " + linea.toString() + " Se esperaba detectar o '&'");
+           throw new OpLogicoException("Error en linea: " + linea.toString() + " Se esperaba detectar '&'");
        }
    }
 
