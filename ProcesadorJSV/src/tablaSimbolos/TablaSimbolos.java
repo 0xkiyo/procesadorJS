@@ -82,10 +82,10 @@ public class TablaSimbolos {
 			tablaWriter.newLine();
 
 		}
-		//String [] comentario = new String[tablaAVolcar.tablaSimbolos.size()];
-		int contcom = 0;
+
 		boolean inicio = false;
 		boolean comentario = false;
+		
 		for (int i = 0; i < tablaAVolcar.tablaSimbolos.size(); i++) {
 			Object[] fila = tablaAVolcar.tablaSimbolos.get(i);
 			
