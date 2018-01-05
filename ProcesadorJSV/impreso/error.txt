@@ -1,1 +1,1 @@
-Se han pasado 2 ficheros para analizar y solo debe pasarse un fichero.
+Error en linea 2. La variable o funcion 'x' ha sido declarada previamente.

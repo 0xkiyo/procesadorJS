@@ -153,7 +153,8 @@ public class AnalizadorLexico {
            else if (tS.isPR(cadena)) {
                //Palabra reservada: genera token
                toReturn = new Token("PR", cadena);
-           } else {    
+           } else {
+        	   
         	   //Identificador: genera token
                if (p[0] == null) {
             	       tS.addTs(new Token("ID", cadena));
