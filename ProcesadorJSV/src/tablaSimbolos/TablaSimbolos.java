@@ -85,6 +85,7 @@ public class TablaSimbolos {
 
 		boolean inicio = false;
 		boolean comentario = false;
+		
 		for (int i = 0; i < tablaAVolcar.tablaSimbolos.size(); i++) {
 			Object[] fila = tablaAVolcar.tablaSimbolos.get(i);
 			

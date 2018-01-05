@@ -1068,11 +1068,12 @@ public class AnalizadorSintactico {
             
             as.getAnalizador().leerFichero(ficheroAAnalizar);
             as.setTokenDevuelto(as.getAnalizador().al(as.gettS()));
+            as.gettS().volcarTabla(as.getTablasWriter());
+            
             while (!"EOF".equals(as.getTokenDevuelto().getId())) {
                 as.procedP();
             }
             
-            as.gettS().volcarTabla(as.getTablasWriter());
             as.getParseWriter().write("DescendenteParser " + as.getParse());
             as.getAnalizador().getBw().close();
             as.getTablasWriter().close();

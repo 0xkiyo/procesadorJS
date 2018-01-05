@@ -1,43 +1,3 @@
-TABLA DE LA FUNCION mult #2
-
-* LEXEMA : 'multi1'
-	ATRIBUTOS : 
-		+ tipo : 'ENTERA'
-		+ dirección : 0
-* LEXEMA : 'multi2'
-	ATRIBUTOS : 
-		+ tipo : 'ENTERA'
-		+ dirección : 2
-* ( Esta funcion multiplica dos valores enteros )  LEXEMA : 'resultado'
-	ATRIBUTOS : 
-		+ tipo : 'ENTERA'
-		+ dirección : 6
-* LEXEMA : 't'
-	ATRIBUTOS : 
-		+ tipo : 'ENTERA'
-		+ dirección : 8
-
----------------------------------------------------
-TABLA DE LA FUNCION suma #3
-
-* LEXEMA : 'n'
-	ATRIBUTOS : 
-		+ tipo : 'ENTERA'
-		+ dirección : 0
-* LEXEMA : 'r'
-	ATRIBUTOS : 
-		+ tipo : 'CADENA'
-		+ dirección : 13
-* LEXEMA : 'u'
-	ATRIBUTOS : 
-		+ tipo : 'BOOL'
-		+ dirección : 6
-* ( Esta funcion se encarga de realizar la suma de dos valores enteros. )  LEXEMA : 'realizado'
-	ATRIBUTOS : 
-		+ tipo : 'BOOL'
-		+ dirección : 7
-* ( Dentro de if ) 
----------------------------------------------------
 TABLA PRINCIPAL #1
 
 * LEXEMA : 'function'
@@ -84,29 +44,45 @@ TABLA PRINCIPAL #1
 	ATRIBUTOS : 
 		+ tipo : 'PR'
 		+ dirección : 46
-* LEXEMA : 'x'
-	ATRIBUTOS : 
-		+ tipo : 'BOOL'
-		+ dirección : 95
-* LEXEMA : 'y'
+
+---------------------------------------------------
+TABLA DE LA FUNCION mult #2
+
+* LEXEMA : 'multi1'
 	ATRIBUTOS : 
 		+ tipo : 'ENTERA'
-		+ dirección : 74
-* LEXEMA : 'z'
+		+ dirección : 0
+* LEXEMA : 'multi2'
+	ATRIBUTOS : 
+		+ tipo : 'ENTERA'
+		+ dirección : 2
+* ( Esta funcion multiplica dos valores enteros )  LEXEMA : 'resultado'
+	ATRIBUTOS : 
+		+ tipo : 'ENTERA'
+		+ dirección : 6
+* LEXEMA : 't'
+	ATRIBUTOS : 
+		+ tipo : 'ENTERA'
+		+ dirección : 8
+
+---------------------------------------------------
+TABLA DE LA FUNCION suma #3
+
+* LEXEMA : 'n'
+	ATRIBUTOS : 
+		+ tipo : 'ENTERA'
+		+ dirección : 0
+* LEXEMA : 'r'
 	ATRIBUTOS : 
 		+ tipo : 'CADENA'
-		+ dirección : 77
-* ( Este es el programa de prueba que comprueba el funcionamiento global del codigo )  LEXEMA : 'mult'
+		+ dirección : 13
+* LEXEMA : 'u'
 	ATRIBUTOS : 
-		+ tipo : 'FUNC'
-		+ dirección : 87
-		+ número de parámetros : 2
-* ( Esta es la funcion suma encima de function )  LEXEMA : 'suma'
+		+ tipo : 'BOOL'
+		+ dirección : 6
+* ( Esta funcion se encarga de realizar la suma de dos valores enteros. )  LEXEMA : 'realizado'
 	ATRIBUTOS : 
-		+ tipo : 'FUNC'
-		+ dirección : 91
-		+ número de parámetros : 3
-		+ tipo devuelto : 'VOID'
-		+ etiqueta : 'FUNC.suma'
-
+		+ tipo : 'BOOL'
+		+ dirección : 7
+* ( Dentro de if ) 
 ---------------------------------------------------
