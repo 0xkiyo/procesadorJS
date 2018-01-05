@@ -4,8 +4,12 @@ var int y;
 var int f;
 var int s;
 
+
 function void hola (int z)
 {
-var int y;
-var int x;
+	var int y;
+	var int x;
+	hola(2);
 }
+hola(66);
+

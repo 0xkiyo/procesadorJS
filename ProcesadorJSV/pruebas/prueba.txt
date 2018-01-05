@@ -23,7 +23,7 @@ if (y < 3 && y < 10) {
    if (true) {
     return resultado;
    }
-   mult(t, x);
+   mult(2, 2);
  }
 
 //Esta es la funcion suma encima de function
@@ -43,7 +43,7 @@ function void suma(int n, chars r, bool u) {
   	}	
   	else {
   		write("hola");
-      suma(x, y, r);
+      suma(y, r, x);
   	}
   }
 }
