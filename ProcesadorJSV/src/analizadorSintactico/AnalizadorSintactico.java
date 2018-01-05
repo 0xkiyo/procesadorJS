@@ -219,7 +219,6 @@ public class AnalizadorSintactico {
             if (!tS.getTipo(tokenLlamador).equals(tipo)) {
                 throw new TipoIncorrectoException("Error en linea: " + AnalizadorLexico.linea + ". Error de tipos en la asignacion.");
             }
-  
             tS.addTipo(tokenLlamador, tipo);
             tS.addDireccion(tokenLlamador, ancho);
         } 
@@ -270,7 +269,7 @@ public class AnalizadorSintactico {
             flagDeclaracion = true;
             empareja(new Token("PR", "function"));
             flagDeclaracion = false;
- 
+
             //AQUI CREAMOS LA TABLA DE SIMBOLOS LOCAL Y EL DESPLAZAMIENTO LOCAL
             procedF3(); // En este paso tenemos que almacenar el tipo de la funcion CORREGIR
             this.tipo = "FUNC";
@@ -285,6 +284,8 @@ public class AnalizadorSintactico {
             }
             nombreFuncion = this.getTokenDevuelto();
             empareja(new Token("ID", null));
+            
+
             flagDeclaracionLocal = true;
             empareja(new Token("PARENTABIERTO", null));
             contParam = procedA();
@@ -293,6 +294,7 @@ public class AnalizadorSintactico {
             empareja(new Token("PARENTCERRADO", null));
             
             empareja(new Token("LLAVEABIERTA", null));
+            
             procedCfun();
             //Borramos la local.
             this.tS.addEtiqueta();
@@ -832,11 +834,9 @@ public class AnalizadorSintactico {
         //Bfun - > var F2 id ; = { var }
         if ("PR".equals(this.getTokenDevuelto().getId()) && "var".equals(this.getTokenDevuelto().getValor())) {
             this.setParse(this.getParse() + "50 ");
-            
             flagDeclaracionLocal = true;
             empareja(new Token("PR", "var"));
             
-            //En este caso asignamos el tipo segun lo que recibamos: entero, chars y bool CORREGIR
             this.tokenLlamador = this.tokenDevuelto;
       
             procedF2();  
@@ -857,8 +857,10 @@ public class AnalizadorSintactico {
             tS.addDireccion(tokenDevuelto, ancho);
 
             empareja(new Token("ID", null));
+                        flagDeclaracionLocal = false;
+
             empareja(new Token("PUNTCOM", null));
-            flagDeclaracionLocal = false;//Hasta aquí
+                        
         }  
         //Bfun -> Sfun = { write prompt id return }
         else if (("PR".equals(this.getTokenDevuelto().getId()) && ("write".equals(this.getTokenDevuelto().getValor())

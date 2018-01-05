@@ -142,7 +142,6 @@ public class AnalizadorLexico {
            procG(contenido);
 
            Integer[] p = tS.buscaTS(cadena);
-           
            //Comprobamos si son booleanas 
            if (cadena.equals("true")){
         	   toReturn = new Token("BOOL", cadena);
@@ -154,13 +153,21 @@ public class AnalizadorLexico {
                //Palabra reservada: genera token
                toReturn = new Token("PR", cadena);
            } else {
+<<<<<<< HEAD
         	   
         	   //Identificador: genera token
                if (p[0] == null) {
             	       tS.addTs(new Token("ID", cadena));
                }else if(p[0] != null && p[1] == 0 && AnalizadorSintactico.flagDeclaracionLocal){
+=======
+               //Identificador: genera token
+               if (p[0] == null && !AnalizadorSintactico.flagDeclaracionLocal) {
+                   tS.addTs(new Token("ID", cadena));
+                 }else if ((p[0] == null && AnalizadorSintactico.flagDeclaracionLocal) || (p[0] != null && p[1] == 0 && AnalizadorSintactico.flagDeclaracionLocal)) {
+>>>>>>> 9bde06a8021b8dc559d88bff1309f4ffac667314
                    tS.addTs(new Token("ID", cadena));//Se añade en la local
-               }else if(p[0] != null && (AnalizadorSintactico.flagDeclaracion || AnalizadorSintactico.flagDeclaracionLocal)){
+                 }
+               else if(p[0] != null && ((p[1] == 1 && AnalizadorSintactico.flagDeclaracionLocal) || (p[1] == 0 && AnalizadorSintactico.flagDeclaracion))){
                    throw new DeclaracionIncompatibleException("Error en linea "+AnalizadorLexico.linea+". La variable o funcion '"+cadena+"' ha sido declarada previamente.");
                } else if(p[0] != null && AnalizadorSintactico.flagDeclaracionLocal==false) {
             	   	   throw new DeclaracionIncompatibleException("Error en linea "+AnalizadorLexico.linea+". La variable o funcion '"+cadena+"' ha sido declarada previamente.");
