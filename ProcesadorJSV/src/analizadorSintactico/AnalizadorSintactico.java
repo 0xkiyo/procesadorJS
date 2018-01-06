@@ -67,7 +67,7 @@ public class AnalizadorSintactico {
         if (valor != null && valor.equals(tokenDevuelto)) {
             tokenDevuelto = analizador.al(tS);
         } else {
-            throw new EmparejaException("EMpareja: Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar el token " + valor.toString() + " y se ha encontrado el token " + this.getTokenDevuelto().toString());
+            throw new EmparejaException("Empareja: Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar el token " + valor.toString() + " y se ha encontrado el token " + this.getTokenDevuelto().toString());
         }
     }
     
@@ -95,7 +95,7 @@ public class AnalizadorSintactico {
         else if ("EOF".equals(this.getTokenDevuelto().getId())) {
             this.setParse(this.getParse() + "3 ");
         } else {
-            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < EOF , _ >, < PR , function >, < ID , id >, < PR , if >, < PR , prompt >,  < PR , var >) pero se ha detectado: " + this.getTokenDevuelto().toString());
+            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < EOF , _ >, < PR , function >, < ID , id >, < PR , if >, < PR , prompt >, < PR , var >) pero se ha detectado: " + this.getTokenDevuelto().toString());
         }
     }
 
@@ -139,7 +139,7 @@ public class AnalizadorSintactico {
             this.setParse(this.getParse() + "5 ");
             procedS();
         } else {
-            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < PR , for >, < ID , id >, < PR , if >, < PR , prompt >, < PR , var >) pero se ha detectado: " + this.getTokenDevuelto().toString());
+            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < ID , id >, < PR , if >, < PR , prompt >, < PR , var >) pero se ha detectado: " + this.getTokenDevuelto().toString());
         }
     }
 
@@ -195,7 +195,7 @@ public class AnalizadorSintactico {
             procedC();
         }  
         else {
-            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < PR , for >, < ID , id >, < PR , if >, < PR , prompt >, < PR , var >) pero se ha detectado: " + this.getTokenDevuelto().toString());
+            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < ID , id >, < PR , if >, < PR , prompt >) pero se ha detectado: " + this.getTokenDevuelto().toString());
         }
     }
 
@@ -257,7 +257,7 @@ public class AnalizadorSintactico {
             tS.addTipo(tokenLlamador, tipo);
             tS.addDireccion(tokenLlamador, ancho);
         } else {
-            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < PARENTABIERTO , _ >, < ASIG , _ > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
+            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < PARENTABIERTO , _ >, < ASIG , _ >, < ASIGDIV , _ >) pero se ha detectado: " + this.getTokenDevuelto().toString());
         }
     }
 
@@ -588,7 +588,7 @@ public class AnalizadorSintactico {
             procedT();
             procedR1();
         } else {
-            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < ENTERA , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
+            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < BOOL , cadena >, < ENTERA , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
         }
     }
 
@@ -635,7 +635,7 @@ public class AnalizadorSintactico {
             procedH();
             procedT1();
         } else {
-            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < ENTERA , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
+            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < BOOL , cadena >, < ENTERA , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
         }
     }
 
@@ -682,7 +682,7 @@ public class AnalizadorSintactico {
             procedF();
             procedH1();
         } else {
-            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < ENTERA , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
+            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < BOOL , cadena >, < ENTERA , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
         }
     }
 
@@ -778,7 +778,7 @@ public class AnalizadorSintactico {
             }
             empareja(new Token("PARENTCERRADO", null));
         } else {
-            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < ENTERA , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
+            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < BOOL , cadena >, < ENTERA , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
         }
         tokenLlamador = tokenAuxiliar;
     }
@@ -921,7 +921,7 @@ public class AnalizadorSintactico {
             this.setParse(this.getParse() + "58 ");
             flagReturn = procedSfun();
         } else {
-            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < PR , for >, < PR , return >, < ID , id >, < PR , if >, < PR , prompt >,  < PR , var >) pero se ha detectado: " + this.getTokenDevuelto().toString());
+            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < PR , return >, < ID , id >, < PR , if >, < PR , prompt >,  < PR , var >) pero se ha detectado: " + this.getTokenDevuelto().toString());
         }
         return flagReturn;
     }
@@ -986,7 +986,7 @@ public class AnalizadorSintactico {
             procedX();
             empareja(new Token("PUNTCOM", null));
         } else {
-            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < PR , for >, < ID , id >, < PR , if >, < PR , prompt>, < PR , return >,  <PR , var >) pero se ha detectado: " + this.getTokenDevuelto().toString());
+            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < ID , id >, < PR , if >, < PR , prompt>, < PR , return >) pero se ha detectado: " + this.getTokenDevuelto().toString());
         }
         return flagReturn;
     }
