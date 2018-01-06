@@ -1,9 +1,9 @@
 //// Conjunto de símbolos terminales
 Terminales = { eof  var  id  if  else  (  )  ;  {  }  =  prompt  write  return
-        function  ,  bool  /=  &&  <  +  cadena  ent  booleano  int  chars  bool  void  }
+        function  ,  bool  /=  &&  <  +  cadena  ent  booleano  int  chars  void  }
 
 //// Conjunto de símbolo no terminales
-NoTerminales = {  P  B  S  S1  Fq  F  F1  F2  F3  A  D  C  C1  C2  C3  L  Q  X  E  T  H  R1  T1  H1  Bfun  Sfun  Cfun  C1fun  }
+NoTerminales = {  P  B  S  S1  S2  Fq  F  F1  F2  F3  A  D  C  C1  C2  C3  L  Q  X  E  T  H  R1  T1  H1  Bfun  Sfun  S2fun  Cfun  }
 
 //// Axioma
 Axioma = P
@@ -12,21 +12,21 @@ Axioma = P
 Producciones = {
 
 P -> B P
-P -> if ( E ) C P
 P -> Fq P
 P -> eof
 
 B -> var F2 id ;
 B -> S
 
-S -> id S1 ; S
-S -> prompt ( id ) ; S
-S -> write ( E ) ; S
-S -> if ( E ) C S
-S -> lambda
+S -> id S1 ;
+S -> prompt ( id ) ;
+S -> write ( E ) ;
+S -> if ( E ) C
 S1 -> = E
 S1 -> ( L )
 S1 -> /= E
+S2 -> S S2
+S2 -> lambda
 
 Fq -> function F3 id ( A ) { Cfun }
 
@@ -35,13 +35,13 @@ A -> lambda
 D -> , F2 id D
 D -> lambda
 
-C -> { S } C1
-C -> S
-C1 -> else { S }
+C -> { S S2 } C1
+C -> S S2
+C1 -> else { S S2 }
 C1 -> lambda
-C2 -> { Sfun } C3
-C2 -> Sfun
-C3 -> else { Sfun }
+C2 -> { Sfun S2fun } C3
+C2 -> Sfun S2fun
+C3 -> else { Sfun S2fun }
 C3 -> lambda
 
 L -> E Q
@@ -84,16 +84,15 @@ F3 -> void
 Bfun -> var F2 id ;
 Bfun -> Sfun
 
-Sfun -> id S1 ; Sfun
-Sfun -> prompt ( id ) ; Sfun
-Sfun -> write ( E ) ; Sfun
-Sfun -> if ( E ) C2 C1fun Sfun
+Sfun -> id S1 ;
+Sfun -> prompt ( id ) ;
+Sfun -> write ( E ) ;
+Sfun -> if ( E ) C2
 Sfun -> return X ;
-Sfun -> lambda
+S2fun -> Sfun S2fun
+S2fun -> lambda
 
-Cfun -> Bfun C1fun
-Cfun -> if ( E ) C2 C1fun
-C1fun -> Cfun
-C1fun -> lambda
+Cfun -> Bfun Cfun
+Cfun -> lambda
 
 }

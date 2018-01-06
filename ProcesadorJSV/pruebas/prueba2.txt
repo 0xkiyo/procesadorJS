@@ -1,0 +1,5 @@
+function int prueba() {
+	var int x;
+	x=1;
+	return x;
+}
