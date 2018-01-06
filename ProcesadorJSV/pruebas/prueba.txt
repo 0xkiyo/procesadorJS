@@ -3,10 +3,13 @@ var int y;
 var chars z;
 
 //Este es el programa de prueba que comprueba el funcionamiento global del codigo
-x = false;
+x = false; 
 y = 10;
 z = "Esto es un string";
 if (y < 3 && y < 10) {
+  if (y < 10) {
+      prompt(y);
+  }
 	y /= 3;
 	x = true;
  }
@@ -34,7 +37,6 @@ function void suma(int n, chars r, bool u) {
   if (2 < 32767) {
     x = false;
     r = "dentro de function";
-    //Dentro de if
   }
   else {
   	if (n < 2) {
