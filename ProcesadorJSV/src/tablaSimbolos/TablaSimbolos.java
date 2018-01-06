@@ -144,6 +144,7 @@ public class TablaSimbolos {
         Posicion 3 = numero parametros (solo para funciones)
         Posicion 4 = tipo devuelto (solo para funciones)
         Posicion 5 = etiqueta (solo para funciones)
+        Posicion 6 = tipos parametros (solo para funciones)
 		 */
 		boolean anadidoLocal = false;
 		if (contadorRegistros > 0 && this.tablaSimbolos.get(contadorRegistros - 1)[0] instanceof TablaSimbolos) {
@@ -153,7 +154,7 @@ public class TablaSimbolos {
 			anadidoLocal = true;
 		}
 		if (!anadidoLocal) {
-			this.tablaSimbolos.add(new Object[6]);
+			this.tablaSimbolos.add(new Object[7]); //Incrementamos una posicion
 			this.tablaSimbolos.get(contadorRegistros)[0] = (String) token.getValor();
 			contadorRegistros++;
 		}
@@ -178,6 +179,9 @@ public class TablaSimbolos {
 		this.tablaSimbolos.get(contadorRegistros - 2)[3] = nParam;
 	}
 
+	public void addTipoParametros(String[] tParam) {
+		this.tablaSimbolos.get(contadorRegistros - 2)[6] = tParam;
+	}
 	public void addEtiqueta() {
 		String etiqueta = "FUNC.";
 		etiqueta += "" + this.tablaSimbolos.get(contadorRegistros - 2)[0];
@@ -296,6 +300,11 @@ public class TablaSimbolos {
 		}else{
 			return -1;
 		}
+	}
+
+	public String[] getTipoParametros(Token token) { 
+		Integer[] posYTab = this.buscaTSGlobal(token.getValor());
+		return (String[]) this.tablaSimbolos.get(posYTab[0].intValue())[6];
 	}
 
 	public String getTipo(Token token) {

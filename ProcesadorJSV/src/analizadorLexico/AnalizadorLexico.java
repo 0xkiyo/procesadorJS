@@ -100,7 +100,7 @@ public class AnalizadorLexico {
            procD(contenido);
            //Posible error en el digito introducido
            if (digit < Math.pow(2, 15)) {
-               toReturn = new Token("NUM", Long.toString(digit));
+               toReturn = new Token("ENTERA", Long.toString(digit));
            } else {
                throw new FueraDeRangoException("Error en linea: " + linea.toString() + " El numero " + Long.toString(digit) + " sobrepasa el maximo representable");
            }

@@ -46,43 +46,19 @@ TABLA PRINCIPAL #1
 		+ dirección : 46
 
 ---------------------------------------------------
-TABLA DE LA FUNCION mult #2
+TABLA DE LA FUNCION hola #2
 
-* LEXEMA : 'multi1'
+* LEXEMA : 'z'
 	ATRIBUTOS : 
 		+ tipo : 'ENTERA'
 		+ dirección : 0
-* LEXEMA : 'multi2'
+* LEXEMA : 'y'
 	ATRIBUTOS : 
 		+ tipo : 'ENTERA'
 		+ dirección : 2
-* ( Esta funcion multiplica dos valores enteros )  LEXEMA : 'resultado'
+* LEXEMA : 'x'
 	ATRIBUTOS : 
 		+ tipo : 'ENTERA'
-		+ dirección : 6
-* LEXEMA : 't'
-	ATRIBUTOS : 
-		+ tipo : 'ENTERA'
-		+ dirección : 8
+		+ dirección : 4
 
----------------------------------------------------
-TABLA DE LA FUNCION suma #3
-
-* LEXEMA : 'n'
-	ATRIBUTOS : 
-		+ tipo : 'ENTERA'
-		+ dirección : 0
-* LEXEMA : 'r'
-	ATRIBUTOS : 
-		+ tipo : 'CADENA'
-		+ dirección : 13
-* LEXEMA : 'u'
-	ATRIBUTOS : 
-		+ tipo : 'BOOL'
-		+ dirección : 6
-* ( Esta funcion se encarga de realizar la suma de dos valores enteros. )  LEXEMA : 'realizado'
-	ATRIBUTOS : 
-		+ tipo : 'BOOL'
-		+ dirección : 7
-* ( Dentro de if ) 
 ---------------------------------------------------

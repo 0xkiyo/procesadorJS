@@ -19,8 +19,11 @@ public class AnalizadorSintactico {
 
     //Atributos semantico
     private String tipo;
+    private Token idFunction;
+    private String[] tiposParam;
     private int ancho;
     private int tabla;
+    private int contParamG;
     private boolean declaracion;
     private Token tokenLlamador;
     private static Token nombreFuncion;
@@ -37,10 +40,13 @@ public class AnalizadorSintactico {
         this.tokenDevuelto = new Token(null, null);
         this.tokenLlamador = new Token(null, null);
         this.nombreFuncion = new Token(null, null);
+        this.tiposParam = new String[10];
 
         //Inicializando los atributos basicos
         this.parse = "";
         this.tabla = 0;
+        this.idFunction = null;
+        this.contParamG = 0;
 
         //Nuevos archivos
         File archivoTablas = new File(miDir + "//impreso//tablas.txt");
@@ -152,7 +158,9 @@ public class AnalizadorSintactico {
         if ("ID".equals(this.getTokenDevuelto().getId())) {
             this.setParse(this.getParse() + "8 ");
             //Semantico
-            tokenLlamador = tokenDevuelto;  
+            tokenLlamador = tokenDevuelto;
+            idFunction = tokenDevuelto;
+
             //Semantico
             empareja(new Token("ID", null));
             procedS1();
@@ -229,12 +237,19 @@ public class AnalizadorSintactico {
             int contParam = 0;
             empareja(new Token("PARENTABIERTO", null));
             contParam = procedL();
+
+            //Comprobaciones
             if (nombreFuncion != null && nombreFuncion.equals(tokenLlamador) && tS.getNParametrosGlobal(tokenLlamador) == contParam) {
                 tS.buscaTSGlobal(tokenLlamador.getValor());
             } else if (tS.buscaTS(tokenLlamador.getValor())[0] == null || !"FUNC".equals(tS.getTipo(tokenLlamador))) {//tipo != FUNC porque si es variable o no declarada tiene que dar error.
                 throw new FuncionNoDeclaradaException("Error en linea " + Integer.toString(AnalizadorLexico.linea) + " La funcion '" + tokenLlamador.getValor() + "' no ha sido declarada.");
             } else if (tS.getNParametros(tokenLlamador) != contParam) {
                 throw new FuncionNoDeclaradaException("Error en linea " + Integer.toString(AnalizadorLexico.linea) + " La funcion '" + tokenLlamador.getValor() + "' debe ser llamada con " + tS.getNParametros(tokenLlamador) + " parametros y se ha llamado con " + contParam + ".");
+            }
+            for (int i=0; i<this.tS.getTipoParametros(idFunction).length && this.tS.getTipoParametros(idFunction)!=null && this.tiposParam[i]!=null; i++) {
+                if (!this.tS.getTipoParametros(idFunction)[i].equals(this.tiposParam[i])) {
+                    throw new FuncionNoDeclaradaException("Error en linea " + Integer.toString(AnalizadorLexico.linea) + " La funcion '" + tokenLlamador.getValor() + "' debe ser llamada con los tipos correspondientes.");
+                }
             }
             empareja(new Token("PARENTCERRADO", null));
         }
@@ -261,7 +276,7 @@ public class AnalizadorSintactico {
     }
 
     public void procedFq() throws FirstNoCoincideException, EmparejaException, ComentarioException, OpLogicoException, CadenaException, FueraDeRangoException, OtroSimboloException, IOException, IdException, FuncionNoDeclaradaException, VariableNoDeclaradaException, DevuelveCadenaException, TiposDiferentesException, CodigoMuertoException, DeclaracionIncompatibleException, ConcatenacionNoImplementadaException, TipoIncorrectoException {
-        int contParam = 0;
+        int contParam = 0;        
         
         //Fq -> function F3 id ( A ) { Cfun } = { function }
         if ("PR".equals(this.getTokenDevuelto().getId()) && "function".equals(this.getTokenDevuelto().getValor())) {
@@ -279,7 +294,6 @@ public class AnalizadorSintactico {
             tS.crearTSL();
             TablaSimbolos tLocal = (TablaSimbolos) tS.getTablaSimbolos().get(tS.getContadorRegistros() - 1)[0];
             if (tLocal != null) {
-                //quitamos las palabras reservadas a la tabla de simbolos
                 tLocal.vaciarTabla();
             }
             nombreFuncion = this.getTokenDevuelto();
@@ -289,7 +303,11 @@ public class AnalizadorSintactico {
             flagDeclaracionLocal = true;
             empareja(new Token("PARENTABIERTO", null));
             contParam = procedA();
+            //Almacenamos los tipos y el numero de parametros en la tS.
             this.tS.addParametros(contParam);
+            this.tS.addTipoParametros(this.tiposParam);
+            this.tiposParam = new String[10];
+
             flagDeclaracionLocal = false;
             empareja(new Token("PARENTCERRADO", null));
             
@@ -316,6 +334,7 @@ public class AnalizadorSintactico {
 
     public int procedA() throws EmparejaException, CadenaException, OpLogicoException, ComentarioException, FueraDeRangoException, OtroSimboloException, IdException, IOException, DeclaracionIncompatibleException, FirstNoCoincideException, FuncionNoDeclaradaException, VariableNoDeclaradaException, TiposDiferentesException, ConcatenacionNoImplementadaException, TipoIncorrectoException {
         int contParam = 0;
+
         //A -> F2 id D = { int chars bool }
         if (("PR".equals(this.getTokenDevuelto().getId()) && ("int".equals(this.getTokenDevuelto().getValor())
                 || "chars".equals(this.getTokenDevuelto().getValor()))
@@ -337,6 +356,7 @@ public class AnalizadorSintactico {
             }
 
             tS.addTipo(this.tokenDevuelto, this.tipo);
+            this.tiposParam[contParamG] = this.tipo;  //almacenamos el tipo de parametro de la funcion
             tS.addDireccion(tokenDevuelto, ancho);
           empareja(new Token("ID", null));
           contParam++;
@@ -346,6 +366,7 @@ public class AnalizadorSintactico {
         else {
             this.setParse(this.getParse() + "19 ");
         }
+        contParamG = 0;
         return contParam;
     }
 
@@ -374,7 +395,9 @@ public class AnalizadorSintactico {
                 this.ancho = 1;
             }
 
+            contParamG++;
             tS.addTipo(this.tokenDevuelto, this.tipo);
+            this.tiposParam[contParamG] = this.tipo;  //almacenamos el tipo de parametro de la funcion
             tS.addDireccion(tokenDevuelto, ancho);
 
             empareja(new Token("ID", null));
@@ -481,9 +504,17 @@ public class AnalizadorSintactico {
         //L -> E Q = { id cadena bool num }
         if ("PARENTABIERTO".equals(this.getTokenDevuelto().getId())
                 || "ID".equals(this.getTokenDevuelto().getId()) || "CADENA".equals(this.getTokenDevuelto().getId()) || "BOOL".equals(this.getTokenDevuelto().getId())
-                || "NUM".equals(this.getTokenDevuelto().getId())) {
+                || "ENTERA".equals(this.getTokenDevuelto().getId())) {
             this.setParse(this.getParse() + "25 ");
+
             contParam++;
+            //Debemos comprobar los tipos de los paramtros.
+            if ("ID".equals(this.getTokenDevuelto().getId())) {
+                this.tiposParam[contParamG++] = this.tS.getTipo(this.getTokenDevuelto());
+            }
+            else {
+                this.tiposParam[contParamG++] = this.getTokenDevuelto().getId();
+            }
             procedE();
             contParam += procedQ();
         }
@@ -491,6 +522,7 @@ public class AnalizadorSintactico {
         else {
             this.setParse(this.getParse() + "26 ");
         }
+        contParamG = 0;
         return contParam;
     }
 
@@ -502,7 +534,13 @@ public class AnalizadorSintactico {
             this.setParse(this.getParse() + "27 ");
             contParam++;
             empareja(new Token("COMA", null));
-            procedE();
+            //Debemos comprobar los tipos de los paramtros.
+            if ("ID".equals(this.getTokenDevuelto().getId())) {
+                this.tiposParam[contParamG++] = this.tS.getTipo(this.getTokenDevuelto());
+            }
+            else {
+                this.tiposParam[contParamG++] = this.getTokenDevuelto().getId();
+            }            procedE();
             contParam += procedQ();
         } 
         //Q -> lambda
@@ -517,7 +555,7 @@ public class AnalizadorSintactico {
         //X -> E = { id cadena ent bool }
         if ("PARENTABIERTO".equals(this.getTokenDevuelto().getId())
                 || "ID".equals(this.getTokenDevuelto().getId()) || "CADENA".equals(this.getTokenDevuelto().getId()) || "BOOL".equals(this.getTokenDevuelto().getId())
-                || "NUM".equals(this.getTokenDevuelto().getId())) {
+                || "ENTERA".equals(this.getTokenDevuelto().getId())) {
             this.setParse(this.getParse() + "29 ");
             procedE();
             if ("CADENA".equals(tipo)) {
@@ -537,12 +575,12 @@ public class AnalizadorSintactico {
         //E -> T R1 = { id cadena ent bool }
         if ("PARENTABIERTO".equals(this.getTokenDevuelto().getId())
                 || "ID".equals(this.getTokenDevuelto().getId()) || "CADENA".equals(this.getTokenDevuelto().getId()) || "BOOL".equals(this.getTokenDevuelto().getId())
-                || "NUM".equals(this.getTokenDevuelto().getId())) {
+                || "ENTERA".equals(this.getTokenDevuelto().getId())) {
             this.setParse(this.getParse() + "31 ");
             procedT();
             procedR1();
         } else {
-            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < NUM , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
+            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < ENTERA , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
         }
     }
 
@@ -584,12 +622,12 @@ public class AnalizadorSintactico {
         //T -> H T1 = { id cadena ent bool }
         if ("PARENTABIERTO".equals(this.getTokenDevuelto().getId())
                 || "ID".equals(this.getTokenDevuelto().getId()) || "CADENA".equals(this.getTokenDevuelto().getId()) || "BOOL".equals(this.getTokenDevuelto().getId())
-                || "NUM".equals(this.getTokenDevuelto().getId())) {
+                || "ENTERA".equals(this.getTokenDevuelto().getId())) {
             this.setParse(this.getParse() + "35 ");
             procedH();
             procedT1();
         } else {
-            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < NUM , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
+            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < ENTERA , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
         }
     }
 
@@ -631,12 +669,12 @@ public class AnalizadorSintactico {
         //H -> F H1 = { id cadena ent bool } 
         if ("PARENTABIERTO".equals(this.getTokenDevuelto().getId())
                 || "ID".equals(this.getTokenDevuelto().getId()) || "CADENA".equals(this.getTokenDevuelto().getId()) || "BOOL".equals(this.getTokenDevuelto().getId())
-                || "NUM".equals(this.getTokenDevuelto().getId())) {
+                || "ENTERA".equals(this.getTokenDevuelto().getId())) {
             this.setParse(this.getParse() + "39 ");
             procedF();
             procedH1();
         } else {
-            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < NUM , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
+            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < ENTERA , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
         }
     }
 
@@ -707,11 +745,11 @@ public class AnalizadorSintactico {
             empareja(new Token("CADENA", null));
         }
         //F -> ent = { ent }
-        else if ("NUM".equals(this.getTokenDevuelto().getId())) {
+        else if ("ENTERA".equals(this.getTokenDevuelto().getId())) {
             this.setParse(this.getParse() + "45 ");
             ancho = 2;
             tipo = "ENTERA";
-            empareja(new Token("NUM", null));
+            empareja(new Token("ENTERA", null));
         } 
         //F -> bool = { bool }
         else if ("BOOL".equals(this.getTokenDevuelto().getId())) {
@@ -732,7 +770,7 @@ public class AnalizadorSintactico {
             }
             empareja(new Token("PARENTCERRADO", null));
         } else {
-            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < NUM , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
+            throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < ENTERA , num >, < ID , id > ) pero se ha detectado: " + this.getTokenDevuelto().toString());
         }
         tokenLlamador = tokenAuxiliar;
     }
@@ -747,15 +785,19 @@ public class AnalizadorSintactico {
             this.setParse(this.getParse() + "48 ");
             //Semantico
             int contParam = 0;
+            //Comprobamos si la funcion existe
             if (tS.buscaTS(tokenLlamador.getValor())[0] == null && "FUNC".equals(tS.getTipo(tokenLlamador))) {
                 throw new FuncionNoDeclaradaException("Error en linea " + Integer.toString(AnalizadorLexico.linea) + " La funcion '" + tokenLlamador.getValor() + "' no ha sido declarada.");
             }
             empareja(new Token("PARENTABIERTO", null));
             contParam = procedL();
+
+            //Comprobamos el numero de parametros de la llamada.
             if (tS.getNParametros(tokenLlamador) != contParam) {
                 throw new FuncionNoDeclaradaException("Error en linea " + Integer.toString(AnalizadorLexico.linea) + " La funcion '" + tokenLlamador.getValor() + "' debe ser llamada con " + tS.getNParametros(tokenLlamador) + " parametros y se ha llamado con " + contParam + ".");
             }
             empareja(new Token("PARENTCERRADO", null));
+
             if (tS.getDevuelve(tokenLlamador) != null) {
                 tipo = tS.getDevuelve(tokenLlamador);
             }
@@ -881,6 +923,8 @@ public class AnalizadorSintactico {
             this.setParse(this.getParse() + "54 ");
             //Semantico
             tokenLlamador = tokenDevuelto;
+            idFunction = tokenDevuelto;
+
             //Semantico
             empareja(new Token("ID", null));
             procedS1();
@@ -1069,7 +1113,6 @@ public class AnalizadorSintactico {
             as.getAnalizador().leerFichero(ficheroAAnalizar);
             as.setTokenDevuelto(as.getAnalizador().al(as.gettS()));
             as.gettS().volcarTabla(as.getTablasWriter());
-            
             while (!"EOF".equals(as.getTokenDevuelto().getId())) {
                 as.procedP();
             }
