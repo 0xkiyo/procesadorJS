@@ -161,8 +161,6 @@ public class AnalizadorLexico {
                  }
                else if(p[0] != null && ((p[1] == 1 && AnalizadorSintactico.flagDeclaracionLocal) || (p[1] == 0 && AnalizadorSintactico.flagDeclaracion))){
                    throw new DeclaracionIncompatibleException("Error en linea "+AnalizadorLexico.linea+". La variable o funcion '"+cadena+"' ha sido declarada previamente.");
-               } else if(p[0] != null && AnalizadorSintactico.flagDeclaracionLocal==false) {
-            	   	   throw new DeclaracionIncompatibleException("Error en linea "+AnalizadorLexico.linea+". La variable o funcion '"+cadena+"' ha sido declarada previamente.");
                }
                toReturn = new Token("ID", cadena);
            }
@@ -218,7 +216,7 @@ public class AnalizadorLexico {
        if (contenido[indice] == '&') {
            indice++;
        } else {
-           throw new OpLogicoException("Error en linea: " + linea.toString() + " Se esperaba detectar '&'");
+           throw new OpLogicoException("Error en linea: " + linea.toString() + " Se esperaba detectar o '&'");
        }
    }
 
@@ -290,4 +288,3 @@ public class AnalizadorLexico {
 
    }
 }
-

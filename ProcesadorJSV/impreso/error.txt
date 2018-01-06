@@ -1,1 +1,0 @@
-Error en linea 2. La variable o funcion 'x' ha sido declarada previamente.
