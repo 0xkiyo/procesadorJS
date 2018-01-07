@@ -1,0 +1,11 @@
+function chars hola() {
+ var int x;
+ var int y;
+ var int z;
+ x = 1;
+ y = 2;
+ z = 3;
+ if (x < y && z < y) {
+  write("y es mayor");
+ }
+}

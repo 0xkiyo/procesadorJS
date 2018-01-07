@@ -1,0 +1,2 @@
+int w = 0;
+var bool = true < 5;

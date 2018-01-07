@@ -1,0 +1,5 @@
+//no se pueden sumar cadenas de caracteres
+var chars hola;
+var chars adios;
+hola = "hola";
+adios = "adios" + "hola";
