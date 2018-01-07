@@ -1,0 +1,11 @@
+function bool mix(bool prueba) {
+  var int x;
+  var int y;
+  if (y < x) {
+   x = 2;
+   y = 3;
+   x /= y;
+   prueba = true;
+ }
+ return prueba;
+}
