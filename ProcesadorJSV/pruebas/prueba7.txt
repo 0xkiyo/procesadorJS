@@ -1,0 +1,7 @@
+function int test() {
+ var int x,
+ x = 5
+ if {
+  return x;
+ }
+}

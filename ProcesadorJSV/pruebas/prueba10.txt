@@ -1,0 +1,7 @@
+var int a;
+var int b;
+//no se pueden declarar variables dentro de un if
+if (a < b) {
+ var int c;
+ c = 5;
+}

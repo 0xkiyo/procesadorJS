@@ -1,0 +1,6 @@
+var int x;
+var chars y;
+var bool z;
+x = 12;
+y = "hola, mundo";
+z = true;
