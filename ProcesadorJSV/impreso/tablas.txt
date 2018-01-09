@@ -1,0 +1,75 @@
+TABLA DE LA FUNCION suma #2
+
+* LEXEMA : 'n'
+	ATRIBUTOS : 
+		+ tipo : 'ENTERA'
+		+ dirección : 0
+* LEXEMA : 'r'
+	ATRIBUTOS : 
+		+ tipo : 'ENTERA'
+		+ dirección : 2
+* LEXEMA : 'u'
+	ATRIBUTOS : 
+		+ tipo : 'ENTERA'
+		+ dirección : 4
+
+---------------------------------------------------
+TABLA PRINCIPAL #1
+
+* LEXEMA : 'function'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 0
+* LEXEMA : 'if'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 8
+* LEXEMA : 'else'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 10
+* LEXEMA : 'write'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 14
+* LEXEMA : 'prompt'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 19
+* LEXEMA : 'return'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 25
+* LEXEMA : 'var'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 31
+* LEXEMA : 'void'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 34
+* LEXEMA : 'int'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 38
+* LEXEMA : 'chars'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 41
+* LEXEMA : 'bool'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 46
+* LEXEMA : 'y'
+	ATRIBUTOS : 
+		+ tipo : 'ENTERA'
+		+ dirección : 50
+* LEXEMA : 'suma'
+	ATRIBUTOS : 
+		+ tipo : 'FUNC'
+		+ dirección : 52
+		+ número de parámetros : 3
+		+ tipo devuelto : 'ENTERA'
+		+ etiqueta : 'FUNC.suma'
+
+---------------------------------------------------

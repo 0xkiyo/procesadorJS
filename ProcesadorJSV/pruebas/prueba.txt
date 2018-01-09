@@ -1,51 +1,6 @@
-var bool x;
+
 var int y;
-var chars z;
 
-//Este es el programa de prueba que comprueba el funcionamiento global del codigo
-x = false; 
-y = 10;
-z = "Esto es un string";
-if (y < 3 && y < 10) {
-  if (y < 10) {
-      prompt(y);
-  }
-	y /= 3;
-	x = true;
- }
- else {
- 	prompt(x);
- 	z = "hola mundo";
- }
-
- function int mult(int multi1, int multi2) {
-	 //Esta funcion multiplica dos valores enteros
-	 var int resultado;
-   resultado = multi1 + multi2;
-
-   if (true) {
-    return resultado;
-   }
-   mult(2, 2);
- }
-
-//Esta es la funcion suma encima de function
-function void suma(int n, chars r, bool u) {
-  //Esta funcion se encarga de realizar la suma de dos valores enteros.
-  var bool realizado;
-  r = "Adios";
-  if (2 < 32767) {
-    x = false;
-    r = "dentro de function";
-  }
-  else {
-  	if (n < 2) {
-  		write("adios");
-  		prompt(u);
-  	}	
-  	else {
-  		write("hola");
-      suma(y, r, x);
-  	}
-  }
+function int suma(int n, int r, int u) {
+  return n+r+u;
 }

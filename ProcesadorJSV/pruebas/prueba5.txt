@@ -1,30 +1,16 @@
-var bool x;
 var int a;
-var chars j;
 
 //Esto es un comentario de prueba
 
-x = false;
 a = 50;
-j = "test";
 
-function int division(int b, int c) {
- var int div1;
- var int div2;
-
+function int division(int b) {
+ var int div;
  b /= a;
- c /= a;
 
- if (x) {
-  div1 = b;
-  div2 = c;
-  x = true;
+ if (b < 3) {
+  div = b;
  }
- if (div1 < div2) {
-  write("div2");
- }
- else {
-  write("div1");
-  prompt(x);
- }
+
+ return div;
 }
