@@ -47,3 +47,6 @@ Thumbs.db
 /JavaApplication2/nbproject/private/
 /ProcesadorJSV/nbproject/private/
 /ProcesadorJSV/build/
+
+.idea/
+*.iml
