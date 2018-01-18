@@ -6,11 +6,10 @@
 package errores;
 
 /**
- *
- * @author Rodrigo Rosado Gonz·lez
+ * @author Rodrigo Rosado Gonz√°lez
  */
-public class FuncionNoDeclaradaException extends Exception{
-    
+public class FuncionNoDeclaradaException extends Exception {
+
     public FuncionNoDeclaradaException() {
 
     }

@@ -6,15 +6,14 @@
 package errores;
 
 /**
- *
- * @author Rodrigo Rosado Gonz·lez
+ * @author Rodrigo Rosado Gonz√°lez
  */
-public class DevuelveCadenaException extends Exception{
-    public DevuelveCadenaException(){
-        
+public class DevuelveCadenaException extends Exception {
+    public DevuelveCadenaException() {
+
     }
-    
-    public DevuelveCadenaException(String message){
+
+    public DevuelveCadenaException(String message) {
         super(message);
     }
 }

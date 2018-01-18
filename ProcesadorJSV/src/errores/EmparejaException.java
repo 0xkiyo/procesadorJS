@@ -6,8 +6,7 @@
 package errores;
 
 /**
- *
- * @author Rodrigo Rosado Gonz·lez
+ * @author Rodrigo Rosado Gonz√°lez
  */
 public class EmparejaException extends Exception {
 

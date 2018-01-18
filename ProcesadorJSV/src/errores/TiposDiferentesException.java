@@ -6,15 +6,14 @@
 package errores;
 
 /**
- *
- * @author Rodrigo Rosado Gonz·lez
+ * @author Rodrigo Rosado Gonz√°lez
  */
-public class TiposDiferentesException extends Exception{
-    public TiposDiferentesException(){
-        
+public class TiposDiferentesException extends Exception {
+    public TiposDiferentesException() {
+
     }
-    
-    public TiposDiferentesException(String message){
+
+    public TiposDiferentesException(String message) {
         super(message);
     }
 }

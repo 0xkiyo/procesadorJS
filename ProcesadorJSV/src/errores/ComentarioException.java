@@ -6,11 +6,10 @@
 package errores;
 
 /**
- *
- * @author Rodrigo Rosado Gonz·lez
+ * @author Rodrigo Rosado Gonz√°lez
  */
 public class ComentarioException extends Exception {
-    
+
     public ComentarioException() {
 
     }
@@ -18,5 +17,5 @@ public class ComentarioException extends Exception {
     public ComentarioException(String message) {
         super(message);
     }
-    
+
 }

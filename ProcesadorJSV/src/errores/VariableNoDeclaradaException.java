@@ -6,16 +6,15 @@
 package errores;
 
 /**
- *
- * @author Rodrigo Rosado Gonz·lez
+ * @author Rodrigo Rosado Gonz√°lez
  */
-public class VariableNoDeclaradaException extends Exception{
-    
-    public VariableNoDeclaradaException(){
-        
+public class VariableNoDeclaradaException extends Exception {
+
+    public VariableNoDeclaradaException() {
+
     }
-    
-    public VariableNoDeclaradaException(String message){
+
+    public VariableNoDeclaradaException(String message) {
         super(message);
     }
 }

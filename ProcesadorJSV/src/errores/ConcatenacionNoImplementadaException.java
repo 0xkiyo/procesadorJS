@@ -6,15 +6,14 @@
 package errores;
 
 /**
- *
- * @author Rodrigo Rosado Gonz·lez
+ * @author Rodrigo Rosado Gonz√°lez
  */
-public class ConcatenacionNoImplementadaException extends Exception{
-    public ConcatenacionNoImplementadaException(){
-        
+public class ConcatenacionNoImplementadaException extends Exception {
+    public ConcatenacionNoImplementadaException() {
+
     }
-    
-    public ConcatenacionNoImplementadaException(String message){
+
+    public ConcatenacionNoImplementadaException(String message) {
         super(message);
     }
 }
