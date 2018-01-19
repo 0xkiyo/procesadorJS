@@ -12,19 +12,19 @@ import java.util.ArrayList;
 public class TablaSimbolos {
 
     public int indice = 2;
-    private AnalizadorLexico analizadorLexico;
     private int contadorRegistros = 0;
     private ArrayList<Object[]> tablaSimbolos;
     private int desplazamiento = 0;
 
+    private AnalizadorLexico analizadorLexico;
+
     public TablaSimbolos(AnalizadorLexico analizadorLexico) throws ParserException {
         this.analizadorLexico = analizadorLexico;
-        this.tablaSimbolos = new ArrayList<Object[]>();
+        this.tablaSimbolos = new ArrayList<>();
         this.addPalabrasReservadas();
     }
 
-    private void addPalabrasReservadas()
-            throws ParserException {
+    private void addPalabrasReservadas() throws ParserException {
 
         this.addTs(new Token("PR", "function"));
         this.addDireccion(new Token("PR", "function"), "function".length());
@@ -99,7 +99,7 @@ public class TablaSimbolos {
             //Imprimimos el lexema
             for (int j = 0; j < fila.length && fila[j] != null; j++) {
 
-                if (inicio == false && comentario == false) {
+                if (!inicio && !comentario) {
                     tablaWriter.write("*");
                     inicio = true;
                 }
@@ -173,8 +173,8 @@ public class TablaSimbolos {
         }
     }
 
-    public void addTipo(Token token, String tipo)
-            throws ParserException {
+    public void addTipo(Token token, String tipo) throws ParserException {
+
         if (this.buscaTS(token.getValor())[0] != null) {
             if (this.getTipo(token) != null &&
                     !this.getTipo(token).equals(tipo) &&
@@ -310,9 +310,7 @@ public class TablaSimbolos {
         if (posYTab[1] == 1) {
             System.out.println("ERROR en getNParametros");
         } else {//Estamos en la global
-            Integer nParam =
-                    (Integer) this.tablaSimbolos.get(posYTab[0].intValue())[3];
-            toReturn = nParam;
+            toReturn = (Integer) this.tablaSimbolos.get(posYTab[0])[3];
         }
         return toReturn;
     }
@@ -321,7 +319,7 @@ public class TablaSimbolos {
         Integer[] posYTab = this.buscaTSGlobal(token.getValor());
         Integer nParam = null;
         if (posYTab[0] != null) {
-            nParam = (Integer) this.tablaSimbolos.get(posYTab[0].intValue())[3];
+            nParam = (Integer) this.tablaSimbolos.get(posYTab[0])[3];
         }
         if (nParam != null) {
             return nParam;
@@ -332,7 +330,7 @@ public class TablaSimbolos {
 
     public String[] getTipoParametros(Token token) {
         Integer[] posYTab = this.buscaTSGlobal(token.getValor());
-        return (String[]) this.tablaSimbolos.get(posYTab[0].intValue())[6];
+        return (String[]) this.tablaSimbolos.get(posYTab[0])[6];
     }
 
     public String getTipo(Token token) {

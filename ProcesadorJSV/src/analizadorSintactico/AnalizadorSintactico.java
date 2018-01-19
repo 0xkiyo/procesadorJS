@@ -9,10 +9,10 @@ import java.io.*;
 
 public class AnalizadorSintactico {
 
-    public boolean flagDeclaracionLocal = false;
-    public boolean flagDeclaracion = false;
-    private static Token nombreFuncion;
-    private static boolean flagReturn = true;
+    public boolean flagDeclaracionLocal;
+    public boolean flagDeclaracion;
+    private Token nombreFuncion;
+    private boolean flagReturn = true;
     //Atributos de clase
     private String parse;
     private AnalizadorLexico analizador;
@@ -42,7 +42,6 @@ public class AnalizadorSintactico {
 
         //Inicializando los atributos basicos
         this.parse = "";
-        int tabla = 0;
         this.idFunction = null;
         this.contParamG = 0;
 
@@ -64,6 +63,7 @@ public class AnalizadorSintactico {
     }
 
     public static void main(String... args) {
+
         AnalizadorSintactico as = null;
 
         try {
@@ -80,7 +80,7 @@ public class AnalizadorSintactico {
                         " ficheros para analizar y solo debe pasarse un fichero.");
             } else if (!ficheroAAnalizar.exists()) {
                 throw new FileNotFoundException(
-                        "El fichero a analizar " + args[0].toString() +
+                        "El fichero a analizar " + args[0] +
                                 " no existe.");
             }
 
@@ -117,10 +117,8 @@ public class AnalizadorSintactico {
             System.out.println(
                     "Error con la escritura o tratamiento de alguno de los ficheros generados.");
             try {
-                if (as != null) {
-                    as.getErrorWriter().write(
-                            "Error con la escritura o tratamiento de alguno de los ficheros generados.");
-                }
+                as.getErrorWriter().write(
+                        "Error con la escritura o tratamiento de alguno de los ficheros generados.");
                 as.getErrorWriter().close();
             } catch (IOException exc) {
                 System.out.println("Error escribiendo en el fichero de error.");
@@ -147,7 +145,7 @@ public class AnalizadorSintactico {
         if (valor != null && valor.equals(tokenDevuelto)) {
             tokenDevuelto = analizador.al(tS);
         } else {
-            throw new ParserException(ParserException.Reason.EMPAREJA,"Empareja: Error en linea: " +
+            throw new ParserException(ParserException.Reason.EMPAREJA, "Empareja: Error en linea: " +
                     Integer.toString(
                             analizador.linea) +
                     " Se esperaba detectar el token " +
@@ -158,7 +156,7 @@ public class AnalizadorSintactico {
     }
 
     private void procedP()
-            throws  ParserException,
+            throws ParserException,
             IOException {
 
         //P -> B P = { var if id prompt write }
@@ -193,7 +191,7 @@ public class AnalizadorSintactico {
     }
 
     private void procedB()
-            throws  ParserException,
+            throws ParserException,
             IOException {
 
         //B -> var F2 id ; = { var }
@@ -347,14 +345,14 @@ public class AnalizadorSintactico {
             } else if (tS.buscaTS(tokenLlamador.getValor())[0] == null ||
                     !"FUNC".equals(tS.getTipo(
                             tokenLlamador))) {//tipo != FUNC porque si es variable o no declarada tiene que dar error.
-                throw new ParserException(ParserException.Reason.FUNCION_NO_DECLARADA,"Error en linea " +
+                throw new ParserException(ParserException.Reason.FUNCION_NO_DECLARADA, "Error en linea " +
                         Integer.toString(
                                 analizador.linea) +
                         " La funcion '" +
                         tokenLlamador.getValor() +
                         "' no ha sido declarada.");
             } else if (tS.getNParametros(tokenLlamador) != contParam) {
-                throw new ParserException(ParserException.Reason.FUNCION_NO_DECLARADA,"Error en linea " +
+                throw new ParserException(ParserException.Reason.FUNCION_NO_DECLARADA, "Error en linea " +
                         Integer.toString(
                                 analizador.linea) +
                         " La funcion '" +
@@ -370,7 +368,7 @@ public class AnalizadorSintactico {
                     this.tiposParam[i] != null; i++) {
                 if (!this.tS.getTipoParametros(idFunction)[i].equals(
                         this.tiposParam[i])) {
-                    throw new ParserException(ParserException.Reason.FUNCION_NO_DECLARADA,"Error en linea " +
+                    throw new ParserException(ParserException.Reason.FUNCION_NO_DECLARADA, "Error en linea " +
                             Integer.toString(
                                     analizador.linea) +
                             " La funcion '" +
@@ -500,8 +498,8 @@ public class AnalizadorSintactico {
     }
 
     private int procedA()
-            throws  ParserException,
-            IOException{
+            throws ParserException,
+            IOException {
         int contParam = 0;
 
         //A -> F2 id D = { int chars bool }
@@ -540,8 +538,8 @@ public class AnalizadorSintactico {
     }
 
     private int procedD()
-            throws  ParserException,
-            IOException{
+            throws ParserException,
+            IOException {
         int contParam = 0;
 
         //D -> , F2 id D = { , }
@@ -762,7 +760,7 @@ public class AnalizadorSintactico {
             this.setParse(this.getParse() + "32 ");
             procedE();
             if ("CADENA".equals(tipo)) {
-                throw new ParserException(ParserException.Reason.DEVUELVE_CADENA,"Error en linea: " +
+                throw new ParserException(ParserException.Reason.DEVUELVE_CADENA, "Error en linea: " +
                         Integer.toString(
                                 analizador.linea) +
                         ". Se ha intentado devolver una cadena y solo se permite devolver un entero o vacio.");
@@ -818,12 +816,12 @@ public class AnalizadorSintactico {
             empareja(new Token("CONJUNCION", null));
             procedT();
             if ("VOID".equals(tipo) || "VOID".equals(tipoR1)) {
-                throw new ParserException(ParserException.Reason.TIPO_INCORRECTO,"Error en linea: " +
+                throw new ParserException(ParserException.Reason.TIPO_INCORRECTO, "Error en linea: " +
                         Integer.toString(
                                 analizador.linea) +
                         ". Esta realizando una operacion con una funcion que puede ser 'VOID'.");
             } else if (!tipo.equals(tipoR1)) {
-                throw new ParserException(ParserException.Reason.TIPO_INCORRECTO,"Error en linea: " +
+                throw new ParserException(ParserException.Reason.TIPO_INCORRECTO, "Error en linea: " +
                         Integer.toString(
                                 analizador.linea) +
                         ". Los tipos de los operandos no coinciden.");
@@ -883,12 +881,12 @@ public class AnalizadorSintactico {
             empareja(new Token("MENORQUE", null));
             procedH();
             if ("VOID".equals(tipo) || "VOID".equals(tipoT1)) {
-                throw new ParserException(ParserException.Reason.TIPOS_DIFERENTES,"Error en linea: " +
+                throw new ParserException(ParserException.Reason.TIPOS_DIFERENTES, "Error en linea: " +
                         Integer.toString(
                                 analizador.linea) +
                         ". Esta realizando una operacion con una funcion que puede ser 'VOID'.");
             } else if (!tipo.equals(tipoT1)) {
-                throw new ParserException(ParserException.Reason.TIPOS_DIFERENTES,"Error en linea: " +
+                throw new ParserException(ParserException.Reason.TIPOS_DIFERENTES, "Error en linea: " +
                         Integer.toString(
                                 analizador.linea) +
                         ". Los tipos de los operandos no coinciden.");
@@ -947,12 +945,12 @@ public class AnalizadorSintactico {
             empareja(new Token("SUMA", null));
             procedF();
             if ("VOID".equals(tipo) || "VOID".equals(tipoH1)) {
-                throw new ParserException(ParserException.Reason.TIPOS_DIFERENTES,"Error en linea: " +
+                throw new ParserException(ParserException.Reason.TIPOS_DIFERENTES, "Error en linea: " +
                         Integer.toString(
                                 analizador.linea) +
                         ". Esta realizando una operacion con una funcion que puede ser 'VOID'.");
             } else if (!tipo.equals(tipoH1)) {
-                throw new ParserException(ParserException.Reason.TIPOS_DIFERENTES,"Error en linea: " +
+                throw new ParserException(ParserException.Reason.TIPOS_DIFERENTES, "Error en linea: " +
                         Integer.toString(
                                 analizador.linea) +
                         ". Los tipos de los sumandos no coinciden.");
@@ -1027,12 +1025,12 @@ public class AnalizadorSintactico {
             empareja(new Token("PARENTABIERTO", null));
             procedE();
             if ("CADENA".equals(tipo)) {
-                throw new ParserException(ParserException.Reason.TIPO_INCORRECTO,"Error en linea: " +
+                throw new ParserException(ParserException.Reason.TIPO_INCORRECTO, "Error en linea: " +
                         Integer.toString(
                                 analizador.linea) +
                         ". La condicion de la sentencia condicional ternaria no puede ser una cadena.");
             } else if ("VOID".equals(tipo)) {
-                throw new ParserException(ParserException.Reason.TIPO_INCORRECTO,"Error en linea: " +
+                throw new ParserException(ParserException.Reason.TIPO_INCORRECTO, "Error en linea: " +
                         Integer.toString(
                                 analizador.linea) +
                         ". La condicion de la sentencia condicional ternaria no puede ser una funcion que puede ser 'VOID'.");
@@ -1242,7 +1240,7 @@ public class AnalizadorSintactico {
 
     private boolean procedSfun()
             throws
-             ParserException, IOException {
+            ParserException, IOException {
 
         //Sfun -> id S1 ; = { id }
         if ("ID".equals(this.getTokenDevuelto().getId())) {

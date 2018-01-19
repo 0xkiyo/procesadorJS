@@ -17,7 +17,6 @@ public class AnalizadorLexico {
     private Long digit = 0L;
     private String cadena = "";
     private final AnalizadorSintactico analizadorSintactico;
-    private File archivo;
     private FileReader fr;
     private BufferedWriter bw;
     private String comentario = "";
@@ -29,10 +28,9 @@ public class AnalizadorLexico {
     public void leerFichero(File fichero) {
         try {
 
-            this.archivo = fichero;
-            this.fr = new FileReader(archivo);
+            this.fr = new FileReader(fichero);
 
-            this.a = new char[(int) archivo.length()];
+            this.a = new char[(int) fichero.length()];
             this.fr.read(a);
 
             String ruta =
@@ -61,7 +59,7 @@ public class AnalizadorLexico {
                 (caracter > 96 && caracter < 123);
     }
 
-    public Token procS(char[] contenido, TablaSimbolos tS)
+    private Token procS(char[] contenido, TablaSimbolos tS)
             throws ParserException {
         Token toReturn = null;
         if (indice == contenido.length) {
@@ -167,15 +165,9 @@ public class AnalizadorLexico {
                 if (p[0] == null &&
                         !analizadorSintactico.flagDeclaracionLocal) {
                     tS.addTs(new Token("ID", cadena));
-                } else if ((p[0] == null &&
-                        analizadorSintactico.flagDeclaracionLocal) ||
-                        (p[0] != null && p[1] == 0 &&
-                                analizadorSintactico.flagDeclaracionLocal)) {
+                } else if (p[0] == null || p[1] == 0 && analizadorSintactico.flagDeclaracionLocal) {
                     tS.addTs(new Token("ID", cadena));//Se añade en la local
-                } else if (p[0] != null && ((p[1] == 1 &&
-                        analizadorSintactico.flagDeclaracionLocal) ||
-                        (p[1] == 0 &&
-                                analizadorSintactico.flagDeclaracion))) {
+                } else if (p[1] == 1 && analizadorSintactico.flagDeclaracionLocal || p[1] == 0 && analizadorSintactico.flagDeclaracion) {
                     throw new ParserException(ParserException.Reason.DECLARACION_INCOMPATIBLE,
                             "Error en linea " + linea +
                                     ". La variable o funcion '" + cadena +
@@ -196,7 +188,7 @@ public class AnalizadorLexico {
         return toReturn;
     }
 
-    public void procA(char[] contenido) throws ParserException {
+    private void procA(char[] contenido) throws ParserException {
         if (contenido[indice] == '/') {
             indice++;
             procB(contenido);
@@ -207,7 +199,7 @@ public class AnalizadorLexico {
         }
     }
 
-    public void procB(char[] contenido) {
+    private void procB(char[] contenido) {
         if (indice < contenido.length && contenido[indice] != '\r' &&
                 contenido[indice] != '\n') {
             comentario += Character.toString(contenido[indice]);
@@ -217,7 +209,7 @@ public class AnalizadorLexico {
 
     }
 
-    public void procD(char[] contenido) {
+    private void procD(char[] contenido) {
         if (indice < contenido.length && isDigit(contenido[indice])) {
             digit = Character.getNumericValue(contenido[indice]) + digit * 10;
             indice++;
@@ -225,7 +217,7 @@ public class AnalizadorLexico {
         }
     }
 
-    public void procE(char[] contenido) throws ParserException {
+    private void procE(char[] contenido) throws ParserException {
         if (indice < contenido.length && contenido[indice] != '\"' &&
                 contenido[indice] != '\n' && contenido[indice] != '\r') {
             cadena += Character.toString(contenido[indice]);
@@ -239,7 +231,7 @@ public class AnalizadorLexico {
         }
     }
 
-    public void procF(char[] contenido) throws ParserException {
+    private void procF(char[] contenido) throws ParserException {
         if (contenido[indice] == '&') {
             indice++;
         } else {
@@ -248,7 +240,7 @@ public class AnalizadorLexico {
         }
     }
 
-    public void procG(char[] contenido) {
+    private void procG(char[] contenido) {
         if (indice < contenido.length &&
                 (isDigit(contenido[indice]) || isLetter(contenido[indice]) ||
                         contenido[indice] == '_')) {
@@ -258,41 +250,16 @@ public class AnalizadorLexico {
         }
     }
 
-    public void procH(char[] contenido) {
-        if (indice < contenido.length && isLetter(contenido[indice])) {
-            cadena += Character.toString(contenido[indice]);
-            indice++;
-            procH(contenido);
-        }
-    }
-
-    public void procI(char[] contenido) throws ParserException {
-        if (contenido[indice] == '|') {
-            indice++;
-        } else {
-            throw new ParserException(ParserException.Reason.OP_LOGICO, "Error en linea: " + linea.toString() +
-                    " Se esperaba detectar otro simbolo '|'");
-        }
-    }
-
-    public File getArchivo() {
-        return archivo;
-    }
-
     public FileReader getFr() {
         return fr;
     }
 
-    public char[] getA() {
+    private char[] getA() {
         return a;
     }
 
     public BufferedWriter getBw() {
         return bw;
-    }
-
-    public void setBw(BufferedWriter bw) {
-        this.bw = bw;
     }
 
     public Token al(TablaSimbolos tablaSimbolos)
