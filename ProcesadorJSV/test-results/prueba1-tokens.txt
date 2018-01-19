@@ -1,0 +1,25 @@
+< PR , var >
+< PR , int >
+< ID , x >
+< PUNTCOM , _ >
+< PR , var >
+< PR , chars >
+< ID , y >
+< PUNTCOM , _ >
+< PR , var >
+< PR , bool >
+< ID , z >
+< PUNTCOM , _ >
+< ID , x >
+< ASIG , _ >
+< ENTERA , 12 >
+< PUNTCOM , _ >
+< ID , y >
+< ASIG , _ >
+< CADENA , "hola, mundo" >
+< PUNTCOM , _ >
+< ID , z >
+< ASIG , _ >
+< BOOL , true >
+< PUNTCOM , _ >
+< EOF , _ >

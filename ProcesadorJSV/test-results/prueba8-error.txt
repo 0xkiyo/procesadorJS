@@ -1,0 +1,1 @@
+Error en linea: 3 Se esperaba detectar uno de los siguientes tokens (< PR , write >, < EOF , _ >, < PR , function >, < ID , id >, < PR , if >, < PR , prompt >, < PR , var >) pero se ha detectado: < PR , int >
