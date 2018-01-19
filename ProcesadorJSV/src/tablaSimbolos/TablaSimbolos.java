@@ -262,7 +262,6 @@ public class TablaSimbolos {
     }
 
     public Integer[] buscaTSGlobal(String palabra) {
-        Integer[] estaEnLocal = new Integer[2];
         Integer[] contador = new Integer[2];
         //pos tabla local
         contador[0] = 0;

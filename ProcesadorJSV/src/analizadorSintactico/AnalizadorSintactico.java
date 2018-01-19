@@ -29,7 +29,7 @@ public class AnalizadorSintactico {
     private int contParamG;
     private Token tokenLlamador;
 
-    public AnalizadorSintactico()
+    private AnalizadorSintactico()
             throws ParserException {
 
         //Inicializando atributos de clase
@@ -255,10 +255,10 @@ public class AnalizadorSintactico {
             empareja(new Token("ID", null));
             procedS1();
             empareja(new Token("PUNTCOM", null));
-        }
-        //S -> prompt ( id ) ; = { prompt }
-        else if ("PR".equals(this.getTokenDevuelto().getId()) &&
+        } else if ("PR".equals(this.getTokenDevuelto().getId()) &&
                 "prompt".equals(this.getTokenDevuelto().getValor())) {
+            //S -> prompt ( id ) ; = { prompt }
+
             this.setParse(this.getParse() + "7 ");
             empareja(new Token("PR", "prompt"));
             empareja(new Token("PARENTABIERTO", null));
@@ -329,9 +329,8 @@ public class AnalizadorSintactico {
             }
             tS.addTipo(tokenLlamador, tipo);
             tS.addDireccion(tokenLlamador, ancho);
-        }
-        //S1 -> ( L ) = { ( }
-        else if ("PARENTABIERTO".equals(this.getTokenDevuelto().getId())) {
+        } else if ("PARENTABIERTO".equals(this.getTokenDevuelto().getId())) {
+            //S1 -> ( L ) = { ( }
             this.setParse(this.getParse() + "11 ");
             //Semantico
             int contParam = 0;
@@ -1399,4 +1398,3 @@ public class AnalizadorSintactico {
     }
 
 }
-

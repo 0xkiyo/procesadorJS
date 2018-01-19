@@ -41,12 +41,9 @@ public class Token {
         if (this.getId() != null && !"PR".equals(this.getId())) {
             return this.getId().equals(token.getId());
         } else {//Estamos ante una palabra reservada
-            if (this.getId() != null && this.getValor() != null) {
-                return this.getId().equals(token.getId()) &&
-                        this.getValor().equals(token.getValor());
-            } else {
-                return false;
-            }
+            return this.getId() != null && this.getValor() != null
+                    && this.getId().equals(token.getId())
+                    && this.getValor().equals(token.getValor());
         }
     }
 
