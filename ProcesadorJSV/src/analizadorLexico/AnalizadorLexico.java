@@ -10,6 +10,10 @@ import java.io.*;
 
 public class AnalizadorLexico {
 
+    //FIXME language -> should be english
+    //FIXME TOO MUCH STATE
+    //FIXME TOO MUCH COUPLING
+
     public Integer linea = 0;
 
     private char[] a;
