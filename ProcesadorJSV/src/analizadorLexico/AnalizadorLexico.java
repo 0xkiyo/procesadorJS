@@ -10,32 +10,20 @@ import java.io.*;
 
 public class AnalizadorLexico {
 
-    public int indice = 0;
-    public Long digit = 0L;
-    public String cadena = "";
     public Integer linea = 0;
+
+    private char[] a;
+    private int indice;
+    private Long digit = 0L;
+    private String cadena = "";
     private final AnalizadorSintactico analizadorSintactico;
-    private File archivo = null;
-    private FileReader fr = null;
+    private File archivo;
+    private FileReader fr;
     private BufferedWriter bw;
     private String comentario = "";
 
-    private char[] a;
-
     public AnalizadorLexico(AnalizadorSintactico analizadorSintactico) {
         this.analizadorSintactico = analizadorSintactico;
-    }
-
-    public int getIndice() {
-        return indice;
-    }
-
-    public Long getDigit() {
-        return digit;
-    }
-
-    public String getCadena() {
-        return cadena;
     }
 
     public void leerFichero(File fichero) {

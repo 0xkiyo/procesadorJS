@@ -1,7 +1,6 @@
 package tablaSimbolos;
 
 import analizadorLexico.AnalizadorLexico;
-import analizadorSintactico.AnalizadorSintactico;
 import errores.DeclaracionIncompatibleException;
 import token.Token;
 
@@ -387,16 +386,8 @@ public class TablaSimbolos {
         return contadorRegistros;
     }
 
-    public void setContadorRegistros(int contadorRegistros) {
-        this.contadorRegistros = contadorRegistros;
-    }
-
     public ArrayList<Object[]> getTablaSimbolos() {
         return tablaSimbolos;
-    }
-
-    public void setTablaSimbolos(ArrayList<Object[]> tablaSimbolos) {
-        this.tablaSimbolos = tablaSimbolos;
     }
 
 }

@@ -15,16 +15,8 @@ public class Token {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getValor() {
         return valor;
-    }
-
-    public void setValor(String valor) {
-        this.valor = valor;
     }
 
     @Override

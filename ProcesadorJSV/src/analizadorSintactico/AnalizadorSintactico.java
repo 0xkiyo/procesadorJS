@@ -11,7 +11,6 @@ public class AnalizadorSintactico {
 
     public boolean flagDeclaracionLocal = false;
     public boolean flagDeclaracion = false;
-    public File miDir = new File(".");
     private static Token nombreFuncion;
     private static boolean flagReturn = true;
     //Atributos de clase
@@ -27,9 +26,7 @@ public class AnalizadorSintactico {
     private Token idFunction;
     private String[] tiposParam;
     private int ancho;
-    private int tabla;
     private int contParamG;
-    private boolean declaracion;
     private Token tokenLlamador;
 
     public AnalizadorSintactico()
@@ -45,14 +42,14 @@ public class AnalizadorSintactico {
 
         //Inicializando los atributos basicos
         this.parse = "";
-        this.tabla = 0;
+        int tabla = 0;
         this.idFunction = null;
         this.contParamG = 0;
 
         //Nuevos archivos
-        File archivoTablas = new File(miDir + "//impreso//tablas.txt");
-        File archivoParse = new File(miDir + "//impreso//parse.txt");
-        File archivoError = new File(miDir + "//impreso//error.txt");
+        File archivoTablas = new File(".//impreso//tablas.txt");
+        File archivoParse = new File(".//impreso//parse.txt");
+        File archivoError = new File(".//impreso//error.txt");
 
         try {
             this.tablasWriter =
@@ -144,7 +141,7 @@ public class AnalizadorSintactico {
         }
     }
 
-    public void empareja(Token valor)
+    private void empareja(Token valor)
             throws EmparejaException, ComentarioException, CadenaException,
             OpLogicoException, OtroSimboloException, FueraDeRangoException,
             IdException, IOException, DeclaracionIncompatibleException {
@@ -161,7 +158,7 @@ public class AnalizadorSintactico {
         }
     }
 
-    public void procedP()
+    private void procedP()
             throws FirstNoCoincideException, EmparejaException, CadenaException,
             OpLogicoException, ComentarioException, FueraDeRangoException,
             OtroSimboloException, IdException, IOException,
@@ -201,7 +198,7 @@ public class AnalizadorSintactico {
         }
     }
 
-    public void procedB()
+    private void procedB()
             throws FirstNoCoincideException, EmparejaException, CadenaException,
             OpLogicoException, OtroSimboloException, ComentarioException,
             FueraDeRangoException, IdException, IOException,
@@ -254,7 +251,7 @@ public class AnalizadorSintactico {
         }
     }
 
-    public void procedS()
+    private void procedS()
             throws FirstNoCoincideException, EmparejaException, ComentarioException,
             FueraDeRangoException, OtroSimboloException, CadenaException,
             IdException, IOException, OpLogicoException,
@@ -324,7 +321,7 @@ public class AnalizadorSintactico {
         }
     }
 
-    public void procedS1()
+    private void procedS1()
             throws FirstNoCoincideException, EmparejaException, ComentarioException,
             OpLogicoException, IdException, OtroSimboloException, CadenaException,
             FueraDeRangoException, IOException, FuncionNoDeclaradaException,
@@ -429,7 +426,7 @@ public class AnalizadorSintactico {
         }
     }
 
-    public void procedS2()
+    private void procedS2()
             throws FirstNoCoincideException, EmparejaException, ComentarioException,
             OpLogicoException, IdException, OtroSimboloException, CadenaException,
             FueraDeRangoException, IOException, FuncionNoDeclaradaException,
@@ -454,7 +451,7 @@ public class AnalizadorSintactico {
         }
     }
 
-    public void procedFq()
+    private void procedFq()
             throws FirstNoCoincideException, EmparejaException, ComentarioException,
             OpLogicoException, CadenaException, FueraDeRangoException,
             OtroSimboloException, IOException, IdException,
@@ -525,7 +522,7 @@ public class AnalizadorSintactico {
         }
     }
 
-    public int procedA()
+    private int procedA()
             throws EmparejaException, CadenaException, OpLogicoException,
             ComentarioException, FueraDeRangoException, OtroSimboloException,
             IdException, IOException, DeclaracionIncompatibleException,
@@ -569,7 +566,7 @@ public class AnalizadorSintactico {
         return contParam;
     }
 
-    public int procedD()
+    private int procedD()
             throws EmparejaException, CadenaException, OtroSimboloException,
             OpLogicoException, ComentarioException, FueraDeRangoException,
             IdException, IOException, DeclaracionIncompatibleException,
@@ -614,7 +611,7 @@ public class AnalizadorSintactico {
         return contParam;
     }
 
-    public void procedC()
+    private void procedC()
             throws FirstNoCoincideException, EmparejaException, ComentarioException,
             OtroSimboloException, IdException, OpLogicoException,
             FueraDeRangoException, IOException, CadenaException,
@@ -650,7 +647,7 @@ public class AnalizadorSintactico {
 
     }
 
-    public void procedC1()
+    private void procedC1()
             throws FirstNoCoincideException, EmparejaException, ComentarioException,
             OtroSimboloException, IdException, OpLogicoException,
             FueraDeRangoException, IOException, CadenaException,
@@ -676,7 +673,7 @@ public class AnalizadorSintactico {
 
     }
 
-    public void procedC2()
+    private void procedC2()
             throws FirstNoCoincideException, EmparejaException, ComentarioException,
             OtroSimboloException, IdException, OpLogicoException,
             FueraDeRangoException, IOException, CadenaException,
@@ -713,7 +710,7 @@ public class AnalizadorSintactico {
 
     }
 
-    public void procedC3()
+    private void procedC3()
             throws FirstNoCoincideException, EmparejaException, ComentarioException,
             OtroSimboloException, IdException, OpLogicoException,
             FueraDeRangoException, IOException, CadenaException,
@@ -776,7 +773,7 @@ public class AnalizadorSintactico {
         return contParam;
     }
 
-    public int procedQ()
+    private int procedQ()
             throws FirstNoCoincideException, EmparejaException, OpLogicoException,
             CadenaException, FueraDeRangoException, IdException,
             OtroSimboloException, ComentarioException, IOException,
@@ -807,7 +804,7 @@ public class AnalizadorSintactico {
         return contParam;
     }
 
-    public void procedX()
+    private void procedX()
             throws FirstNoCoincideException, EmparejaException, IOException,
             CadenaException, ComentarioException, OpLogicoException,
             FueraDeRangoException, IdException, OtroSimboloException,
@@ -864,7 +861,7 @@ public class AnalizadorSintactico {
         }
     }
 
-    public void procedR1()
+    private void procedR1()
             throws FirstNoCoincideException, EmparejaException, CadenaException,
             ComentarioException, OpLogicoException, IdException,
             OtroSimboloException, FueraDeRangoException, IOException,
@@ -911,7 +908,7 @@ public class AnalizadorSintactico {
         }
     }
 
-    public void procedT()
+    private void procedT()
             throws FirstNoCoincideException, EmparejaException, ComentarioException,
             OpLogicoException, OtroSimboloException, FueraDeRangoException,
             CadenaException, IdException, IOException, FuncionNoDeclaradaException,
@@ -937,7 +934,7 @@ public class AnalizadorSintactico {
         }
     }
 
-    public void procedT1()
+    private void procedT1()
             throws FirstNoCoincideException, EmparejaException, ComentarioException,
             OpLogicoException, FueraDeRangoException, OtroSimboloException,
             CadenaException, IdException, IOException, FuncionNoDeclaradaException,
@@ -982,7 +979,7 @@ public class AnalizadorSintactico {
         }
     }
 
-    public void procedH()
+    private void procedH()
             throws FirstNoCoincideException, EmparejaException, ComentarioException,
             OpLogicoException, CadenaException, OtroSimboloException,
             FueraDeRangoException, IdException, IOException,
@@ -1007,7 +1004,7 @@ public class AnalizadorSintactico {
         }
     }
 
-    public void procedH1()
+    private void procedH1()
             throws FirstNoCoincideException, EmparejaException, OpLogicoException,
             CadenaException, FueraDeRangoException, OtroSimboloException,
             ComentarioException, IdException, IOException,
@@ -1054,7 +1051,7 @@ public class AnalizadorSintactico {
         }
     }
 
-    public void procedF()
+    private void procedF()
             throws FirstNoCoincideException, EmparejaException, ComentarioException,
             OpLogicoException, CadenaException, FueraDeRangoException,
             OtroSimboloException, IdException, IOException,
@@ -1199,7 +1196,7 @@ public class AnalizadorSintactico {
         }
     }
 
-    public void procedF2()
+    private void procedF2()
             throws FirstNoCoincideException, EmparejaException, ComentarioException,
             OpLogicoException, CadenaException, FueraDeRangoException,
             OtroSimboloException, IdException, IOException,
@@ -1237,7 +1234,7 @@ public class AnalizadorSintactico {
 
     }
 
-    public void procedF3()
+    private void procedF3()
             throws FirstNoCoincideException, EmparejaException, ComentarioException,
             OpLogicoException, CadenaException, FueraDeRangoException,
             OtroSimboloException, IdException, IOException,
@@ -1475,60 +1472,41 @@ public class AnalizadorSintactico {
         return flagReturn;
     }
 
-    public AnalizadorLexico getAnalizador() {
+    private AnalizadorLexico getAnalizador() {
         return analizador;
     }
 
-    public void setAnalizador(AnalizadorLexico analizador) {
-        this.analizador = analizador;
-    }
-
-    public TablaSimbolos gettS() {
+    private TablaSimbolos gettS() {
         return tS;
     }
 
-    public void settS(TablaSimbolos tS) {
-        this.tS = tS;
-    }
-
-    public Token getTokenDevuelto() {
+    private Token getTokenDevuelto() {
         return tokenDevuelto;
     }
 
-    public void setTokenDevuelto(Token tokenDevuelto) {
+    private void setTokenDevuelto(Token tokenDevuelto) {
         this.tokenDevuelto = tokenDevuelto;
     }
 
-    public String getParse() {
+    private String getParse() {
         return parse;
     }
 
-    public void setParse(String parse) {
+    private void setParse(String parse) {
         this.parse = parse;
     }
 
-    public BufferedWriter getTablasWriter() {
+    private BufferedWriter getTablasWriter() {
         return tablasWriter;
     }
 
-    public void setTablasWriter(BufferedWriter tablasWriter) {
-        this.tablasWriter = tablasWriter;
-    }
-
-    public BufferedWriter getParseWriter() {
+    private BufferedWriter getParseWriter() {
         return parseWriter;
     }
 
-    public void setParseWriter(BufferedWriter parseWriter) {
-        this.parseWriter = parseWriter;
-    }
-
-    public BufferedWriter getErrorWriter() {
+    private BufferedWriter getErrorWriter() {
         return errorWriter;
     }
 
-    public void setErrorWriter(BufferedWriter errorWriter) {
-        this.errorWriter = errorWriter;
-    }
 }
 
