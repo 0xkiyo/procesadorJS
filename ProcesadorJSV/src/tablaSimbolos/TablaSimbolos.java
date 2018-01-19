@@ -1,6 +1,7 @@
 package tablaSimbolos;
 
 import analizadorLexico.AnalizadorLexico;
+import analizadorSintactico.AnalizadorSintactico;
 import errores.DeclaracionIncompatibleException;
 import token.Token;
 
@@ -11,12 +12,14 @@ import java.util.ArrayList;
 
 public class TablaSimbolos {
 
-    public static int indice = 2;
+    public int indice = 2;
+    private AnalizadorLexico analizadorLexico;
     private int contadorRegistros = 0;
     private ArrayList<Object[]> tablaSimbolos;
     private int desplazamiento = 0;
 
-    public TablaSimbolos() throws DeclaracionIncompatibleException {
+    public TablaSimbolos(AnalizadorLexico analizadorLexico) throws DeclaracionIncompatibleException {
+        this.analizadorLexico = analizadorLexico;
         this.tablaSimbolos = new ArrayList<Object[]>();
         this.addPalabrasReservadas();
     }
@@ -166,7 +169,7 @@ public class TablaSimbolos {
         if (!anadidoLocal) {
             this.tablaSimbolos.add(new Object[7]); //Incrementamos una posicion
             this.tablaSimbolos.get(contadorRegistros)[0] =
-                    (String) token.getValor();
+                    token.getValor();
             contadorRegistros++;
         }
     }
@@ -178,7 +181,7 @@ public class TablaSimbolos {
                     !this.getTipo(token).equals(tipo) &&
                     ("FUNC".equals(tipo) || "FUNC".equals(this.getTipo(token)))) {
                 throw new DeclaracionIncompatibleException(
-                        "Error en linea " + AnalizadorLexico.linea +
+                        "Error en linea " + analizadorLexico.linea +
                                 ". La variable o funcion '" + token.getValor() +
                                 "' ha sido declarada previamente.");
             }
@@ -283,7 +286,7 @@ public class TablaSimbolos {
 
     public void crearTSL() throws DeclaracionIncompatibleException {
         this.tablaSimbolos.add(new Object[6]);
-        this.tablaSimbolos.get(contadorRegistros)[0] = new TablaSimbolos();
+        this.tablaSimbolos.get(contadorRegistros)[0] = new TablaSimbolos(this.analizadorLexico);
         contadorRegistros++;
     }
 

@@ -10,10 +10,11 @@ import java.io.*;
 
 public class AnalizadorLexico {
 
-    public static int indice = 0;
-    public static Long digit = 0L;
-    public static String cadena = "";
-    public static Integer linea = 0;
+    public int indice = 0;
+    public Long digit = 0L;
+    public String cadena = "";
+    public Integer linea = 0;
+    private final AnalizadorSintactico analizadorSintactico;
     private File archivo = null;
     private FileReader fr = null;
     private BufferedWriter bw;
@@ -21,15 +22,19 @@ public class AnalizadorLexico {
 
     private char[] a;
 
-    public static int getIndice() {
+    public AnalizadorLexico(AnalizadorSintactico analizadorSintactico) {
+        this.analizadorSintactico = analizadorSintactico;
+    }
+
+    public int getIndice() {
         return indice;
     }
 
-    public static Long getDigit() {
+    public Long getDigit() {
         return digit;
     }
 
-    public static String getCadena() {
+    public String getCadena() {
         return cadena;
     }
 
@@ -42,8 +47,8 @@ public class AnalizadorLexico {
             this.a = new char[(int) archivo.length()];
             this.fr.read(a);
 
-            String ruta = AnalizadorSintactico.miDir.getCanonicalPath() +
-                    "//impreso//tokens.txt";
+            String ruta =
+                    ".//impreso//tokens.txt";
             File archivoTokens = new File(ruta);
             this.bw = new BufferedWriter(new FileWriter(archivoTokens));
             linea++;
@@ -174,19 +179,19 @@ public class AnalizadorLexico {
             } else {
                 //Identificador: genera token
                 if (p[0] == null &&
-                        !AnalizadorSintactico.flagDeclaracionLocal) {
+                        !analizadorSintactico.flagDeclaracionLocal) {
                     tS.addTs(new Token("ID", cadena));
                 } else if ((p[0] == null &&
-                        AnalizadorSintactico.flagDeclaracionLocal) ||
+                        analizadorSintactico.flagDeclaracionLocal) ||
                         (p[0] != null && p[1] == 0 &&
-                                AnalizadorSintactico.flagDeclaracionLocal)) {
+                                analizadorSintactico.flagDeclaracionLocal)) {
                     tS.addTs(new Token("ID", cadena));//Se añade en la local
                 } else if (p[0] != null && ((p[1] == 1 &&
-                        AnalizadorSintactico.flagDeclaracionLocal) ||
+                        analizadorSintactico.flagDeclaracionLocal) ||
                         (p[1] == 0 &&
-                                AnalizadorSintactico.flagDeclaracion))) {
+                                analizadorSintactico.flagDeclaracion))) {
                     throw new DeclaracionIncompatibleException(
-                            "Error en linea " + AnalizadorLexico.linea +
+                            "Error en linea " + linea +
                                     ". La variable o funcion '" + cadena +
                                     "' ha sido declarada previamente.");
                 }
@@ -257,7 +262,7 @@ public class AnalizadorLexico {
         }
     }
 
-    public void procG(char[] contenido) throws IdException {
+    public void procG(char[] contenido) {
         if (indice < contenido.length &&
                 (isDigit(contenido[indice]) || isLetter(contenido[indice]) ||
                         contenido[indice] == '_')) {

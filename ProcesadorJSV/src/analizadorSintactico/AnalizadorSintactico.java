@@ -9,9 +9,9 @@ import java.io.*;
 
 public class AnalizadorSintactico {
 
-    public static boolean flagDeclaracionLocal = false;
-    public static boolean flagDeclaracion = false;
-    public static File miDir = new File(".");
+    public boolean flagDeclaracionLocal = false;
+    public boolean flagDeclaracion = false;
+    public File miDir = new File(".");
     private static Token nombreFuncion;
     private static boolean flagReturn = true;
     //Atributos de clase
@@ -33,14 +33,14 @@ public class AnalizadorSintactico {
     private Token tokenLlamador;
 
     public AnalizadorSintactico()
-            throws DeclaracionIncompatibleException, IOException {
+            throws DeclaracionIncompatibleException {
 
         //Inicializando atributos de clase
-        this.analizador = new AnalizadorLexico();
-        this.tS = new TablaSimbolos();
+        this.analizador = new AnalizadorLexico(this);
+        this.tS = new TablaSimbolos(analizador);
         this.tokenDevuelto = new Token(null, null);
         this.tokenLlamador = new Token(null, null);
-        this.nombreFuncion = new Token(null, null);
+        nombreFuncion = new Token(null, null);
         this.tiposParam = new String[10];
 
         //Inicializando los atributos basicos
@@ -66,15 +66,14 @@ public class AnalizadorSintactico {
 
     }
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
         AnalizadorSintactico as = null;
 
         try {
 
             File ficheroAAnalizar = null;
             if (args != null) {
-                ficheroAAnalizar = new File(
-                        miDir.getCanonicalPath() + "//pruebas//" + args[0]);
+                ficheroAAnalizar = new File(".//pruebas//" + args[0]);
             }
 
             as = new AnalizadorSintactico();
@@ -105,6 +104,7 @@ public class AnalizadorSintactico {
 
         } catch (FirstNoCoincideException | FileNotFoundException | EmparejaException | ComentarioException | CadenaException | OpLogicoException | OtroSimboloException | FueraDeRangoException | IdException | FuncionNoDeclaradaException | VariableNoDeclaradaException | DevuelveCadenaException | TiposDiferentesException | CodigoMuertoException | DeclaracionIncompatibleException | ConcatenacionNoImplementadaException | TipoIncorrectoException ex) {
             System.out.println(ex.getMessage());
+//            ex.printStackTrace();
             try {
                 if (as != null) {
                     as.getErrorWriter().write(ex.getMessage());
@@ -153,7 +153,7 @@ public class AnalizadorSintactico {
         } else {
             throw new EmparejaException("Empareja: Error en linea: " +
                     Integer.toString(
-                            AnalizadorLexico.linea) +
+                            analizador.linea) +
                     " Se esperaba detectar el token " +
                     valor.toString() +
                     " y se ha encontrado el token " +
@@ -195,7 +195,7 @@ public class AnalizadorSintactico {
             this.setParse(this.getParse() + "3 ");
         } else {
             throw new FirstNoCoincideException(
-                    "Error en linea: " + Integer.toString(AnalizadorLexico.linea) +
+                    "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < EOF , _ >, < PR , function >, < ID , id >, < PR , if >, < PR , prompt >, < PR , var >) pero se ha detectado: " +
                             this.getTokenDevuelto().toString());
         }
@@ -248,7 +248,7 @@ public class AnalizadorSintactico {
             procedS();
         } else {
             throw new FirstNoCoincideException(
-                    "Error en linea: " + Integer.toString(AnalizadorLexico.linea) +
+                    "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < ID , id >, < PR , if >, < PR , prompt >, < PR , var >) pero se ha detectado: " +
                             this.getTokenDevuelto().toString());
         }
@@ -288,7 +288,7 @@ public class AnalizadorSintactico {
                 tS.addDireccion(tokenDevuelto, ancho);
             } else if ("FUNC".equals(tS.getTipo(tokenDevuelto))) {
                 throw new DeclaracionIncompatibleException(
-                        "Error en linea " + AnalizadorLexico.linea +
+                        "Error en linea " + analizador.linea +
                                 ". La variable o funcion '" + tokenDevuelto.getValor() +
                                 "' ha sido declarada previamente.");
             }
@@ -318,7 +318,7 @@ public class AnalizadorSintactico {
             procedC();
         } else {
             throw new FirstNoCoincideException(
-                    "Error en linea: " + Integer.toString(AnalizadorLexico.linea) +
+                    "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < ID , id >, < PR , if >, < PR , prompt >) pero se ha detectado: " +
                             this.getTokenDevuelto().toString());
         }
@@ -339,13 +339,13 @@ public class AnalizadorSintactico {
             procedE();
             if ("VOID".equals(tipo)) {
                 throw new TipoIncorrectoException(
-                        "Error en linea: " + AnalizadorLexico.linea +
+                        "Error en linea: " + analizador.linea +
                                 ". Esta intentando asignar una funcion que puede ser 'VOID' a una variable.");
             }
             //Comprobacion de tipos en la asignacion
             if (!tS.getTipo(tokenLlamador).equals(tipo)) {
                 throw new TipoIncorrectoException(
-                        "Error en linea: " + AnalizadorLexico.linea +
+                        "Error en linea: " + analizador.linea +
                                 ". Error de tipos en la asignacion.");
             }
             tS.addTipo(tokenLlamador, tipo);
@@ -368,14 +368,14 @@ public class AnalizadorSintactico {
                             tokenLlamador))) {//tipo != FUNC porque si es variable o no declarada tiene que dar error.
                 throw new FuncionNoDeclaradaException("Error en linea " +
                         Integer.toString(
-                                AnalizadorLexico.linea) +
+                                analizador.linea) +
                         " La funcion '" +
                         tokenLlamador.getValor() +
                         "' no ha sido declarada.");
             } else if (tS.getNParametros(tokenLlamador) != contParam) {
                 throw new FuncionNoDeclaradaException("Error en linea " +
                         Integer.toString(
-                                AnalizadorLexico.linea) +
+                                analizador.linea) +
                         " La funcion '" +
                         tokenLlamador.getValor() +
                         "' debe ser llamada con " +
@@ -391,7 +391,7 @@ public class AnalizadorSintactico {
                         this.tiposParam[i])) {
                     throw new FuncionNoDeclaradaException("Error en linea " +
                             Integer.toString(
-                                    AnalizadorLexico.linea) +
+                                    analizador.linea) +
                             " La funcion '" +
                             tokenLlamador.getValor() +
                             "' debe ser llamada con los tipos correspondientes.");
@@ -406,24 +406,24 @@ public class AnalizadorSintactico {
             procedE();
             if ("VOID".equals(tipo)) {
                 throw new TipoIncorrectoException(
-                        "Error en linea: " + AnalizadorLexico.linea +
+                        "Error en linea: " + analizador.linea +
                                 ". Esta intentando asignar una funcion que puede ser 'VOID' a una variable.");
             }
             //Comprobacion de tipos enteros
             if (!tS.getTipo(tokenLlamador).equals(tipo)) {
                 throw new TipoIncorrectoException(
-                        "Error en linea: " + AnalizadorLexico.linea +
+                        "Error en linea: " + analizador.linea +
                                 ". Error de tipos en la asignacion con division.");
             } else if (!tipo.equals("ENTERA")) {
                 throw new TipoIncorrectoException(
-                        "Error en linea: " + AnalizadorLexico.linea +
+                        "Error en linea: " + analizador.linea +
                                 ". Error de tipos en la asignacion con division. Deben de ser enteros.");
             }
             tS.addTipo(tokenLlamador, tipo);
             tS.addDireccion(tokenLlamador, ancho);
         } else {
             throw new FirstNoCoincideException(
-                    "Error en linea: " + Integer.toString(AnalizadorLexico.linea) +
+                    "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens ( < PARENTABIERTO , _ >, < ASIG , _ >, < ASIGDIV , _ >) pero se ha detectado: " +
                             this.getTokenDevuelto().toString());
         }
@@ -507,7 +507,7 @@ public class AnalizadorSintactico {
             //Justo antes de borrar volcamos la tabla de simbolos local correspondiente
             tablasWriter.write(
                     "TABLA DE LA FUNCION " + nombreFuncion.getValor() + " #" +
-                            tS.indice++);
+                            this.tS.indice++);
             this.tS.volcarTabla(tablasWriter);
             this.tS.borraTS();
             empareja(new Token("LLAVECERRADA", null));
@@ -519,7 +519,7 @@ public class AnalizadorSintactico {
 
         } else {
             throw new FirstNoCoincideException(
-                    "Error en linea: " + Integer.toString(AnalizadorLexico.linea) +
+                    "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar el token < PR , function > pero se ha detectado: " +
                             this.getTokenDevuelto().toString());
         }
@@ -643,7 +643,7 @@ public class AnalizadorSintactico {
             procedS2();
         } else {
             throw new FirstNoCoincideException(
-                    "Error en linea: " + Integer.toString(AnalizadorLexico.linea) +
+                    "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens ( < PR , write >, < ID , id >, < LLAVEABIERTA , - >, < PR , prompt > ) pero se ha detectado: " +
                             this.getTokenDevuelto().toString());
         }
@@ -706,7 +706,7 @@ public class AnalizadorSintactico {
             procedS2fun();
         } else {
             throw new FirstNoCoincideException(
-                    "Error en linea: " + Integer.toString(AnalizadorLexico.linea) +
+                    "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar el token ( < PR , write >, < ID , id >, < LLAVEABIERTA , - >, < PR , prompt > ) pero se ha detectado: " +
                             this.getTokenDevuelto().toString());
         }
@@ -827,7 +827,7 @@ public class AnalizadorSintactico {
             if ("CADENA".equals(tipo)) {
                 throw new DevuelveCadenaException("Error en linea: " +
                         Integer.toString(
-                                AnalizadorLexico.linea) +
+                                analizador.linea) +
                         ". Se ha intentado devolver una cadena y solo se permite devolver un entero o vacio.");
             }
         }
@@ -858,7 +858,7 @@ public class AnalizadorSintactico {
             procedR1();
         } else {
             throw new FirstNoCoincideException(
-                    "Error en linea: " + Integer.toString(AnalizadorLexico.linea) +
+                    "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < BOOL , cadena >, < ENTERA , num >, < ID , id > ) pero se ha detectado: " +
                             this.getTokenDevuelto().toString());
         }
@@ -890,17 +890,17 @@ public class AnalizadorSintactico {
             if ("VOID".equals(tipo) || "VOID".equals(tipoR1)) {
                 throw new TiposDiferentesException("Error en linea: " +
                         Integer.toString(
-                                AnalizadorLexico.linea) +
+                                analizador.linea) +
                         ". Esta realizando una operacion con una funcion que puede ser 'VOID'.");
             } else if (!tipo.equals(tipoR1)) {
                 throw new TiposDiferentesException("Error en linea: " +
                         Integer.toString(
-                                AnalizadorLexico.linea) +
+                                analizador.linea) +
                         ". Los tipos de los operandos no coinciden.");
             } else if (tipo.equals(tipoR1) && tipo.equals("CADENA")) {
                 throw new ConcatenacionNoImplementadaException(
                         "Error en linea: " +
-                                Integer.toString(AnalizadorLexico.linea) +
+                                Integer.toString(analizador.linea) +
                                 ". La conjuncion de cadenas no se puede realizar.");
             }
             procedR1();
@@ -931,7 +931,7 @@ public class AnalizadorSintactico {
             procedT1();
         } else {
             throw new FirstNoCoincideException(
-                    "Error en linea: " + Integer.toString(AnalizadorLexico.linea) +
+                    "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < BOOL , cadena >, < ENTERA , num >, < ID , id > ) pero se ha detectado: " +
                             this.getTokenDevuelto().toString());
         }
@@ -963,12 +963,12 @@ public class AnalizadorSintactico {
             if ("VOID".equals(tipo) || "VOID".equals(tipoT1)) {
                 throw new TiposDiferentesException("Error en linea: " +
                         Integer.toString(
-                                AnalizadorLexico.linea) +
+                                analizador.linea) +
                         ". Esta realizando una operacion con una funcion que puede ser 'VOID'.");
             } else if (!tipo.equals(tipoT1)) {
                 throw new TiposDiferentesException("Error en linea: " +
                         Integer.toString(
-                                AnalizadorLexico.linea) +
+                                analizador.linea) +
                         ". Los tipos de los operandos no coinciden.");
             } else if (tipo.equals(tipoT1) && "CADENA".equals(tipo)) {
                 tipo = "ENTERA";
@@ -1001,7 +1001,7 @@ public class AnalizadorSintactico {
             procedH1();
         } else {
             throw new FirstNoCoincideException(
-                    "Error en linea: " + Integer.toString(AnalizadorLexico.linea) +
+                    "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < BOOL , cadena >, < ENTERA , num >, < ID , id > ) pero se ha detectado: " +
                             this.getTokenDevuelto().toString());
         }
@@ -1033,17 +1033,17 @@ public class AnalizadorSintactico {
             if ("VOID".equals(tipo) || "VOID".equals(tipoH1)) {
                 throw new TiposDiferentesException("Error en linea: " +
                         Integer.toString(
-                                AnalizadorLexico.linea) +
+                                analizador.linea) +
                         ". Esta realizando una operacion con una funcion que puede ser 'VOID'.");
             } else if (!tipo.equals(tipoH1)) {
                 throw new TiposDiferentesException("Error en linea: " +
                         Integer.toString(
-                                AnalizadorLexico.linea) +
+                                analizador.linea) +
                         ". Los tipos de los sumandos no coinciden.");
             } else if (tipo.equals(tipoH1) && tipo.equals("CADENA")) {
                 throw new ConcatenacionNoImplementadaException(
                         "Error en linea: " +
-                                Integer.toString(AnalizadorLexico.linea) +
+                                Integer.toString(analizador.linea) +
                                 ". No esta implementada la concatenacion de cadenas.");
             }
             procedH1();
@@ -1116,18 +1116,18 @@ public class AnalizadorSintactico {
             if ("CADENA".equals(tipo)) {
                 throw new TipoIncorrectoException("Error en linea: " +
                         Integer.toString(
-                                AnalizadorLexico.linea) +
+                                analizador.linea) +
                         ". La condicion de la sentencia condicional ternaria no puede ser una cadena.");
             } else if ("VOID".equals(tipo)) {
                 throw new TipoIncorrectoException("Error en linea: " +
                         Integer.toString(
-                                AnalizadorLexico.linea) +
+                                analizador.linea) +
                         ". La condicion de la sentencia condicional ternaria no puede ser una funcion que puede ser 'VOID'.");
             }
             empareja(new Token("PARENTCERRADO", null));
         } else {
             throw new FirstNoCoincideException(
-                    "Error en linea: " + Integer.toString(AnalizadorLexico.linea) +
+                    "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < BOOL , cadena >, < ENTERA , num >, < ID , id > ) pero se ha detectado: " +
                             this.getTokenDevuelto().toString());
         }
@@ -1147,7 +1147,7 @@ public class AnalizadorSintactico {
             if (tS.getTipo(tokenLlamador) == null) {
                 throw new FuncionNoDeclaradaException("Error en linea " +
                         Integer.toString(
-                                AnalizadorLexico.linea) +
+                                analizador.linea) +
                         " La funcion '" +
                         tokenLlamador.getValor() +
                         "' no ha sido declarada.");
@@ -1160,7 +1160,7 @@ public class AnalizadorSintactico {
                     "FUNC".equals(tS.getTipo(tokenLlamador))) {
                 throw new FuncionNoDeclaradaException("Error en linea " +
                         Integer.toString(
-                                AnalizadorLexico.linea) +
+                                analizador.linea) +
                         " La funcion '" +
                         tokenLlamador.getValor() +
                         "' no ha sido declarada.");
@@ -1172,7 +1172,7 @@ public class AnalizadorSintactico {
             if (tS.getNParametros(tokenLlamador) != contParam) {
                 throw new FuncionNoDeclaradaException("Error en linea " +
                         Integer.toString(
-                                AnalizadorLexico.linea) +
+                                analizador.linea) +
                         " La funcion '" +
                         tokenLlamador.getValor() +
                         "' debe ser llamada con " +
@@ -1191,7 +1191,7 @@ public class AnalizadorSintactico {
         else {
             if ("FUNC".equals(tS.getTipo(tokenLlamador))) {
                 throw new DeclaracionIncompatibleException(
-                        "Error en linea " + AnalizadorLexico.linea +
+                        "Error en linea " + analizador.linea +
                                 ". La variable o funcion '" + tokenLlamador.getValor() +
                                 "' ha sido declarada previamente.");
             }
@@ -1203,9 +1203,7 @@ public class AnalizadorSintactico {
             throws FirstNoCoincideException, EmparejaException, ComentarioException,
             OpLogicoException, CadenaException, FueraDeRangoException,
             OtroSimboloException, IdException, IOException,
-            FuncionNoDeclaradaException, VariableNoDeclaradaException,
-            TiposDiferentesException, DeclaracionIncompatibleException,
-            ConcatenacionNoImplementadaException, TipoIncorrectoException {
+            DeclaracionIncompatibleException {
 
         //F2 -> int = { int }
         if ("PR".equals(this.getTokenDevuelto().getId()) &&
@@ -1232,7 +1230,7 @@ public class AnalizadorSintactico {
             empareja(new Token("PR", "bool"));
         } else {
             throw new FirstNoCoincideException(
-                    "Error en linea: " + Integer.toString(AnalizadorLexico.linea) +
+                    "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens ( < PR , int >, < PR , chars >, < PR , bool > ) pero se ha detectado: " +
                             this.getTokenDevuelto().toString());
         }
@@ -1243,9 +1241,7 @@ public class AnalizadorSintactico {
             throws FirstNoCoincideException, EmparejaException, ComentarioException,
             OpLogicoException, CadenaException, FueraDeRangoException,
             OtroSimboloException, IdException, IOException,
-            FuncionNoDeclaradaException, VariableNoDeclaradaException,
-            TiposDiferentesException, DeclaracionIncompatibleException,
-            ConcatenacionNoImplementadaException, TipoIncorrectoException {
+            DeclaracionIncompatibleException {
 
         //F3 -> int = { int }
         if ("PR".equals(this.getTokenDevuelto().getId()) &&
@@ -1276,7 +1272,7 @@ public class AnalizadorSintactico {
             empareja(new Token("PR", "void"));
         } else {
             throw new FirstNoCoincideException(
-                    "Error en linea: " + Integer.toString(AnalizadorLexico.linea) +
+                    "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens ( < PR , int >, < PR , chars >, < PR , bool >, < PR, void > ) pero se ha detectado: " +
                             this.getTokenDevuelto().toString());
         }
@@ -1333,7 +1329,7 @@ public class AnalizadorSintactico {
             flagReturn = procedSfun();
         } else {
             throw new FirstNoCoincideException(
-                    "Error en linea: " + Integer.toString(AnalizadorLexico.linea) +
+                    "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < PR , return >, < ID , id >, < PR , if >, < PR , prompt >,  < PR , var >) pero se ha detectado: " +
                             this.getTokenDevuelto().toString());
         }
@@ -1375,7 +1371,7 @@ public class AnalizadorSintactico {
                 tS.addDireccion(tokenDevuelto, ancho);
             } else if ("FUNC".equals(tS.getTipo(tokenDevuelto))) {
                 throw new DeclaracionIncompatibleException(
-                        "Error en linea " + AnalizadorLexico.linea +
+                        "Error en linea " + analizador.linea +
                                 ". La variable o funcion '" + tokenDevuelto.getValor() +
                                 "' ha sido declarada previamente.");
             }
@@ -1415,7 +1411,7 @@ public class AnalizadorSintactico {
             empareja(new Token("PUNTCOM", null));
         } else {
             throw new FirstNoCoincideException(
-                    "Error en linea: " + Integer.toString(AnalizadorLexico.linea) +
+                    "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < ID , id >, < PR , if >, < PR , prompt>, < PR , return >) pero se ha detectado: " +
                             this.getTokenDevuelto().toString());
         }
@@ -1473,7 +1469,7 @@ public class AnalizadorSintactico {
         }
         //Cfun -> lambda
         else {
-            //throw new FirstNoCoincideException("Error en linea: " + Integer.toString(AnalizadorLexico.linea) + " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < PR , for >, < ID , id >, < PR , if >, < PR , prompt>, < PR , return >,  <PR , var >) pero se ha detectado: " + this.getTokenDevuelto().toString());
+            //throw new FirstNoCoincideException("Error en linea: " + Integer.toString(analizador.linea) + " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < PR , for >, < ID , id >, < PR , if >, < PR , prompt>, < PR , return >,  <PR , var >) pero se ha detectado: " + this.getTokenDevuelto().toString());
             this.setParse(this.getParse() + "67 ");
         }
         return flagReturn;
