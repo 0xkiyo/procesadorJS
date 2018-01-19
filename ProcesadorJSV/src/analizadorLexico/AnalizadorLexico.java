@@ -1,7 +1,7 @@
 package analizadorLexico;
 
 import analizadorSintactico.AnalizadorSintactico;
-import errores.*;
+import errores.ParserException;
 import tablaSimbolos.TablaSimbolos;
 import token.Token;
 
@@ -62,9 +62,7 @@ public class AnalizadorLexico {
     }
 
     public Token procS(char[] contenido, TablaSimbolos tS)
-            throws ComentarioException, CadenaException, OpLogicoException,
-            OtroSimboloException, FueraDeRangoException, IdException,
-            DeclaracionIncompatibleException {
+            throws ParserException {
         Token toReturn = null;
         if (indice == contenido.length) {
             //Final de archivo: genera token
@@ -113,7 +111,7 @@ public class AnalizadorLexico {
             if (digit < Math.pow(2, 15)) {
                 toReturn = new Token("ENTERA", Long.toString(digit));
             } else {
-                throw new FueraDeRangoException(
+                throw new ParserException(ParserException.Reason.FUERA_DE_RANGO,
                         "Error en linea: " + linea.toString() + " El numero " +
                                 Long.toString(digit) +
                                 " sobrepasa el maximo representable");
@@ -178,7 +176,7 @@ public class AnalizadorLexico {
                         analizadorSintactico.flagDeclaracionLocal) ||
                         (p[1] == 0 &&
                                 analizadorSintactico.flagDeclaracion))) {
-                    throw new DeclaracionIncompatibleException(
+                    throw new ParserException(ParserException.Reason.DECLARACION_INCOMPATIBLE,
                             "Error en linea " + linea +
                                     ". La variable o funcion '" + cadena +
                                     "' ha sido declarada previamente.");
@@ -190,7 +188,7 @@ public class AnalizadorLexico {
             indice++;
             toReturn = new Token("PUNTCOM", null);
         } else {
-            throw new OtroSimboloException(
+            throw new ParserException(ParserException.Reason.OTRO_SIMBOLO,
                     "Error en linea: " + linea.toString() +
                             " Se ha encontrado un simbolo que no pertenece a la gramatica: " +
                             contenido[indice]);
@@ -198,12 +196,12 @@ public class AnalizadorLexico {
         return toReturn;
     }
 
-    public void procA(char[] contenido) throws ComentarioException {
+    public void procA(char[] contenido) throws ParserException {
         if (contenido[indice] == '/') {
             indice++;
             procB(contenido);
         } else {
-            throw new ComentarioException(
+            throw new ParserException(ParserException.Reason.COMENTARIO,
                     "Error en linea: " + linea.toString() +
                             " Se esperaba detectar el simbolo '/'");
         }
@@ -227,7 +225,7 @@ public class AnalizadorLexico {
         }
     }
 
-    public void procE(char[] contenido) throws CadenaException {
+    public void procE(char[] contenido) throws ParserException {
         if (indice < contenido.length && contenido[indice] != '\"' &&
                 contenido[indice] != '\n' && contenido[indice] != '\r') {
             cadena += Character.toString(contenido[indice]);
@@ -236,16 +234,16 @@ public class AnalizadorLexico {
         } else if (indice < contenido.length && contenido[indice] == '\"') {
             indice++;
         } else {
-            throw new CadenaException("Error en linea: " + linea.toString() +
+            throw new ParserException(ParserException.Reason.CADENA, "Error en linea: " + linea.toString() +
                     " Se ha encontrado un salto de linea mientras se analizaba una cadena");
         }
     }
 
-    public void procF(char[] contenido) throws OpLogicoException {
+    public void procF(char[] contenido) throws ParserException {
         if (contenido[indice] == '&') {
             indice++;
         } else {
-            throw new OpLogicoException("Error en linea: " + linea.toString() +
+            throw new ParserException(ParserException.Reason.OP_LOGICO, "Error en linea: " + linea.toString() +
                     " Se esperaba detectar o '&'");
         }
     }
@@ -268,11 +266,11 @@ public class AnalizadorLexico {
         }
     }
 
-    public void procI(char[] contenido) throws OpLogicoException {
+    public void procI(char[] contenido) throws ParserException {
         if (contenido[indice] == '|') {
             indice++;
         } else {
-            throw new OpLogicoException("Error en linea: " + linea.toString() +
+            throw new ParserException(ParserException.Reason.OP_LOGICO, "Error en linea: " + linea.toString() +
                     " Se esperaba detectar otro simbolo '|'");
         }
     }
@@ -298,9 +296,7 @@ public class AnalizadorLexico {
     }
 
     public Token al(TablaSimbolos tablaSimbolos)
-            throws ComentarioException, CadenaException, OpLogicoException,
-            OtroSimboloException, FueraDeRangoException, IdException, IOException,
-            DeclaracionIncompatibleException {
+            throws ParserException, IOException {
         Token toReturn = null;
 
         while (toReturn == null) {
