@@ -293,16 +293,6 @@ public class TablaSimbolos {
         contadorRegistros--;
     }
 
-    public TablaSimbolos accederTSL() {
-        if ("TablaSimbolos".equals(this.tablaSimbolos.get(
-                contadorRegistros - 1)[0].getClass().getCanonicalName())) {
-            return (TablaSimbolos) this.tablaSimbolos.get(
-                    contadorRegistros - 1)[0];
-        } else {
-            return null;
-        }
-    }
-
     public int getNParametros(Token token) {
         int toReturn = -1;
         Integer[] posYTab = this.buscaTS(token.getValor());

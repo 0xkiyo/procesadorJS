@@ -9,6 +9,8 @@ import java.io.*;
 
 public class AnalizadorSintactico {
 
+    private static final String CONJUNCION = "CONJUNCION";
+    private static final String CADENA = "CADENA";
     public boolean flagDeclaracionLocal;
     public boolean flagDeclaracion;
     private Token nombreFuncion;
@@ -206,16 +208,7 @@ public class AnalizadorSintactico {
             this.tokenLlamador = this.tokenDevuelto;
 
             procedF2();
-            if ("int".equals(this.tokenLlamador.getValor())) {
-                this.tipo = "ENTERA";
-                this.ancho = 2;
-            } else if ("chars".equals(this.tokenLlamador.getValor())) {
-                this.tipo = "CADENA";
-                this.ancho = 1;
-            } else {
-                this.tipo = "BOOL";
-                this.ancho = 1;
-            }
+            getTypeOFToken();
 
             tS.addTipo(this.tokenDevuelto, this.tipo);
             tS.addDireccion(tokenDevuelto, ancho);
@@ -236,6 +229,23 @@ public class AnalizadorSintactico {
                     "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < ID , id >, < PR , if >, < PR , prompt >, < PR , var >) pero se ha detectado: " +
                             this.getTokenDevuelto().toString());
+        }
+    }
+
+    private void getTypeOFToken() {
+        switch (this.tokenLlamador.getValor()) {
+            case "int":
+                this.tipo = "ENTERA";
+                this.ancho = 2;
+                break;
+            case "chars":
+                this.tipo = CADENA;
+                this.ancho = 1;
+                break;
+            default:
+                this.tipo = "BOOL";
+                this.ancho = 1;
+                break;
         }
     }
 
@@ -509,16 +519,7 @@ public class AnalizadorSintactico {
             this.setParse(this.getParse() + "16 ");
 
             procedF2();
-            if ("int".equals(this.tokenLlamador.getValor())) {
-                this.tipo = "ENTERA";
-                this.ancho = 2;
-            } else if ("chars".equals(this.tokenLlamador.getValor())) {
-                this.tipo = "CADENA";
-                this.ancho = 1;
-            } else {
-                this.tipo = "BOOL";
-                this.ancho = 1;
-            }
+            getTypeOFToken();
 
             tS.addTipo(this.tokenDevuelto, this.tipo);
             this.tiposParam[contParamG] =
@@ -554,7 +555,7 @@ public class AnalizadorSintactico {
                 this.tipo = "ENTERA";
                 this.ancho = 2;
             } else if ("chars".equals(this.tokenLlamador.getValor())) {
-                this.tipo = "CADENA";
+                this.tipo = CADENA;
                 this.ancho = 4;
             } else {
                 this.tipo = "BOOL";
@@ -694,7 +695,7 @@ public class AnalizadorSintactico {
         //L -> E Q = { id cadena bool num }
         if ("PARENTABIERTO".equals(this.getTokenDevuelto().getId())
                 || "ID".equals(this.getTokenDevuelto().getId()) ||
-                "CADENA".equals(this.getTokenDevuelto().getId()) ||
+                CADENA.equals(this.getTokenDevuelto().getId()) ||
                 "BOOL".equals(this.getTokenDevuelto().getId())
                 || "ENTERA".equals(this.getTokenDevuelto().getId())) {
             this.setParse(this.getParse() + "28 ");
@@ -753,12 +754,12 @@ public class AnalizadorSintactico {
         //X -> E = { id cadena ent bool }
         if ("PARENTABIERTO".equals(this.getTokenDevuelto().getId())
                 || "ID".equals(this.getTokenDevuelto().getId()) ||
-                "CADENA".equals(this.getTokenDevuelto().getId()) ||
+                CADENA.equals(this.getTokenDevuelto().getId()) ||
                 "BOOL".equals(this.getTokenDevuelto().getId())
                 || "ENTERA".equals(this.getTokenDevuelto().getId())) {
             this.setParse(this.getParse() + "32 ");
             procedE();
-            if ("CADENA".equals(tipo)) {
+            if (CADENA.equals(tipo)) {
                 throw new ParserException(ParserException.Reason.DEVUELVE_CADENA, "Error en linea: " +
                         Integer.toString(
                                 analizador.linea) +
@@ -781,7 +782,7 @@ public class AnalizadorSintactico {
         //E -> T R1 = { id cadena ent bool }
         if ("PARENTABIERTO".equals(this.getTokenDevuelto().getId())
                 || "ID".equals(this.getTokenDevuelto().getId()) ||
-                "CADENA".equals(this.getTokenDevuelto().getId()) ||
+                CADENA.equals(this.getTokenDevuelto().getId()) ||
                 "BOOL".equals(this.getTokenDevuelto().getId())
                 || "ENTERA".equals(this.getTokenDevuelto().getId())) {
             this.setParse(this.getParse() + "34 ");
@@ -798,21 +799,12 @@ public class AnalizadorSintactico {
     private void procedR1()
             throws ParserException,
             IOException {
-        String tipoR1 = "";
 
         //R1 -> && T R1 = { && }
-        if ("CONJUNCION".equals(this.getTokenDevuelto().getId())) {
+        if (CONJUNCION.equals(this.getTokenDevuelto().getId())) {
             this.setParse(this.getParse() + "35 ");
-            if (tipo.equals("CADENA")) {
-                tipoR1 = "CADENA";
-            } else if ("VOID".equals(tipo)) {
-                tipoR1 = "VOID";
-            } else if ("BOOL".equals(tipo)) {
-                tipoR1 = "BOOL";
-            } else {
-                tipoR1 = "ENTERA";
-            }
-            empareja(new Token("CONJUNCION", null));
+            String tipoR1 = getType();
+            empareja(new Token(CONJUNCION, null));
             procedT();
             if ("VOID".equals(tipo) || "VOID".equals(tipoR1)) {
                 throw new ParserException(ParserException.Reason.TIPO_INCORRECTO, "Error en linea: " +
@@ -824,7 +816,7 @@ public class AnalizadorSintactico {
                         Integer.toString(
                                 analizador.linea) +
                         ". Los tipos de los operandos no coinciden.");
-            } else if (tipo.equals(tipoR1) && tipo.equals("CADENA")) {
+            } else if (tipo.equals(tipoR1) && tipo.equals(CADENA)) {
                 throw new ParserException(ParserException.Reason.CONCATENACION_NO_IMPLEMENTADA,
                         "Error en linea: " +
                                 Integer.toString(analizador.linea) +
@@ -838,15 +830,27 @@ public class AnalizadorSintactico {
         }
     }
 
+    private String getType() {
+        switch (tipo) {
+            case "CADENA":
+                return CADENA;
+            case "VOID":
+                return "VOID";
+            case "BOOL":
+                return "BOOL";
+            default:
+                return "ENTERA";
+        }
+    }
+
     private void procedT()
             throws
             ParserException, IOException {
-        String tipoT = "";
 
         //T -> H T1 = { id cadena ent bool }
         if ("PARENTABIERTO".equals(this.getTokenDevuelto().getId())
                 || "ID".equals(this.getTokenDevuelto().getId()) ||
-                "CADENA".equals(this.getTokenDevuelto().getId()) ||
+                CADENA.equals(this.getTokenDevuelto().getId()) ||
                 "BOOL".equals(this.getTokenDevuelto().getId())
                 || "ENTERA".equals(this.getTokenDevuelto().getId())) {
             this.setParse(this.getParse() + "37 ");
@@ -863,20 +867,11 @@ public class AnalizadorSintactico {
     private void procedT1()
             throws
             ParserException, IOException {
-        String tipoT1 = "";
 
         //T1 -> < H T1 = { < }
         if ("MENORQUE".equals(this.getTokenDevuelto().getId())) {
             this.setParse(this.getParse() + "38 ");
-            if (tipo.equals("CADENA")) {
-                tipoT1 = "CADENA";
-            } else if ("VOID".equals(tipo)) {
-                tipoT1 = "VOID";
-            } else if ("BOOL".equals(tipo)) {
-                tipoT1 = "BOOL";
-            } else {
-                tipoT1 = "ENTERA";
-            }
+            String tipoT1 = getType();
             empareja(new Token("MENORQUE", null));
             procedH();
             if ("VOID".equals(tipo) || "VOID".equals(tipoT1)) {
@@ -889,7 +884,7 @@ public class AnalizadorSintactico {
                         Integer.toString(
                                 analizador.linea) +
                         ". Los tipos de los operandos no coinciden.");
-            } else if (tipo.equals(tipoT1) && "CADENA".equals(tipo)) {
+            } else if (tipo.equals(tipoT1) && CADENA.equals(tipo)) {
                 tipo = "ENTERA";
                 ancho = 2;
             }
@@ -909,7 +904,7 @@ public class AnalizadorSintactico {
         //H -> F H1 = { id cadena ent bool }
         if ("PARENTABIERTO".equals(this.getTokenDevuelto().getId())
                 || "ID".equals(this.getTokenDevuelto().getId()) ||
-                "CADENA".equals(this.getTokenDevuelto().getId()) ||
+                CADENA.equals(this.getTokenDevuelto().getId()) ||
                 "BOOL".equals(this.getTokenDevuelto().getId())
                 || "ENTERA".equals(this.getTokenDevuelto().getId())) {
             this.setParse(this.getParse() + "40 ");
@@ -927,20 +922,11 @@ public class AnalizadorSintactico {
             throws
             ParserException,
             IOException {
-        String tipoH1 = "";
 
         //H1 -> + F H1 = { + }
         if ("SUMA".equals(this.getTokenDevuelto().getId())) {
             this.setParse(this.getParse() + "41 ");
-            if (tipo.equals("CADENA")) {
-                tipoH1 = "CADENA";
-            } else if ("VOID".equals(tipo)) {
-                tipoH1 = "VOID";
-            } else if ("BOOL".equals(tipo)) {
-                tipoH1 = "BOOL";
-            } else {
-                tipoH1 = "ENTERA";
-            }
+            String tipoH1 = getType();
             empareja(new Token("SUMA", null));
             procedF();
             if ("VOID".equals(tipo) || "VOID".equals(tipoH1)) {
@@ -953,7 +939,7 @@ public class AnalizadorSintactico {
                         Integer.toString(
                                 analizador.linea) +
                         ". Los tipos de los sumandos no coinciden.");
-            } else if (tipo.equals(tipoH1) && tipo.equals("CADENA")) {
+            } else if (tipo.equals(tipoH1) && tipo.equals(CADENA)) {
                 throw new ParserException(ParserException.Reason.CONCATENACION_NO_IMPLEMENTADA,
                         "Error en linea: " +
                                 Integer.toString(analizador.linea) +
@@ -983,8 +969,8 @@ public class AnalizadorSintactico {
                 ancho = 2;
                 tS.addTipo(tokenDevuelto, tipo);
                 tS.addDireccion(tokenDevuelto, ancho);
-            } else if ("CADENA".equals(tS.getTipo(tokenDevuelto))) {
-                tipo = "CADENA";
+            } else if (CADENA.equals(tS.getTipo(tokenDevuelto))) {
+                tipo = CADENA;
                 ancho = tokenDevuelto.getValor().length();
             } else if ("ENTERA".equals(tS.getTipo(tokenDevuelto))) {
                 tipo = "ENTERA";
@@ -998,11 +984,11 @@ public class AnalizadorSintactico {
             procedF1();
         }
         //F -> cadena = { cadena }
-        else if ("CADENA".equals(this.getTokenDevuelto().getId())) {
+        else if (CADENA.equals(this.getTokenDevuelto().getId())) {
             this.setParse(this.getParse() + "44 ");
-            tipo = "CADENA";
+            tipo = CADENA;
             ancho = this.tokenDevuelto.getValor().length();
-            empareja(new Token("CADENA", null));
+            empareja(new Token(CADENA, null));
         }
         //F -> ent = { ent }
         else if ("ENTERA".equals(this.getTokenDevuelto().getId())) {
@@ -1023,7 +1009,7 @@ public class AnalizadorSintactico {
             this.setParse(this.getParse() + "47 ");
             empareja(new Token("PARENTABIERTO", null));
             procedE();
-            if ("CADENA".equals(tipo)) {
+            if (CADENA.equals(tipo)) {
                 throw new ParserException(ParserException.Reason.TIPO_INCORRECTO, "Error en linea: " +
                         Integer.toString(
                                 analizador.linea) +
@@ -1199,16 +1185,7 @@ public class AnalizadorSintactico {
             this.tokenLlamador = this.tokenDevuelto;
 
             procedF2();
-            if ("int".equals(this.tokenLlamador.getValor())) {
-                this.tipo = "ENTERA";
-                this.ancho = 2;
-            } else if ("chars".equals(this.tokenLlamador.getValor())) {
-                this.tipo = "CADENA";
-                this.ancho = 1;
-            } else {
-                this.tipo = "BOOL";
-                this.ancho = 1;
-            }
+            getTypeOFToken();
 
             tS.addTipo(this.tokenDevuelto, this.tipo);
             tS.addDireccion(tokenDevuelto, ancho);
