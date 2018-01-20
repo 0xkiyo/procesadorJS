@@ -1,0 +1,1 @@
+Error en linea: 5. No esta implementada la concatenacion de cadenas.

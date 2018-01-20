@@ -15,16 +15,8 @@ public class Token {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getValor() {
         return valor;
-    }
-
-    public void setValor(String valor) {
-        this.valor = valor;
     }
 
     @Override
@@ -46,14 +38,12 @@ public class Token {
     }
 
     public boolean equals(Token token) {
-        if (this.getId()!=null && !"PR".equals(this.getId())) {
+        if (this.getId() != null && !"PR".equals(this.getId())) {
             return this.getId().equals(token.getId());
         } else {//Estamos ante una palabra reservada
-            if (this.getId() != null && this.getValor() != null) {
-                return this.getId().equals(token.getId()) && this.getValor().equals(token.getValor());
-            }else{
-                return false;
-            }
+            return this.getId() != null && this.getValor() != null
+                    && this.getId().equals(token.getId())
+                    && this.getValor().equals(token.getValor());
         }
     }
 

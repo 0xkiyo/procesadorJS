@@ -1,0 +1,87 @@
+TABLA DE LA FUNCION division #2
+
+* LEXEMA : 'b'
+	ATRIBUTOS : 
+		+ tipo : 'ENTERA'
+		+ dirección : 8
+* LEXEMA : 'c'
+	ATRIBUTOS : 
+		+ tipo : 'ENTERA'
+		+ dirección : 10
+* LEXEMA : 'div1'
+	ATRIBUTOS : 
+		+ tipo : 'ENTERA'
+		+ dirección : 12
+* LEXEMA : 'div2'
+	ATRIBUTOS : 
+		+ tipo : 'ENTERA'
+		+ dirección : 14
+
+---------------------------------------------------
+TABLA PRINCIPAL #1
+
+* LEXEMA : 'function'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 0
+* LEXEMA : 'if'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 8
+* LEXEMA : 'else'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 10
+* LEXEMA : 'write'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 14
+* LEXEMA : 'prompt'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 19
+* LEXEMA : 'return'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 25
+* LEXEMA : 'var'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 31
+* LEXEMA : 'void'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 34
+* LEXEMA : 'int'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 38
+* LEXEMA : 'chars'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 41
+* LEXEMA : 'bool'
+	ATRIBUTOS : 
+		+ tipo : 'PR'
+		+ dirección : 46
+* LEXEMA : 'x'
+	ATRIBUTOS : 
+		+ tipo : 'BOOL'
+		+ dirección : 65
+* LEXEMA : 'a'
+	ATRIBUTOS : 
+		+ tipo : 'ENTERA'
+		+ dirección : 55
+* LEXEMA : 'j'
+	ATRIBUTOS : 
+		+ tipo : 'CADENA'
+		+ dirección : 57
+* ( Esto es un comentario de prueba )  LEXEMA : 'division'
+	ATRIBUTOS : 
+		+ tipo : 'FUNC'
+		+ dirección : 61
+		+ número de parámetros : 2
+		+ tipo devuelto : 'VOID'
+		+ etiqueta : 'FUNC.division'
+
+---------------------------------------------------
