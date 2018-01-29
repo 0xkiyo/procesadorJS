@@ -23,7 +23,6 @@ public class AnalizadorSintactico {
     private TablaSimbolos tS;
     private Token returnToken;
     private BufferedWriter tablasWriter;
-    private BufferedWriter parseWriter;
     //Atributos semantico
     private String tipo;
     private Token functionId;
@@ -32,7 +31,7 @@ public class AnalizadorSintactico {
     private int contParamG;
     private Token tokenLlamador;
 
-    private AnalizadorSintactico() throws ParserException {
+    private AnalizadorSintactico() {
 
         //Inicializando atributos de clase
         this.analizador = new AnalizadorLexico(this);
@@ -49,13 +48,11 @@ public class AnalizadorSintactico {
 
         //Nuevos archivos
         File archivoTablas = new File(".//impreso//tablas.txt");
-        File archivoParse = new File(".//impreso//parse.txt");
 
 
         try {
             this.tablasWriter =
                     new BufferedWriter(new FileWriter(archivoTablas));
-            this.parseWriter = new BufferedWriter(new FileWriter(archivoParse));
         } catch (IOException ex) {
             System.out.println(
                     "Ha habido un problema inicializando el fichero de tablas, probablemente no se cree correctamente.");
@@ -65,13 +62,14 @@ public class AnalizadorSintactico {
 
     public static void main(String... args) {
 
-        AnalizadorSintactico as = null;
         BufferedWriter errorWriter = null;
+        AnalizadorSintactico as = null;
 
         try {
 
             File archivoError = new File(".//impreso//error.txt");
             errorWriter = new BufferedWriter(new FileWriter(archivoError));
+
             File ficheroAAnalizar = null;
             if (args != null) {
                 ficheroAAnalizar = new File(".//pruebas//" + args[0]);
@@ -94,34 +92,32 @@ public class AnalizadorSintactico {
                 as.parseRuleS();
             }
             as.gettS().volcarTabla(as.getTablasWriter());
-            as.getParseWriter().write("DescendenteParser " + as.getParse());
+
             as.getAnalizador().getBw().close();
             as.getTablasWriter().close();
-            as.getParseWriter().close();
+
+            File archivoParse = new File(".//impreso//parse.txt");
+            BufferedWriter parseWriter = new BufferedWriter(new FileWriter(archivoParse));
+            parseWriter.write("DescendenteParser " + as.getParse());
+            parseWriter.close();
 
             if (as.getAnalizador().getFr() != null) {
                 as.getAnalizador().getFr().close();
             }
 
-        } catch (FileNotFoundException | ParserException ex) {
+        } catch (ParserException ex) {
             System.out.println(ex.getMessage());
-//            ex.printStackTrace();
             try {
-
-                if (as != null) {
-                    errorWriter.write(ex.getMessage());
-                }
+                errorWriter.write(ex.getMessage());
                 errorWriter.close();
             } catch (IOException exc) {
                 System.out.println("Error escribiendo en el fichero de error.");
             }
 
         } catch (IOException ex) { //Error en la escritura/tratamiento de los ficheros generados
-            System.out.println(
-                    "Error con la escritura o tratamiento de alguno de los ficheros generados.");
+            System.out.println("Error con la escritura o tratamiento de alguno de los ficheros generados.");
             try {
-                errorWriter.write(
-                        "Error con la escritura o tratamiento de alguno de los ficheros generados.");
+                errorWriter.write("Error con la escritura o tratamiento de alguno de los ficheros generados.");
                 errorWriter.close();
             } catch (IOException exc) {
                 System.out.println("Error escribiendo en el fichero de error.");
@@ -129,11 +125,8 @@ public class AnalizadorSintactico {
         } catch (Exception ex) { //Excepcion no controlada
             System.out.println("Excepción no controlada.");
             try {
-                if (as != null) {
-                    errorWriter.write(
-                            "Se ha producido una excepcion no controlada.");
-                }
-
+                errorWriter.write("Se ha producido una excepcion no controlada.");
+                errorWriter.close();
             } catch (IOException exc) {
                 System.out.println("Error escribiendo en el fichero de error.");
             }
@@ -1333,10 +1326,6 @@ public class AnalizadorSintactico {
 
     private BufferedWriter getTablasWriter() {
         return tablasWriter;
-    }
-
-    private BufferedWriter getParseWriter() {
-        return parseWriter;
     }
 
 }

@@ -56,7 +56,7 @@ public class ProcesadorSintacticoTest {
         assertFalse(isEmpty("error.txt"));
         checkFiles(fileName, "error.txt");
 
-        assertTrue(isEmpty("parse.txt"));
+//        assertTrue(isEmpty("parse.txt"));
         assertTrue(isEmpty("tablas.txt"));
         assertTrue(isEmpty("tokens.txt"));
     }
@@ -70,7 +70,6 @@ public class ProcesadorSintacticoTest {
         assertFalse(isEmpty("error.txt"));
         checkFiles(fileName, "error.txt");
 
-        assertTrue(isEmpty("parse.txt"));
         assertTrue(isEmpty("tablas.txt"));
         assertTrue(isEmpty("tokens.txt"));
     }
@@ -84,7 +83,6 @@ public class ProcesadorSintacticoTest {
         assertFalse(isEmpty("error.txt"));
         checkFiles(fileName, "error.txt");
 
-        assertTrue(isEmpty("parse.txt"));
         assertTrue(isEmpty("tablas.txt"));
         assertTrue(isEmpty("tokens.txt"));
     }
@@ -98,7 +96,6 @@ public class ProcesadorSintacticoTest {
         assertFalse(isEmpty("error.txt"));
         checkFiles(fileName, "error.txt");
 
-        assertTrue(isEmpty("parse.txt"));
         assertTrue(isEmpty("tablas.txt"));
         assertTrue(isEmpty("tokens.txt"));
     }
@@ -112,7 +109,6 @@ public class ProcesadorSintacticoTest {
         assertFalse(isEmpty("error.txt"));
         checkFiles(fileName, "error.txt");
 
-        assertTrue(isEmpty("parse.txt"));
         assertTrue(isEmpty("tablas.txt"));
         assertTrue(isEmpty("tokens.txt"));
     }
@@ -123,7 +119,6 @@ public class ProcesadorSintacticoTest {
 
         assertTrue(isEmpty("error.txt"));
 
-        checkFiles(fileName, "parse.txt");
         checkFiles(fileName, "tablas.txt");
         checkFiles(fileName, "tokens.txt");
     }
