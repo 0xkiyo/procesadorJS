@@ -22,7 +22,6 @@ public class AnalizadorSintactico {
     private AnalizadorLexico analizador;
     private TablaSimbolos tS;
     private Token returnToken;
-    private BufferedWriter tablasWriter;
     //Atributos semantico
     private String tipo;
     private Token functionId;
@@ -45,27 +44,16 @@ public class AnalizadorSintactico {
         this.parse = "";
         this.functionId = null;
         this.contParamG = 0;
-
-        //Nuevos archivos
-        File archivoTablas = new File(".//impreso//tablas.txt");
-
-
-        try {
-            this.tablasWriter =
-                    new BufferedWriter(new FileWriter(archivoTablas));
-        } catch (IOException ex) {
-            System.out.println(
-                    "Ha habido un problema inicializando el fichero de tablas, probablemente no se cree correctamente.");
-        }
-
     }
 
     public static void main(String... args) {
 
         BufferedWriter errorWriter = null;
-        AnalizadorSintactico as = null;
+        AnalizadorSintactico as;
 
         try {
+
+            purgeFiles();
 
             File archivoError = new File(".//impreso//error.txt");
             errorWriter = new BufferedWriter(new FileWriter(archivoError));
@@ -88,13 +76,21 @@ public class AnalizadorSintactico {
 
             as.getAnalizador().leerFichero(ficheroAAnalizar);
             as.setReturnToken(as.getAnalizador().al(as.gettS()));
+
+            StringBuilder result = new StringBuilder();
+
             while (!"EOF".equals(as.getReturnToken().getId())) {
-                as.parseRuleS();
+                result.append(as.parseRuleS());
             }
-            as.gettS().volcarTabla(as.getTablasWriter());
+
+            File archivoTablas = new File(".//impreso//tablas.txt");
+            BufferedWriter tablasWriter = new BufferedWriter(new FileWriter(archivoTablas, true));
+
+            tablasWriter.write(result.toString());
+            tablasWriter.write(as.gettS().volcarTabla());
 
             as.getAnalizador().getBw().close();
-            as.getTablasWriter().close();
+            tablasWriter.close();
 
             File archivoParse = new File(".//impreso//parse.txt");
             BufferedWriter parseWriter = new BufferedWriter(new FileWriter(archivoParse));
@@ -133,6 +129,15 @@ public class AnalizadorSintactico {
         }
     }
 
+    private static void purgeFiles() {
+        File dir = new File("./impreso");
+        for (File file : dir.listFiles()) {
+            if (!file.isDirectory()) {
+                file.delete();
+            }
+        }
+    }
+
     private void empareja(Token valor) throws IOException {
         if (valor != null && valor.equals(returnToken)) {
             returnToken = analizador.al(tS);
@@ -147,7 +152,9 @@ public class AnalizadorSintactico {
         }
     }
 
-    private void parseRuleS() throws IOException {
+    private String parseRuleS() throws IOException {
+
+        String result = "";
 
         //P -> B P = { var if id prompt write }
         if (("PR".equals(this.getReturnToken().getId()) &&
@@ -159,15 +166,15 @@ public class AnalizadorSintactico {
             this.setParse(this.getParse() + "1 ");
 
             procedB();
-            parseRuleS();
+            result += parseRuleS();
         }
         //P -> Fq P = { function }
         else if ("PR".equals(this.getReturnToken().getId()) &&
                 "function".equals(this.getReturnToken().getValor())) {
             this.setParse(this.getParse() + "2 ");
 
-            procedFq();
-            parseRuleS();
+            result += procedFq();
+            result += parseRuleS();
         }
         //P -> eof = { eof }
         else if ("EOF".equals(this.getReturnToken().getId())) {
@@ -178,6 +185,7 @@ public class AnalizadorSintactico {
                             " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < EOF , _ >, < PR , function >, < ID , id >, < PR , if >, < PR , prompt >, < PR , var >) pero se ha detectado: " +
                             this.getReturnToken().toString());
         }
+        return result;
     }
 
     private void procedB() throws IOException {
@@ -416,7 +424,7 @@ public class AnalizadorSintactico {
         }
     }
 
-    private void procedFq() throws IOException {
+    private String procedFq() throws IOException {
         int contParam = 0;
 
         //Fq -> function F3 id ( A ) { Cfun } = { function }
@@ -442,7 +450,6 @@ public class AnalizadorSintactico {
             functionName = this.getReturnToken();
             empareja(new Token("ID", null));
 
-
             flagDeclaracionLocal = true;
             empareja(new Token("PARENTABIERTO", null));
             contParam = procedA();
@@ -459,11 +466,14 @@ public class AnalizadorSintactico {
             procedCfun();
             //Borramos la local.
             this.tS.addEtiqueta();
+
             //Justo antes de borrar volcamos la tabla de simbolos local correspondiente
-            tablasWriter.write(
+            String result = (
                     "TABLA DE LA FUNCION " + functionName.getValor() + " #" +
                             this.tS.indice++);
-            this.tS.volcarTabla(tablasWriter);
+
+            result += this.tS.volcarTabla();
+
             this.tS.borraTS();
             empareja(new Token("LLAVECERRADA", null));
             if (flagReturn) {
@@ -471,6 +481,7 @@ public class AnalizadorSintactico {
             }
             tS.addDevuelve(tipo);
             functionName = null;
+            return result;
 
         } else {
             throw new ParserException(ParserException.Reason.FIRST_NO_COINCIDE,
@@ -1322,10 +1333,6 @@ public class AnalizadorSintactico {
 
     private void setParse(String parse) {
         this.parse = parse;
-    }
-
-    private BufferedWriter getTablasWriter() {
-        return tablasWriter;
     }
 
 }

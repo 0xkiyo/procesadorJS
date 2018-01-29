@@ -56,9 +56,7 @@ public class ProcesadorSintacticoTest {
         assertFalse(isEmpty("error.txt"));
         checkFiles(fileName, "error.txt");
 
-//        assertTrue(isEmpty("parse.txt"));
-        assertTrue(isEmpty("tablas.txt"));
-        assertTrue(isEmpty("tokens.txt"));
+        assertFileWereNotCreated();
     }
 
     @Test
@@ -70,8 +68,7 @@ public class ProcesadorSintacticoTest {
         assertFalse(isEmpty("error.txt"));
         checkFiles(fileName, "error.txt");
 
-        assertTrue(isEmpty("tablas.txt"));
-        assertTrue(isEmpty("tokens.txt"));
+        assertFileWereNotCreated();
     }
 
     @Test
@@ -83,7 +80,12 @@ public class ProcesadorSintacticoTest {
         assertFalse(isEmpty("error.txt"));
         checkFiles(fileName, "error.txt");
 
-        assertTrue(isEmpty("tablas.txt"));
+        assertFileWereNotCreated();
+    }
+
+    private void assertFileWereNotCreated() throws FileNotFoundException {
+        assertTrue(doesNotExists("parse.txt"));
+        assertTrue(doesNotExists("tablas.txt"));
         assertTrue(isEmpty("tokens.txt"));
     }
 
@@ -96,8 +98,7 @@ public class ProcesadorSintacticoTest {
         assertFalse(isEmpty("error.txt"));
         checkFiles(fileName, "error.txt");
 
-        assertTrue(isEmpty("tablas.txt"));
-        assertTrue(isEmpty("tokens.txt"));
+        assertFileWereNotCreated();
     }
 
     @Test
@@ -109,8 +110,7 @@ public class ProcesadorSintacticoTest {
         assertFalse(isEmpty("error.txt"));
         checkFiles(fileName, "error.txt");
 
-        assertTrue(isEmpty("tablas.txt"));
-        assertTrue(isEmpty("tokens.txt"));
+        assertFileWereNotCreated();
     }
 
     private void parseablePrograms(String fileName)
@@ -119,6 +119,7 @@ public class ProcesadorSintacticoTest {
 
         assertTrue(isEmpty("error.txt"));
 
+        checkFiles(fileName, "parse.txt");
         checkFiles(fileName, "tablas.txt");
         checkFiles(fileName, "tokens.txt");
     }
@@ -132,6 +133,10 @@ public class ProcesadorSintacticoTest {
 
     private String read(String fileName) throws FileNotFoundException {
         return getScanner(fileName).useDelimiter("\\A").next();
+    }
+
+    private boolean doesNotExists(String fileName) {
+        return !new File(BASE_PATH + fileName).exists();
     }
 
     private boolean isEmpty(String fileName) throws FileNotFoundException {
