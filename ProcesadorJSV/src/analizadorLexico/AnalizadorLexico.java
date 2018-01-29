@@ -37,8 +37,7 @@ public class AnalizadorLexico {
             this.a = new char[(int) fichero.length()];
             this.fr.read(a);
 
-            String ruta =
-                    ".//impreso//tokens.txt";
+            String ruta = ".//impreso//tokens.txt";
             File archivoTokens = new File(ruta);
             this.bw = new BufferedWriter(new FileWriter(archivoTokens));
             linea++;

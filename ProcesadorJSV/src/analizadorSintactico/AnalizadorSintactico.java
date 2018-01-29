@@ -24,7 +24,6 @@ public class AnalizadorSintactico {
     private Token returnToken;
     private BufferedWriter tablasWriter;
     private BufferedWriter parseWriter;
-    private BufferedWriter errorWriter;
     //Atributos semantico
     private String tipo;
     private Token functionId;
@@ -51,13 +50,12 @@ public class AnalizadorSintactico {
         //Nuevos archivos
         File archivoTablas = new File(".//impreso//tablas.txt");
         File archivoParse = new File(".//impreso//parse.txt");
-        File archivoError = new File(".//impreso//error.txt");
+
 
         try {
             this.tablasWriter =
                     new BufferedWriter(new FileWriter(archivoTablas));
             this.parseWriter = new BufferedWriter(new FileWriter(archivoParse));
-            this.errorWriter = new BufferedWriter(new FileWriter(archivoError));
         } catch (IOException ex) {
             System.out.println(
                     "Ha habido un problema inicializando el fichero de tablas, probablemente no se cree correctamente.");
@@ -68,9 +66,12 @@ public class AnalizadorSintactico {
     public static void main(String... args) {
 
         AnalizadorSintactico as = null;
+        BufferedWriter errorWriter = null;
 
         try {
 
+            File archivoError = new File(".//impreso//error.txt");
+            errorWriter = new BufferedWriter(new FileWriter(archivoError));
             File ficheroAAnalizar = null;
             if (args != null) {
                 ficheroAAnalizar = new File(".//pruebas//" + args[0]);
@@ -108,33 +109,28 @@ public class AnalizadorSintactico {
             try {
 
                 if (as != null) {
-                    as.getErrorWriter().write(ex.getMessage());
+                    errorWriter.write(ex.getMessage());
                 }
-                as.getErrorWriter().close();
+                errorWriter.close();
             } catch (IOException exc) {
                 System.out.println("Error escribiendo en el fichero de error.");
             }
 
-        }
-        //Error en la escritura/tratamiento de los ficheros generados
-        catch (IOException ex) {
+        } catch (IOException ex) { //Error en la escritura/tratamiento de los ficheros generados
             System.out.println(
                     "Error con la escritura o tratamiento de alguno de los ficheros generados.");
             try {
-                as.getErrorWriter().write(
+                errorWriter.write(
                         "Error con la escritura o tratamiento de alguno de los ficheros generados.");
-                as.getErrorWriter().close();
+                errorWriter.close();
             } catch (IOException exc) {
                 System.out.println("Error escribiendo en el fichero de error.");
             }
-        }
-        //Excepcion no controlada
-        catch (Exception ex) {
-
+        } catch (Exception ex) { //Excepcion no controlada
             System.out.println("Excepción no controlada.");
             try {
                 if (as != null) {
-                    as.getErrorWriter().write(
+                    errorWriter.write(
                             "Se ha producido una excepcion no controlada.");
                 }
 
@@ -1341,10 +1337,6 @@ public class AnalizadorSintactico {
 
     private BufferedWriter getParseWriter() {
         return parseWriter;
-    }
-
-    private BufferedWriter getErrorWriter() {
-        return errorWriter;
     }
 
 }

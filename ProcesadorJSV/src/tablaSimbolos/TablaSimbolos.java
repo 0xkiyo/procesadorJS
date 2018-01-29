@@ -73,8 +73,7 @@ public class TablaSimbolos {
 
     public void volcarTabla(BufferedWriter tablaWriter) throws IOException {
         TablaSimbolos tablaAVolcar;
-        if (this.tablaSimbolos.get(
-                contadorRegistros - 1)[0] instanceof TablaSimbolos) {
+        if (this.tablaSimbolos.get(contadorRegistros - 1)[0] instanceof TablaSimbolos) {
             //tabla local
             tablaAVolcar =
                     (TablaSimbolos) this.tablaSimbolos.get(contadorRegistros - 1)[0];
