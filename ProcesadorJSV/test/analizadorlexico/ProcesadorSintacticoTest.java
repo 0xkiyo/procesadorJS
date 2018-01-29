@@ -7,144 +7,143 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ProcesadorSintacticoTest {
 
-	private static final String BASE_PATH = "./impreso/";
-	private static final String TEST_PATH = "./test-results/";
+    private static final String BASE_PATH = "./impreso/";
+    private static final String TEST_PATH = "./test-results/";
 
-	@Test
-	public void pruebaTxtTest() throws FileNotFoundException {
-		parseablePrograms("prueba");
-	}
+    @Test
+    public void pruebaTxtTest() throws FileNotFoundException {
+        parseablePrograms("prueba");
+    }
 
-	@Test
-	public void prueba1TxtTest() throws FileNotFoundException {
-		parseablePrograms("prueba1");
-	}
+    @Test
+    public void prueba1TxtTest() throws FileNotFoundException {
+        parseablePrograms("prueba1");
+    }
 
-	@Test
-	public void prueba2TxtTest() throws FileNotFoundException {
-		//TODO this should be parametrized
-		parseablePrograms("prueba2");
-	}
+    @Test
+    public void prueba2TxtTest() throws FileNotFoundException {
+        //TODO this should be parametrized
 
-	@Test
-	public void prueba3TxtTest() throws FileNotFoundException {
-		parseablePrograms("prueba3");
-	}
+        parseablePrograms("prueba2");
+    }
 
-	@Test
-	public void prueba4TxtTest() throws FileNotFoundException {
-		parseablePrograms("prueba4");
-	}
+    @Test
+    public void prueba3TxtTest() throws FileNotFoundException {
+        parseablePrograms("prueba3");
+    }
 
-	@Test
-	public void prueba5TxtTest() throws FileNotFoundException {
-		parseablePrograms("prueba5");
-	}
+    @Test
+    public void prueba4TxtTest() throws FileNotFoundException {
+        parseablePrograms("prueba4");
+    }
 
-	@Test
-	public void prueba6TxtTest() throws FileNotFoundException {
+    @Test
+    public void prueba5TxtTest() throws FileNotFoundException {
+        parseablePrograms("prueba5");
+    }
 
-		String fileName = "prueba6";
+    @Test
+    public void prueba6TxtTest() throws FileNotFoundException {
 
-		AnalizadorSintactico.main(fileName + ".txt");
+        String fileName = "prueba6";
 
-		assertFalse(isEmpty("error.txt"));
-		checkFiles(fileName, "error.txt");
+        AnalizadorSintactico.main(fileName + ".txt");
 
-		assertTrue(isEmpty("parse.txt"));
-		assertTrue(isEmpty("tablas.txt"));
-		assertTrue(isEmpty("tokens.txt"));
-	}
+        assertFalse(isEmpty("error.txt"));
+        checkFiles(fileName, "error.txt");
 
-	@Test
-	public void prueba7TxtTest() throws FileNotFoundException {
-		String fileName = "prueba7";
+        assertFileWereNotCreated();
+    }
 
-		AnalizadorSintactico.main(fileName + ".txt");
+    @Test
+    public void prueba7TxtTest() throws FileNotFoundException {
+        String fileName = "prueba7";
 
-		assertFalse(isEmpty("error.txt"));
-		checkFiles(fileName, "error.txt");
+        AnalizadorSintactico.main(fileName + ".txt");
 
-		assertTrue(isEmpty("parse.txt"));
-		assertTrue(isEmpty("tablas.txt"));
-		assertTrue(isEmpty("tokens.txt"));
-	}
+        assertFalse(isEmpty("error.txt"));
+        checkFiles(fileName, "error.txt");
 
-	@Test
-	public void prueba8TxtTest() throws FileNotFoundException {
-		String fileName = "prueba8";
+        assertFileWereNotCreated();
+    }
 
-		AnalizadorSintactico.main(fileName + ".txt");
+    @Test
+    public void prueba8TxtTest() throws FileNotFoundException {
+        String fileName = "prueba8";
 
-		assertFalse(isEmpty("error.txt"));
-		checkFiles(fileName, "error.txt");
+        AnalizadorSintactico.main(fileName + ".txt");
 
-		assertTrue(isEmpty("parse.txt"));
-		assertTrue(isEmpty("tablas.txt"));
-		assertTrue(isEmpty("tokens.txt"));
-	}
+        assertFalse(isEmpty("error.txt"));
+        checkFiles(fileName, "error.txt");
 
-	@Test
-	public void prueba9TxtTest() throws FileNotFoundException {
-		String fileName = "prueba9";
+        assertFileWereNotCreated();
+    }
 
-		AnalizadorSintactico.main(fileName + ".txt");
+    private void assertFileWereNotCreated() throws FileNotFoundException {
+        assertTrue(doesNotExists("parse.txt"));
+        assertTrue(doesNotExists("tablas.txt"));
+        assertTrue(isEmpty("tokens.txt"));
+    }
 
-		assertFalse(isEmpty("error.txt"));
-		checkFiles(fileName, "error.txt");
+    @Test
+    public void prueba9TxtTest() throws FileNotFoundException {
+        String fileName = "prueba9";
 
-		assertTrue(isEmpty("parse.txt"));
-		assertTrue(isEmpty("tablas.txt"));
-		assertTrue(isEmpty("tokens.txt"));
-	}
+        AnalizadorSintactico.main(fileName + ".txt");
 
-	@Test
-	public void prueba10TxtTest() throws FileNotFoundException {
-		String fileName = "prueba10";
+        assertFalse(isEmpty("error.txt"));
+        checkFiles(fileName, "error.txt");
 
-		AnalizadorSintactico.main(fileName + ".txt");
+        assertFileWereNotCreated();
+    }
 
-		assertFalse(isEmpty("error.txt"));
-		checkFiles(fileName, "error.txt");
+    @Test
+    public void prueba10TxtTest() throws FileNotFoundException {
+        String fileName = "prueba10";
 
-		assertTrue(isEmpty("parse.txt"));
-		assertTrue(isEmpty("tablas.txt"));
-		assertTrue(isEmpty("tokens.txt"));
-	}
+        AnalizadorSintactico.main(fileName + ".txt");
 
-	private void parseablePrograms(String fileName)
-		throws FileNotFoundException {
-		AnalizadorSintactico.main(fileName + ".txt");
+        assertFalse(isEmpty("error.txt"));
+        checkFiles(fileName, "error.txt");
 
-		assertTrue(isEmpty("error.txt"));
+        assertFileWereNotCreated();
+    }
 
-		checkFiles(fileName, "parse.txt");
-		checkFiles(fileName, "tablas.txt");
-		checkFiles(fileName, "tokens.txt");
-	}
+    private void parseablePrograms(String fileName)
+            throws FileNotFoundException {
+        AnalizadorSintactico.main(fileName + ".txt");
 
-	private void checkFiles(String fileName, String resultName)
-		throws FileNotFoundException {
-		assertEquals(
-			read(TEST_PATH + fileName + "-" + resultName).trim(),
-			read(BASE_PATH + resultName).trim());
-	}
+        assertTrue(isEmpty("error.txt"));
 
-	private String read(String fileName) throws FileNotFoundException {
-		return getScanner(fileName).useDelimiter("\\A").next();
-	}
+        checkFiles(fileName, "parse.txt");
+        checkFiles(fileName, "tablas.txt");
+        checkFiles(fileName, "tokens.txt");
+    }
 
-	private boolean isEmpty(String fileName) throws FileNotFoundException {
-		return !getScanner(BASE_PATH + fileName).hasNext();
-	}
+    private void checkFiles(String fileName, String resultName)
+            throws FileNotFoundException {
+        assertEquals(
+                read(TEST_PATH + fileName + "-" + resultName).trim(),
+                read(BASE_PATH + resultName).trim());
+    }
 
-	private Scanner getScanner(String fileName) throws FileNotFoundException {
-		return new Scanner(new File(fileName));
-	}
+    private String read(String fileName) throws FileNotFoundException {
+        return getScanner(fileName).useDelimiter("\\A").next();
+    }
+
+    private boolean doesNotExists(String fileName) {
+        return !new File(BASE_PATH + fileName).exists();
+    }
+
+    private boolean isEmpty(String fileName) throws FileNotFoundException {
+        return !getScanner(BASE_PATH + fileName).hasNext();
+    }
+
+    private Scanner getScanner(String fileName) throws FileNotFoundException {
+        return new Scanner(new File(fileName));
+    }
 }

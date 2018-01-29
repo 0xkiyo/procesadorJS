@@ -11,64 +11,52 @@ public class AnalizadorSintactico {
 
     private static final String CONJUNCION = "CONJUNCION";
     private static final String CADENA = "CADENA";
+    private static final String PARENTABIERTO = "PARENTABIERTO";
+
     public boolean flagDeclaracionLocal;
     public boolean flagDeclaracion;
-    private Token nombreFuncion;
+    private Token functionName;
     private boolean flagReturn = true;
     //Atributos de clase
     private String parse;
     private AnalizadorLexico analizador;
     private TablaSimbolos tS;
-    private Token tokenDevuelto;
-    private BufferedWriter tablasWriter;
-    private BufferedWriter parseWriter;
-    private BufferedWriter errorWriter;
+    private Token returnToken;
     //Atributos semantico
     private String tipo;
-    private Token idFunction;
-    private String[] tiposParam;
-    private int ancho;
+    private Token functionId;
+    private String[] paramTypes;
+    private int width;
     private int contParamG;
     private Token tokenLlamador;
 
-    private AnalizadorSintactico()
-            throws ParserException {
+    private AnalizadorSintactico() {
 
         //Inicializando atributos de clase
         this.analizador = new AnalizadorLexico(this);
         this.tS = new TablaSimbolos(analizador);
-        this.tokenDevuelto = new Token(null, null);
+        this.returnToken = new Token(null, null);
         this.tokenLlamador = new Token(null, null);
-        nombreFuncion = new Token(null, null);
-        this.tiposParam = new String[10];
+        functionName = new Token(null, null);
+        this.paramTypes = new String[10];
 
         //Inicializando los atributos basicos
         this.parse = "";
-        this.idFunction = null;
+        this.functionId = null;
         this.contParamG = 0;
-
-        //Nuevos archivos
-        File archivoTablas = new File(".//impreso//tablas.txt");
-        File archivoParse = new File(".//impreso//parse.txt");
-        File archivoError = new File(".//impreso//error.txt");
-
-        try {
-            this.tablasWriter =
-                    new BufferedWriter(new FileWriter(archivoTablas));
-            this.parseWriter = new BufferedWriter(new FileWriter(archivoParse));
-            this.errorWriter = new BufferedWriter(new FileWriter(archivoError));
-        } catch (IOException ex) {
-            System.out.println(
-                    "Ha habido un problema inicializando el fichero de tablas, probablemente no se cree correctamente.");
-        }
-
     }
 
     public static void main(String... args) {
 
-        AnalizadorSintactico as = null;
+        BufferedWriter errorWriter = null;
+        AnalizadorSintactico as;
 
         try {
+
+            purgeFiles();
+
+            File archivoError = new File(".//impreso//error.txt");
+            errorWriter = new BufferedWriter(new FileWriter(archivoError));
 
             File ficheroAAnalizar = null;
             if (args != null) {
@@ -87,65 +75,72 @@ public class AnalizadorSintactico {
             }
 
             as.getAnalizador().leerFichero(ficheroAAnalizar);
-            as.setTokenDevuelto(as.getAnalizador().al(as.gettS()));
-            while (!"EOF".equals(as.getTokenDevuelto().getId())) {
-                as.procedP();
+            as.setReturnToken(as.getAnalizador().al(as.gettS()));
+
+            StringBuilder result = new StringBuilder();
+
+            while (!"EOF".equals(as.getReturnToken().getId())) {
+                result.append(as.parseRuleS());
             }
-            as.gettS().volcarTabla(as.getTablasWriter());
-            as.getParseWriter().write("DescendenteParser " + as.getParse());
+
+            File archivoTablas = new File(".//impreso//tablas.txt");
+            BufferedWriter tablasWriter = new BufferedWriter(new FileWriter(archivoTablas, true));
+
+            tablasWriter.write(result.toString());
+            tablasWriter.write(as.gettS().volcarTabla());
+
             as.getAnalizador().getBw().close();
-            as.getTablasWriter().close();
-            as.getParseWriter().close();
+            tablasWriter.close();
+
+            File archivoParse = new File(".//impreso//parse.txt");
+            BufferedWriter parseWriter = new BufferedWriter(new FileWriter(archivoParse));
+            parseWriter.write("DescendenteParser " + as.getParse());
+            parseWriter.close();
 
             if (as.getAnalizador().getFr() != null) {
                 as.getAnalizador().getFr().close();
             }
 
-        } catch (FileNotFoundException | ParserException ex) {
+        } catch (ParserException ex) {
             System.out.println(ex.getMessage());
-//            ex.printStackTrace();
             try {
-                if (as != null) {
-                    as.getErrorWriter().write(ex.getMessage());
-                }
-                as.getErrorWriter().close();
+                errorWriter.write(ex.getMessage());
+                errorWriter.close();
             } catch (IOException exc) {
                 System.out.println("Error escribiendo en el fichero de error.");
             }
 
-        }
-        //Error en la escritura/tratamiento de los ficheros generados
-        catch (IOException ex) {
-            System.out.println(
-                    "Error con la escritura o tratamiento de alguno de los ficheros generados.");
+        } catch (IOException ex) { //Error en la escritura/tratamiento de los ficheros generados
+            System.out.println("Error con la escritura o tratamiento de alguno de los ficheros generados.");
             try {
-                as.getErrorWriter().write(
-                        "Error con la escritura o tratamiento de alguno de los ficheros generados.");
-                as.getErrorWriter().close();
+                errorWriter.write("Error con la escritura o tratamiento de alguno de los ficheros generados.");
+                errorWriter.close();
             } catch (IOException exc) {
                 System.out.println("Error escribiendo en el fichero de error.");
             }
-        }
-        //Excepcion no controlada
-        catch (Exception ex) {
-            System.out.println("Excepcion no controlada.");
+        } catch (Exception ex) { //Excepcion no controlada
+            System.out.println("Excepción no controlada.");
             try {
-                if (as != null) {
-                    as.getErrorWriter().write(
-                            "Se ha producido una excepcion no controlada.");
-                }
-
+                errorWriter.write("Se ha producido una excepcion no controlada.");
+                errorWriter.close();
             } catch (IOException exc) {
                 System.out.println("Error escribiendo en el fichero de error.");
             }
         }
     }
 
-    private void empareja(Token valor)
-            throws ParserException,
-            IOException {
-        if (valor != null && valor.equals(tokenDevuelto)) {
-            tokenDevuelto = analizador.al(tS);
+    private static void purgeFiles() {
+        File dir = new File("./impreso");
+        for (File file : dir.listFiles()) {
+            if (!file.isDirectory()) {
+                file.delete();
+            }
+        }
+    }
+
+    private void empareja(Token valor) throws IOException {
+        if (valor != null && valor.equals(returnToken)) {
+            returnToken = analizador.al(tS);
         } else {
             throw new ParserException(ParserException.Reason.EMPAREJA, "Empareja: Error en linea: " +
                     Integer.toString(
@@ -153,82 +148,81 @@ public class AnalizadorSintactico {
                     " Se esperaba detectar el token " +
                     valor.toString() +
                     " y se ha encontrado el token " +
-                    this.getTokenDevuelto().toString());
+                    this.getReturnToken().toString());
         }
     }
 
-    private void procedP()
-            throws ParserException,
-            IOException {
+    private String parseRuleS() throws IOException {
+
+        String result = "";
 
         //P -> B P = { var if id prompt write }
-        if (("PR".equals(this.getTokenDevuelto().getId()) &&
-                ("write".equals(this.getTokenDevuelto().getValor())
-                        || "prompt".equals(this.getTokenDevuelto().getValor())
-                        || "if".equals(this.getTokenDevuelto().getValor())
-                        || "var".equals(this.getTokenDevuelto().getValor())))
-                || "ID".equals(this.getTokenDevuelto().getId())) {
+        if (("PR".equals(this.getReturnToken().getId()) &&
+                ("write".equals(this.getReturnToken().getValor())
+                        || "prompt".equals(this.getReturnToken().getValor())
+                        || "if".equals(this.getReturnToken().getValor())
+                        || "var".equals(this.getReturnToken().getValor())))
+                || "ID".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "1 ");
 
             procedB();
-            procedP();
+            result += parseRuleS();
         }
         //P -> Fq P = { function }
-        else if ("PR".equals(this.getTokenDevuelto().getId()) &&
-                "function".equals(this.getTokenDevuelto().getValor())) {
+        else if ("PR".equals(this.getReturnToken().getId()) &&
+                "function".equals(this.getReturnToken().getValor())) {
             this.setParse(this.getParse() + "2 ");
 
-            procedFq();
-            procedP();
+            result += procedFq();
+            result += parseRuleS();
         }
         //P -> eof = { eof }
-        else if ("EOF".equals(this.getTokenDevuelto().getId())) {
+        else if ("EOF".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "3 ");
         } else {
             throw new ParserException(ParserException.Reason.FIRST_NO_COINCIDE,
                     "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < EOF , _ >, < PR , function >, < ID , id >, < PR , if >, < PR , prompt >, < PR , var >) pero se ha detectado: " +
-                            this.getTokenDevuelto().toString());
+                            this.getReturnToken().toString());
         }
+        return result;
     }
 
-    private void procedB()
-            throws ParserException,
-            IOException {
+    private void procedB() throws IOException {
 
         //B -> var F2 id ; = { var }
-        if ("PR".equals(this.getTokenDevuelto().getId()) &&
-                "var".equals(this.getTokenDevuelto().getValor())) {
+        if ("PR".equals(this.getReturnToken().getId()) &&
+                "var".equals(this.getReturnToken().getValor())) {
             this.setParse(this.getParse() + "4 ");
             flagDeclaracion = true;
             empareja(new Token("PR", "var"));
             flagDeclaracion = false;
 
             //En este caso asignamos el tipo segun lo que recibamos: entero, chars y bool CORREGIR
-            this.tokenLlamador = this.tokenDevuelto;
+            this.tokenLlamador = this.returnToken;
 
             procedF2();
             getTypeOFToken();
 
-            tS.addTipo(this.tokenDevuelto, this.tipo);
-            tS.addDireccion(tokenDevuelto, ancho);
+            tS.addTipo(this.returnToken, this.tipo);
+            tS.addDireccion(returnToken, width);
 
             empareja(new Token("ID", null));
             empareja(new Token("PUNTCOM", null));
         }
         //B -> S = { write prompt id if lambda }
-        else if (("PR".equals(this.getTokenDevuelto().getId()) &&
-                ("write".equals(this.getTokenDevuelto().getValor())
-                        || "prompt".equals(this.getTokenDevuelto().getValor())
-                        || "if".equals(this.getTokenDevuelto().getValor())))
-                || "ID".equals(this.getTokenDevuelto().getId())) {
+        else if (("PR".equals(this.getReturnToken().getId()) &&
+                ("write".equals(this.getReturnToken().getValor())
+                        || "prompt".equals(this.getReturnToken().getValor())
+                        || "if".equals(this.getReturnToken().getValor())))
+                || "ID".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "5 ");
             procedS();
         } else {
             throw new ParserException(ParserException.Reason.FIRST_NO_COINCIDE,
                     "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < ID , id >, < PR , if >, < PR , prompt >, < PR , var >) pero se ha detectado: " +
-                            this.getTokenDevuelto().toString());
+                            this.getReturnToken().toString());
         }
     }
 
@@ -236,52 +230,49 @@ public class AnalizadorSintactico {
         switch (this.tokenLlamador.getValor()) {
             case "int":
                 this.tipo = "ENTERA";
-                this.ancho = 2;
+                this.width = 2;
                 break;
             case "chars":
                 this.tipo = CADENA;
-                this.ancho = 1;
+                this.width = 1;
                 break;
             default:
                 this.tipo = "BOOL";
-                this.ancho = 1;
+                this.width = 1;
                 break;
         }
     }
 
-    private void procedS()
-            throws
-            ParserException,
-            IOException {
+    private void procedS() throws IOException {
 
         //S -> id S1 ; = { id }
-        if ("ID".equals(this.getTokenDevuelto().getId())) {
+        if ("ID".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "6 ");
             //Semantico
-            tokenLlamador = tokenDevuelto;
-            idFunction = tokenDevuelto;
+            tokenLlamador = returnToken;
+            functionId = returnToken;
 
             //Semantico
             empareja(new Token("ID", null));
             procedS1();
             empareja(new Token("PUNTCOM", null));
-        } else if ("PR".equals(this.getTokenDevuelto().getId()) &&
-                "prompt".equals(this.getTokenDevuelto().getValor())) {
+        } else if ("PR".equals(this.getReturnToken().getId()) &&
+                "prompt".equals(this.getReturnToken().getValor())) {
             //S -> prompt ( id ) ; = { prompt }
 
             this.setParse(this.getParse() + "7 ");
             empareja(new Token("PR", "prompt"));
             empareja(new Token("PARENTABIERTO", null));
-            if (tS.getTipo(tokenDevuelto) == null) {
+            if (tS.getTipo(returnToken) == null) {
                 //caso en que no este declarada la variable
                 tipo = "ENTERA";
-                ancho = 2;
-                tS.addTipo(tokenDevuelto, tipo);
-                tS.addDireccion(tokenDevuelto, ancho);
-            } else if ("FUNC".equals(tS.getTipo(tokenDevuelto))) {
+                width = 2;
+                tS.addTipo(returnToken, tipo);
+                tS.addDireccion(returnToken, width);
+            } else if ("FUNC".equals(tS.getTipo(returnToken))) {
                 throw new ParserException(ParserException.Reason.DECLARACION_INCOMPATIBLE,
                         "Error en linea " + analizador.linea +
-                                ". La variable o funcion '" + tokenDevuelto.getValor() +
+                                ". La variable o funcion '" + returnToken.getValor() +
                                 "' ha sido declarada previamente.");
             }
             empareja(new Token("ID", null));
@@ -289,18 +280,18 @@ public class AnalizadorSintactico {
             empareja(new Token("PUNTCOM", null));
         }
         //S -> write ( E ) ; = { write }
-        else if ("PR".equals(this.getTokenDevuelto().getId()) &&
-                "write".equals(this.getTokenDevuelto().getValor())) {
+        else if ("PR".equals(this.getReturnToken().getId()) &&
+                "write".equals(this.getReturnToken().getValor())) {
             this.setParse(this.getParse() + "8 ");
             empareja(new Token("PR", "write"));
-            empareja(new Token("PARENTABIERTO", null));
+            empareja(new Token(PARENTABIERTO, null));
             procedE();
             empareja(new Token("PARENTCERRADO", null));
             empareja(new Token("PUNTCOM", null));
         }
         //S -> if ( E ) C = { if }
-        else if ("PR".equals(this.getTokenDevuelto().getId()) &&
-                "if".equals(this.getTokenDevuelto().getValor())) {
+        else if ("PR".equals(this.getReturnToken().getId()) &&
+                "if".equals(this.getReturnToken().getValor())) {
             this.setParse(this.getParse() + "9 ");
 
             empareja(new Token("PR", "if"));
@@ -312,17 +303,14 @@ public class AnalizadorSintactico {
             throw new ParserException(ParserException.Reason.FIRST_NO_COINCIDE,
                     "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < ID , id >, < PR , if >, < PR , prompt >) pero se ha detectado: " +
-                            this.getTokenDevuelto().toString());
+                            this.getReturnToken().toString());
         }
     }
 
-    private void procedS1()
-            throws
-            ParserException,
-            IOException {
+    private void procedS1() throws IOException {
 
         //S1 -> = E = { = }
-        if ("ASIG".equals(this.getTokenDevuelto().getId())) {
+        if ("ASIG".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "10 ");
             empareja(new Token("ASIG", null));
             procedE();
@@ -338,8 +326,8 @@ public class AnalizadorSintactico {
                                 ". Error de tipos en la asignacion.");
             }
             tS.addTipo(tokenLlamador, tipo);
-            tS.addDireccion(tokenLlamador, ancho);
-        } else if ("PARENTABIERTO".equals(this.getTokenDevuelto().getId())) {
+            tS.addDireccion(tokenLlamador, width);
+        } else if ("PARENTABIERTO".equals(this.getReturnToken().getId())) {
             //S1 -> ( L ) = { ( }
             this.setParse(this.getParse() + "11 ");
             //Semantico
@@ -348,7 +336,7 @@ public class AnalizadorSintactico {
             contParam = procedL();
 
             //Comprobaciones
-            if (nombreFuncion != null && nombreFuncion.equals(tokenLlamador) &&
+            if (functionName != null && functionName.equals(tokenLlamador) &&
                     tS.getNParametrosGlobal(tokenLlamador) == contParam) {
                 tS.buscaTSGlobal(tokenLlamador.getValor());
             } else if (tS.buscaTS(tokenLlamador.getValor())[0] == null ||
@@ -372,11 +360,11 @@ public class AnalizadorSintactico {
                         " parametros y se ha llamado con " +
                         contParam + ".");
             }
-            for (int i = 0; i < this.tS.getTipoParametros(idFunction).length &&
-                    this.tS.getTipoParametros(idFunction) != null &&
-                    this.tiposParam[i] != null; i++) {
-                if (!this.tS.getTipoParametros(idFunction)[i].equals(
-                        this.tiposParam[i])) {
+            for (int i = 0; i < this.tS.getTipoParametros(functionId).length &&
+                    this.tS.getTipoParametros(functionId) != null &&
+                    this.paramTypes[i] != null; i++) {
+                if (!this.tS.getTipoParametros(functionId)[i].equals(
+                        this.paramTypes[i])) {
                     throw new ParserException(ParserException.Reason.FUNCION_NO_DECLARADA, "Error en linea " +
                             Integer.toString(
                                     analizador.linea) +
@@ -388,7 +376,7 @@ public class AnalizadorSintactico {
             empareja(new Token("PARENTCERRADO", null));
         }
         //S1 -> /= E = { / }
-        else if ("ASIGDIV".equals(this.getTokenDevuelto().getId())) {
+        else if ("ASIGDIV".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "12 ");
             empareja(new Token("ASIGDIV", null));
             procedE();
@@ -408,26 +396,23 @@ public class AnalizadorSintactico {
                                 ". Error de tipos en la asignacion con division. Deben de ser enteros.");
             }
             tS.addTipo(tokenLlamador, tipo);
-            tS.addDireccion(tokenLlamador, ancho);
+            tS.addDireccion(tokenLlamador, width);
         } else {
             throw new ParserException(ParserException.Reason.FIRST_NO_COINCIDE,
                     "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens ( < PARENTABIERTO , _ >, < ASIG , _ >, < ASIGDIV , _ >) pero se ha detectado: " +
-                            this.getTokenDevuelto().toString());
+                            this.getReturnToken().toString());
         }
     }
 
-    private void procedS2()
-            throws
-            ParserException,
-            IOException {
+    private void procedS2() throws IOException {
 
         //S2 -> S = { id prompt write if }
-        if (("PR".equals(this.getTokenDevuelto().getId()) &&
-                ("write".equals(this.getTokenDevuelto().getValor())
-                        || "prompt".equals(this.getTokenDevuelto().getValor())
-                        || "if".equals(this.getTokenDevuelto().getValor())))
-                || "ID".equals(this.getTokenDevuelto().getId())) {
+        if (("PR".equals(this.getReturnToken().getId()) &&
+                ("write".equals(this.getReturnToken().getValor())
+                        || "prompt".equals(this.getReturnToken().getValor())
+                        || "if".equals(this.getReturnToken().getValor())))
+                || "ID".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "13 ");
 
             procedS();
@@ -439,15 +424,12 @@ public class AnalizadorSintactico {
         }
     }
 
-    private void procedFq()
-            throws
-            ParserException,
-            IOException {
+    private String procedFq() throws IOException {
         int contParam = 0;
 
         //Fq -> function F3 id ( A ) { Cfun } = { function }
-        if ("PR".equals(this.getTokenDevuelto().getId()) &&
-                "function".equals(this.getTokenDevuelto().getValor())) {
+        if ("PR".equals(this.getReturnToken().getId()) &&
+                "function".equals(this.getReturnToken().getValor())) {
             this.setParse(this.getParse() + "15 ");
             flagDeclaracion = true;
             empareja(new Token("PR", "function"));
@@ -456,26 +438,25 @@ public class AnalizadorSintactico {
             //AQUI CREAMOS LA TABLA DE SIMBOLOS LOCAL Y EL DESPLAZAMIENTO LOCAL
             procedF3(); // En este paso tenemos que almacenar el tipo de la funcion CORREGIR
             this.tipo = "FUNC";
-            this.ancho = 4;
-            this.tS.addTipo(tokenDevuelto, tipo);
-            this.tS.addDireccion(tokenDevuelto, 4);
+            this.width = 4;
+            this.tS.addTipo(returnToken, tipo);
+            this.tS.addDireccion(returnToken, 4);
             tS.crearTSL();
             TablaSimbolos tLocal = (TablaSimbolos) tS.getTablaSimbolos().get(
                     tS.getContadorRegistros() - 1)[0];
             if (tLocal != null) {
                 tLocal.vaciarTabla();
             }
-            nombreFuncion = this.getTokenDevuelto();
+            functionName = this.getReturnToken();
             empareja(new Token("ID", null));
-
 
             flagDeclaracionLocal = true;
             empareja(new Token("PARENTABIERTO", null));
             contParam = procedA();
             //Almacenamos los tipos y el numero de parametros en la tS.
             this.tS.addParametros(contParam);
-            this.tS.addTipoParametros(this.tiposParam);
-            this.tiposParam = new String[10];
+            this.tS.addTipoParametros(this.paramTypes);
+            this.paramTypes = new String[10];
 
             flagDeclaracionLocal = false;
             empareja(new Token("PARENTCERRADO", null));
@@ -485,105 +466,101 @@ public class AnalizadorSintactico {
             procedCfun();
             //Borramos la local.
             this.tS.addEtiqueta();
+
             //Justo antes de borrar volcamos la tabla de simbolos local correspondiente
-            tablasWriter.write(
-                    "TABLA DE LA FUNCION " + nombreFuncion.getValor() + " #" +
+            String result = (
+                    "TABLA DE LA FUNCION " + functionName.getValor() + " #" +
                             this.tS.indice++);
-            this.tS.volcarTabla(tablasWriter);
+
+            result += this.tS.volcarTabla();
+
             this.tS.borraTS();
             empareja(new Token("LLAVECERRADA", null));
             if (flagReturn) {
                 tipo = "VOID";
             }
             tS.addDevuelve(tipo);
-            nombreFuncion = null;
+            functionName = null;
+            return result;
 
         } else {
             throw new ParserException(ParserException.Reason.FIRST_NO_COINCIDE,
                     "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar el token < PR , function > pero se ha detectado: " +
-                            this.getTokenDevuelto().toString());
+                            this.getReturnToken().toString());
         }
     }
 
-    private int procedA()
-            throws ParserException,
-            IOException {
+    private int procedA() throws IOException {
         int contParam = 0;
 
         //A -> F2 id D = { int chars bool }
-        if (("PR".equals(this.getTokenDevuelto().getId()) &&
-                ("int".equals(this.getTokenDevuelto().getValor())
-                        || "chars".equals(this.getTokenDevuelto().getValor()))
-                || "bool".equals(this.getTokenDevuelto().getValor()))) {
+        if (("PR".equals(this.getReturnToken().getId()) &&
+                ("int".equals(this.getReturnToken().getValor())
+                        || "chars".equals(this.getReturnToken().getValor()))
+                || "bool".equals(this.getReturnToken().getValor()))) {
             this.setParse(this.getParse() + "16 ");
 
             procedF2();
             getTypeOFToken();
 
-            tS.addTipo(this.tokenDevuelto, this.tipo);
-            this.tiposParam[contParamG] =
+            tS.addTipo(this.returnToken, this.tipo);
+            this.paramTypes[contParamG] =
                     this.tipo;  //almacenamos el tipo de parametro de la funcion
-            tS.addDireccion(tokenDevuelto, ancho);
+            tS.addDireccion(returnToken, width);
             empareja(new Token("ID", null));
             contParam++;
             contParam += procedD();
-        }
-        //A -> lambda
-        else {
+        } else {
+            //A -> lambda
             this.setParse(this.getParse() + "17 ");
         }
         contParamG = 0;
         return contParam;
     }
 
-    private int procedD()
-            throws ParserException,
-            IOException {
+    private int procedD() throws IOException {
         int contParam = 0;
 
         //D -> , F2 id D = { , }
-        if ("COMA".equals(this.getTokenDevuelto().getId())) {
+        if ("COMA".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "18 ");
             contParam++;
             empareja(new Token("COMA", null));
-            this.tokenLlamador = this.tokenDevuelto;
+            this.tokenLlamador = this.returnToken;
 
             //Almacenamos el tipo del parametro
             procedF2();
             if ("int".equals(this.tokenLlamador.getValor())) {
                 this.tipo = "ENTERA";
-                this.ancho = 2;
+                this.width = 2;
             } else if ("chars".equals(this.tokenLlamador.getValor())) {
                 this.tipo = CADENA;
-                this.ancho = 4;
+                this.width = 4;
             } else {
                 this.tipo = "BOOL";
-                this.ancho = 1;
+                this.width = 1;
             }
 
             contParamG++;
-            tS.addTipo(this.tokenDevuelto, this.tipo);
-            this.tiposParam[contParamG] =
+            tS.addTipo(this.returnToken, this.tipo);
+            this.paramTypes[contParamG] =
                     this.tipo;  //almacenamos el tipo de parametro de la funcion
-            tS.addDireccion(tokenDevuelto, ancho);
+            tS.addDireccion(returnToken, width);
 
             empareja(new Token("ID", null));
             contParam += procedD();
-        }
-        //D -> lambda
-        else {
+        } else {
+            //D -> lambda
             this.setParse(this.getParse() + "19 ");
         }
         return contParam;
     }
 
-    private void procedC()
-            throws
-            IOException, ParserException {
+    private void procedC() throws IOException {
 
         //C -> { S S2 } C1 = { { }
-        if ("LLAVEABIERTA".equals(this.getTokenDevuelto().getId())) {
+        if ("LLAVEABIERTA".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "20 ");
 
             empareja(new Token("LLAVEABIERTA", null));
@@ -591,12 +568,11 @@ public class AnalizadorSintactico {
             procedS2();
             empareja(new Token("LLAVECERRADA", null));
             procedC1();
-        }
-        //C -> S S2 = { write prompt id }
-        else if (("PR".equals(this.getTokenDevuelto().getId()) &&
-                ("write".equals(this.getTokenDevuelto().getValor())
-                        || "prompt".equals(this.getTokenDevuelto().getValor())))
-                || "ID".equals(this.getTokenDevuelto().getId())) {
+        } else if (("PR".equals(this.getReturnToken().getId()) &&
+                ("write".equals(this.getReturnToken().getValor())
+                        || "prompt".equals(this.getReturnToken().getValor())))
+                || "ID".equals(this.getReturnToken().getId())) {
+            //C -> S S2 = { write prompt id }
             this.setParse(this.getParse() + "21 ");
 
             procedS();
@@ -605,18 +581,16 @@ public class AnalizadorSintactico {
             throw new ParserException(ParserException.Reason.FIRST_NO_COINCIDE,
                     "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens ( < PR , write >, < ID , id >, < LLAVEABIERTA , - >, < PR , prompt > ) pero se ha detectado: " +
-                            this.getTokenDevuelto().toString());
+                            this.getReturnToken().toString());
         }
 
     }
 
-    private void procedC1()
-            throws
-            IOException, ParserException {
+    private void procedC1() throws IOException {
 
         //C1 -> else { S S2 } = { else }
-        if ("PR".equals(this.getTokenDevuelto().getId()) &&
-                "else".equals(this.getTokenDevuelto().getValor())) {
+        if ("PR".equals(this.getReturnToken().getId()) &&
+                "else".equals(this.getReturnToken().getValor())) {
             this.setParse(this.getParse() + "22 ");
 
             empareja(new Token("PR", "else"));
@@ -624,9 +598,8 @@ public class AnalizadorSintactico {
             procedS();
             procedS2();
             empareja(new Token("LLAVECERRADA", null));
-        }
-        //C1 -> lambda
-        else {
+        } else {
+            //C1 -> lambda
             this.setParse(this.getParse() + "23 ");
         }
 
@@ -637,7 +610,7 @@ public class AnalizadorSintactico {
             IOException, ParserException {
 
         //C2 -> { Sfun S2fun } C3 = { { }
-        if ("LLAVEABIERTA".equals(this.getTokenDevuelto().getId())) {
+        if ("LLAVEABIERTA".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "24 ");
 
             empareja(new Token("LLAVEABIERTA", null));
@@ -647,10 +620,10 @@ public class AnalizadorSintactico {
             procedC3();
         }
         //C2 -> Sfun S2fun = { write prompt id }
-        else if (("PR".equals(this.getTokenDevuelto().getId()) &&
-                ("write".equals(this.getTokenDevuelto().getValor())
-                        || "prompt".equals(this.getTokenDevuelto().getValor())))
-                || "ID".equals(this.getTokenDevuelto().getId())) {
+        else if (("PR".equals(this.getReturnToken().getId()) &&
+                ("write".equals(this.getReturnToken().getValor())
+                        || "prompt".equals(this.getReturnToken().getValor())))
+                || "ID".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "25 ");
 
             procedSfun();
@@ -659,7 +632,7 @@ public class AnalizadorSintactico {
             throw new ParserException(ParserException.Reason.FIRST_NO_COINCIDE,
                     "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar el token ( < PR , write >, < ID , id >, < LLAVEABIERTA , - >, < PR , prompt > ) pero se ha detectado: " +
-                            this.getTokenDevuelto().toString());
+                            this.getReturnToken().toString());
         }
 
     }
@@ -669,8 +642,8 @@ public class AnalizadorSintactico {
             IOException, ParserException {
 
         //C3 -> else { Sfun S2fun }
-        if ("PR".equals(this.getTokenDevuelto().getId()) &&
-                "else".equals(this.getTokenDevuelto().getValor())) {
+        if ("PR".equals(this.getReturnToken().getId()) &&
+                "else".equals(this.getReturnToken().getValor())) {
             this.setParse(this.getParse() + "26 ");
 
             empareja(new Token("PR", "else"));
@@ -693,20 +666,20 @@ public class AnalizadorSintactico {
         int contParam = 0;
 
         //L -> E Q = { id cadena bool num }
-        if ("PARENTABIERTO".equals(this.getTokenDevuelto().getId())
-                || "ID".equals(this.getTokenDevuelto().getId()) ||
-                CADENA.equals(this.getTokenDevuelto().getId()) ||
-                "BOOL".equals(this.getTokenDevuelto().getId())
-                || "ENTERA".equals(this.getTokenDevuelto().getId())) {
+        if ("PARENTABIERTO".equals(this.getReturnToken().getId())
+                || "ID".equals(this.getReturnToken().getId()) ||
+                CADENA.equals(this.getReturnToken().getId()) ||
+                "BOOL".equals(this.getReturnToken().getId())
+                || "ENTERA".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "28 ");
 
             contParam++;
             //Debemos comprobar los tipos de los paramtros.
-            if ("ID".equals(this.getTokenDevuelto().getId())) {
-                this.tiposParam[contParamG++] =
-                        this.tS.getTipo(this.getTokenDevuelto());
+            if ("ID".equals(this.getReturnToken().getId())) {
+                this.paramTypes[contParamG++] =
+                        this.tS.getTipo(this.getReturnToken());
             } else {
-                this.tiposParam[contParamG++] = this.getTokenDevuelto().getId();
+                this.paramTypes[contParamG++] = this.getReturnToken().getId();
             }
             procedE();
             contParam += procedQ();
@@ -726,16 +699,16 @@ public class AnalizadorSintactico {
         int contParam = 0;
 
         //Q -> , E Q = { , }
-        if ("COMA".equals(this.getTokenDevuelto().getId())) {
+        if ("COMA".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "30 ");
             contParam++;
             empareja(new Token("COMA", null));
             //Debemos comprobar los tipos de los paramtros.
-            if ("ID".equals(this.getTokenDevuelto().getId())) {
-                this.tiposParam[contParamG++] =
-                        this.tS.getTipo(this.getTokenDevuelto());
+            if ("ID".equals(this.getReturnToken().getId())) {
+                this.paramTypes[contParamG++] =
+                        this.tS.getTipo(this.getReturnToken());
             } else {
-                this.tiposParam[contParamG++] = this.getTokenDevuelto().getId();
+                this.paramTypes[contParamG++] = this.getReturnToken().getId();
             }
             procedE();
             contParam += procedQ();
@@ -752,11 +725,11 @@ public class AnalizadorSintactico {
             ParserException {
 
         //X -> E = { id cadena ent bool }
-        if ("PARENTABIERTO".equals(this.getTokenDevuelto().getId())
-                || "ID".equals(this.getTokenDevuelto().getId()) ||
-                CADENA.equals(this.getTokenDevuelto().getId()) ||
-                "BOOL".equals(this.getTokenDevuelto().getId())
-                || "ENTERA".equals(this.getTokenDevuelto().getId())) {
+        if ("PARENTABIERTO".equals(this.getReturnToken().getId())
+                || "ID".equals(this.getReturnToken().getId()) ||
+                CADENA.equals(this.getReturnToken().getId()) ||
+                "BOOL".equals(this.getReturnToken().getId())
+                || "ENTERA".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "32 ");
             procedE();
             if (CADENA.equals(tipo)) {
@@ -780,11 +753,11 @@ public class AnalizadorSintactico {
             IOException {
 
         //E -> T R1 = { id cadena ent bool }
-        if ("PARENTABIERTO".equals(this.getTokenDevuelto().getId())
-                || "ID".equals(this.getTokenDevuelto().getId()) ||
-                CADENA.equals(this.getTokenDevuelto().getId()) ||
-                "BOOL".equals(this.getTokenDevuelto().getId())
-                || "ENTERA".equals(this.getTokenDevuelto().getId())) {
+        if ("PARENTABIERTO".equals(this.getReturnToken().getId())
+                || "ID".equals(this.getReturnToken().getId()) ||
+                CADENA.equals(this.getReturnToken().getId()) ||
+                "BOOL".equals(this.getReturnToken().getId())
+                || "ENTERA".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "34 ");
             procedT();
             procedR1();
@@ -792,7 +765,7 @@ public class AnalizadorSintactico {
             throw new ParserException(ParserException.Reason.FIRST_NO_COINCIDE,
                     "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < BOOL , cadena >, < ENTERA , num >, < ID , id > ) pero se ha detectado: " +
-                            this.getTokenDevuelto().toString());
+                            this.getReturnToken().toString());
         }
     }
 
@@ -801,7 +774,7 @@ public class AnalizadorSintactico {
             IOException {
 
         //R1 -> && T R1 = { && }
-        if (CONJUNCION.equals(this.getTokenDevuelto().getId())) {
+        if (CONJUNCION.equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "35 ");
             String tipoR1 = getType();
             empareja(new Token(CONJUNCION, null));
@@ -848,11 +821,11 @@ public class AnalizadorSintactico {
             ParserException, IOException {
 
         //T -> H T1 = { id cadena ent bool }
-        if ("PARENTABIERTO".equals(this.getTokenDevuelto().getId())
-                || "ID".equals(this.getTokenDevuelto().getId()) ||
-                CADENA.equals(this.getTokenDevuelto().getId()) ||
-                "BOOL".equals(this.getTokenDevuelto().getId())
-                || "ENTERA".equals(this.getTokenDevuelto().getId())) {
+        if ("PARENTABIERTO".equals(this.getReturnToken().getId())
+                || "ID".equals(this.getReturnToken().getId()) ||
+                CADENA.equals(this.getReturnToken().getId()) ||
+                "BOOL".equals(this.getReturnToken().getId())
+                || "ENTERA".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "37 ");
             procedH();
             procedT1();
@@ -860,7 +833,7 @@ public class AnalizadorSintactico {
             throw new ParserException(ParserException.Reason.FIRST_NO_COINCIDE,
                     "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < BOOL , cadena >, < ENTERA , num >, < ID , id > ) pero se ha detectado: " +
-                            this.getTokenDevuelto().toString());
+                            this.getReturnToken().toString());
         }
     }
 
@@ -869,7 +842,7 @@ public class AnalizadorSintactico {
             ParserException, IOException {
 
         //T1 -> < H T1 = { < }
-        if ("MENORQUE".equals(this.getTokenDevuelto().getId())) {
+        if ("MENORQUE".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "38 ");
             String tipoT1 = getType();
             empareja(new Token("MENORQUE", null));
@@ -886,7 +859,7 @@ public class AnalizadorSintactico {
                         ". Los tipos de los operandos no coinciden.");
             } else if (tipo.equals(tipoT1) && CADENA.equals(tipo)) {
                 tipo = "ENTERA";
-                ancho = 2;
+                width = 2;
             }
             procedT1();
         }
@@ -902,11 +875,11 @@ public class AnalizadorSintactico {
             IOException {
 
         //H -> F H1 = { id cadena ent bool }
-        if ("PARENTABIERTO".equals(this.getTokenDevuelto().getId())
-                || "ID".equals(this.getTokenDevuelto().getId()) ||
-                CADENA.equals(this.getTokenDevuelto().getId()) ||
-                "BOOL".equals(this.getTokenDevuelto().getId())
-                || "ENTERA".equals(this.getTokenDevuelto().getId())) {
+        if ("PARENTABIERTO".equals(this.getReturnToken().getId())
+                || "ID".equals(this.getReturnToken().getId()) ||
+                CADENA.equals(this.getReturnToken().getId()) ||
+                "BOOL".equals(this.getReturnToken().getId())
+                || "ENTERA".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "40 ");
             procedF();
             procedH1();
@@ -914,7 +887,7 @@ public class AnalizadorSintactico {
             throw new ParserException(ParserException.Reason.FIRST_NO_COINCIDE,
                     "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < BOOL , cadena >, < ENTERA , num >, < ID , id > ) pero se ha detectado: " +
-                            this.getTokenDevuelto().toString());
+                            this.getReturnToken().toString());
         }
     }
 
@@ -924,7 +897,7 @@ public class AnalizadorSintactico {
             IOException {
 
         //H1 -> + F H1 = { + }
-        if ("SUMA".equals(this.getTokenDevuelto().getId())) {
+        if ("SUMA".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "41 ");
             String tipoH1 = getType();
             empareja(new Token("SUMA", null));
@@ -959,53 +932,53 @@ public class AnalizadorSintactico {
             IOException {
         Token tokenAuxiliar = tokenLlamador;
         //F -> id F1 = { id }
-        if ("ID".equals(this.getTokenDevuelto().getId())) {
+        if ("ID".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "43 ");
             //Semantico
-            tokenLlamador = tokenDevuelto;
-            if (tS.getTipo(tokenDevuelto) == null) {
+            tokenLlamador = returnToken;
+            if (tS.getTipo(returnToken) == null) {
                 //Si la variable no esta declarada: chars "", int a cero y bool a false
                 tipo = "ENTERA";
-                ancho = 2;
-                tS.addTipo(tokenDevuelto, tipo);
-                tS.addDireccion(tokenDevuelto, ancho);
-            } else if (CADENA.equals(tS.getTipo(tokenDevuelto))) {
+                width = 2;
+                tS.addTipo(returnToken, tipo);
+                tS.addDireccion(returnToken, width);
+            } else if (CADENA.equals(tS.getTipo(returnToken))) {
                 tipo = CADENA;
-                ancho = tokenDevuelto.getValor().length();
-            } else if ("ENTERA".equals(tS.getTipo(tokenDevuelto))) {
+                width = returnToken.getValor().length();
+            } else if ("ENTERA".equals(tS.getTipo(returnToken))) {
                 tipo = "ENTERA";
-                ancho = 2;
-            } else if ("BOOL".equals(tS.getTipo(tokenDevuelto))) {
+                width = 2;
+            } else if ("BOOL".equals(tS.getTipo(returnToken))) {
                 tipo = "BOOL";
-                ancho = 1;
+                width = 1;
             }
 
             empareja(new Token("ID", null));
             procedF1();
         }
         //F -> cadena = { cadena }
-        else if (CADENA.equals(this.getTokenDevuelto().getId())) {
+        else if (CADENA.equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "44 ");
             tipo = CADENA;
-            ancho = this.tokenDevuelto.getValor().length();
+            width = this.returnToken.getValor().length();
             empareja(new Token(CADENA, null));
         }
         //F -> ent = { ent }
-        else if ("ENTERA".equals(this.getTokenDevuelto().getId())) {
+        else if ("ENTERA".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "45 ");
-            ancho = 2;
+            width = 2;
             tipo = "ENTERA";
             empareja(new Token("ENTERA", null));
         }
         //F -> bool = { bool }
-        else if ("BOOL".equals(this.getTokenDevuelto().getId())) {
+        else if ("BOOL".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "46 ");
-            ancho = 1;
+            width = 1;
             tipo = "BOOL";
             empareja(new Token("BOOL", null));
         }
         //F -> ( E ) = { ( }
-        else if ("PARENTABIERTO".equals(this.getTokenDevuelto().getId())) {
+        else if ("PARENTABIERTO".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "47 ");
             empareja(new Token("PARENTABIERTO", null));
             procedE();
@@ -1025,7 +998,7 @@ public class AnalizadorSintactico {
             throw new ParserException(ParserException.Reason.FIRST_NO_COINCIDE,
                     "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens ( < CADENA , cadena >, < PARENTABIERTO , _ >, < BOOL , cadena >, < ENTERA , num >, < ID , id > ) pero se ha detectado: " +
-                            this.getTokenDevuelto().toString());
+                            this.getReturnToken().toString());
         }
         tokenLlamador = tokenAuxiliar;
     }
@@ -1036,7 +1009,7 @@ public class AnalizadorSintactico {
             IOException {
 
         //F1 -> ( L ) = { ( }
-        if ("PARENTABIERTO".equals(this.getTokenDevuelto().getId())) {
+        if ("PARENTABIERTO".equals(this.getReturnToken().getId())) {
             if (tS.getTipo(tokenLlamador) == null) {
                 throw new ParserException(ParserException.Reason.FUNCION_NO_DECLARADA, "Error en linea " +
                         Integer.toString(
@@ -1098,33 +1071,33 @@ public class AnalizadorSintactico {
             IOException {
 
         //F2 -> int = { int }
-        if ("PR".equals(this.getTokenDevuelto().getId()) &&
-                "int".equals(this.getTokenDevuelto().getValor())) {
+        if ("PR".equals(this.getReturnToken().getId()) &&
+                "int".equals(this.getReturnToken().getValor())) {
             this.setParse(this.getParse() + "50 ");
 
-            this.tokenLlamador = this.getTokenDevuelto();
+            this.tokenLlamador = this.getReturnToken();
             empareja(new Token("PR", "int"));
         }
         //F2 -> chars = { chars }
-        else if ("PR".equals(this.getTokenDevuelto().getId()) &&
-                "chars".equals(this.getTokenDevuelto().getValor())) {
+        else if ("PR".equals(this.getReturnToken().getId()) &&
+                "chars".equals(this.getReturnToken().getValor())) {
             this.setParse(this.getParse() + "51 ");
 
-            this.tokenLlamador = this.getTokenDevuelto();
+            this.tokenLlamador = this.getReturnToken();
             empareja(new Token("PR", "chars"));
         }
         //F2 -> bool = { bool }
-        else if ("PR".equals(this.getTokenDevuelto().getId()) &&
-                "bool".equals(this.getTokenDevuelto().getValor())) {
+        else if ("PR".equals(this.getReturnToken().getId()) &&
+                "bool".equals(this.getReturnToken().getValor())) {
             this.setParse(this.getParse() + "52 ");
 
-            this.tokenLlamador = this.getTokenDevuelto();
+            this.tokenLlamador = this.getReturnToken();
             empareja(new Token("PR", "bool"));
         } else {
             throw new ParserException(ParserException.Reason.FIRST_NO_COINCIDE,
                     "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens ( < PR , int >, < PR , chars >, < PR , bool > ) pero se ha detectado: " +
-                            this.getTokenDevuelto().toString());
+                            this.getReturnToken().toString());
         }
 
     }
@@ -1135,29 +1108,29 @@ public class AnalizadorSintactico {
             IOException {
 
         //F3 -> int = { int }
-        if ("PR".equals(this.getTokenDevuelto().getId()) &&
-                "int".equals(this.getTokenDevuelto().getValor())) {
+        if ("PR".equals(this.getReturnToken().getId()) &&
+                "int".equals(this.getReturnToken().getValor())) {
             this.setParse(this.getParse() + "53 ");
 
             empareja(new Token("PR", "int"));
         }
         //F3 -> chars = { chars }
-        else if ("PR".equals(this.getTokenDevuelto().getId()) &&
-                "chars".equals(this.getTokenDevuelto().getValor())) {
+        else if ("PR".equals(this.getReturnToken().getId()) &&
+                "chars".equals(this.getReturnToken().getValor())) {
             this.setParse(this.getParse() + "54 ");
 
             empareja(new Token("PR", "chars"));
         }
         //F3 -> bool = { bool }
-        else if ("PR".equals(this.getTokenDevuelto().getId()) &&
-                "bool".equals(this.getTokenDevuelto().getValor())) {
+        else if ("PR".equals(this.getReturnToken().getId()) &&
+                "bool".equals(this.getReturnToken().getValor())) {
             this.setParse(this.getParse() + "55 ");
 
             empareja(new Token("PR", "bool"));
         }
         //F3 -> void = { void }
-        else if ("PR".equals(this.getTokenDevuelto().getId()) &&
-                "void".equals(this.getTokenDevuelto().getValor())) {
+        else if ("PR".equals(this.getReturnToken().getId()) &&
+                "void".equals(this.getReturnToken().getValor())) {
             this.setParse(this.getParse() + "56 ");
 
             empareja(new Token("PR", "void"));
@@ -1165,7 +1138,7 @@ public class AnalizadorSintactico {
             throw new ParserException(ParserException.Reason.FIRST_NO_COINCIDE,
                     "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens ( < PR , int >, < PR , chars >, < PR , bool >, < PR, void > ) pero se ha detectado: " +
-                            this.getTokenDevuelto().toString());
+                            this.getReturnToken().toString());
         }
 
     }
@@ -1176,19 +1149,19 @@ public class AnalizadorSintactico {
             IOException {
 
         //Bfun - > var F2 id ; = { var }
-        if ("PR".equals(this.getTokenDevuelto().getId()) &&
-                "var".equals(this.getTokenDevuelto().getValor())) {
+        if ("PR".equals(this.getReturnToken().getId()) &&
+                "var".equals(this.getReturnToken().getValor())) {
             this.setParse(this.getParse() + "57 ");
             flagDeclaracionLocal = true;
             empareja(new Token("PR", "var"));
 
-            this.tokenLlamador = this.tokenDevuelto;
+            this.tokenLlamador = this.returnToken;
 
             procedF2();
             getTypeOFToken();
 
-            tS.addTipo(this.tokenDevuelto, this.tipo);
-            tS.addDireccion(tokenDevuelto, ancho);
+            tS.addTipo(this.returnToken, this.tipo);
+            tS.addDireccion(returnToken, width);
 
             empareja(new Token("ID", null));
             flagDeclaracionLocal = false;
@@ -1197,19 +1170,19 @@ public class AnalizadorSintactico {
 
         }
         //Bfun -> Sfun = { write prompt id if return }
-        else if (("PR".equals(this.getTokenDevuelto().getId()) &&
-                ("write".equals(this.getTokenDevuelto().getValor())
-                        || "prompt".equals(this.getTokenDevuelto().getValor())
-                        || "if".equals(this.getTokenDevuelto().getValor())
-                        || "return".equals(this.getTokenDevuelto().getValor())))
-                || "ID".equals(this.getTokenDevuelto().getId())) {
+        else if (("PR".equals(this.getReturnToken().getId()) &&
+                ("write".equals(this.getReturnToken().getValor())
+                        || "prompt".equals(this.getReturnToken().getValor())
+                        || "if".equals(this.getReturnToken().getValor())
+                        || "return".equals(this.getReturnToken().getValor())))
+                || "ID".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "58 ");
             flagReturn = procedSfun();
         } else {
             throw new ParserException(ParserException.Reason.FIRST_NO_COINCIDE,
                     "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < PR , return >, < ID , id >, < PR , if >, < PR , prompt >,  < PR , var >) pero se ha detectado: " +
-                            this.getTokenDevuelto().toString());
+                            this.getReturnToken().toString());
         }
         return flagReturn;
     }
@@ -1219,11 +1192,11 @@ public class AnalizadorSintactico {
             ParserException, IOException {
 
         //Sfun -> id S1 ; = { id }
-        if ("ID".equals(this.getTokenDevuelto().getId())) {
+        if ("ID".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "59 ");
             //Semantico
-            tokenLlamador = tokenDevuelto;
-            idFunction = tokenDevuelto;
+            tokenLlamador = returnToken;
+            functionId = returnToken;
 
             //Semantico
             empareja(new Token("ID", null));
@@ -1231,21 +1204,21 @@ public class AnalizadorSintactico {
             empareja(new Token("PUNTCOM", null));
         }
         //Sfun -> prompt ( id ) ; = { prompt }
-        else if ("PR".equals(this.getTokenDevuelto().getId()) &&
-                "prompt".equals(this.getTokenDevuelto().getValor())) {
+        else if ("PR".equals(this.getReturnToken().getId()) &&
+                "prompt".equals(this.getReturnToken().getValor())) {
             this.setParse(this.getParse() + "60 ");
             empareja(new Token("PR", "prompt"));
             empareja(new Token("PARENTABIERTO", null));
-            if (tS.getTipo(tokenDevuelto) == null) {
+            if (tS.getTipo(returnToken) == null) {
                 //No esta declarada la variable
                 tipo = "ENTERA";
-                ancho = 2;
-                tS.addTipo(tokenDevuelto, tipo);
-                tS.addDireccion(tokenDevuelto, ancho);
-            } else if ("FUNC".equals(tS.getTipo(tokenDevuelto))) {
+                width = 2;
+                tS.addTipo(returnToken, tipo);
+                tS.addDireccion(returnToken, width);
+            } else if ("FUNC".equals(tS.getTipo(returnToken))) {
                 throw new ParserException(ParserException.Reason.DECLARACION_INCOMPATIBLE,
                         "Error en linea " + analizador.linea +
-                                ". La variable o funcion '" + tokenDevuelto.getValor() +
+                                ". La variable o funcion '" + returnToken.getValor() +
                                 "' ha sido declarada previamente.");
             }
             empareja(new Token("ID", null));
@@ -1253,8 +1226,8 @@ public class AnalizadorSintactico {
             empareja(new Token("PUNTCOM", null));
         }
         //Sfun -> write ( E ) ; = { write }
-        else if ("PR".equals(this.getTokenDevuelto().getId()) &&
-                "write".equals(this.getTokenDevuelto().getValor())) {
+        else if ("PR".equals(this.getReturnToken().getId()) &&
+                "write".equals(this.getReturnToken().getValor())) {
             this.setParse(this.getParse() + "61 ");
             empareja(new Token("PR", "write"));
             empareja(new Token("PARENTABIERTO", null));
@@ -1263,8 +1236,8 @@ public class AnalizadorSintactico {
             empareja(new Token("PUNTCOM", null));
         }
         //P -> if ( E ) C2  = { if }
-        else if ("PR".equals(this.getTokenDevuelto().getId()) &&
-                "if".equals(this.getTokenDevuelto().getValor())) {
+        else if ("PR".equals(this.getReturnToken().getId()) &&
+                "if".equals(this.getReturnToken().getValor())) {
             this.setParse(this.getParse() + "62 ");
 
             empareja(new Token("PR", "if"));
@@ -1275,8 +1248,8 @@ public class AnalizadorSintactico {
             flagReturn = true;
         }
         //Sfun -> return X ; = { return }
-        else if ("PR".equals(this.getTokenDevuelto().getId()) &&
-                "return".equals(this.getTokenDevuelto().getValor())) {
+        else if ("PR".equals(this.getReturnToken().getId()) &&
+                "return".equals(this.getReturnToken().getValor())) {
             this.setParse(this.getParse() + "63 ");
             empareja(new Token("PR", "return"));
             flagReturn = false;
@@ -1286,7 +1259,7 @@ public class AnalizadorSintactico {
             throw new ParserException(ParserException.Reason.FIRST_NO_COINCIDE,
                     "Error en linea: " + Integer.toString(analizador.linea) +
                             " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < ID , id >, < PR , if >, < PR , prompt>, < PR , return >) pero se ha detectado: " +
-                            this.getTokenDevuelto().toString());
+                            this.getReturnToken().toString());
         }
         return flagReturn;
     }
@@ -1296,12 +1269,12 @@ public class AnalizadorSintactico {
             IOException {
 
         //S2fun -> Sfun S2fun = { id prompt write if return }
-        if (("PR".equals(this.getTokenDevuelto().getId()) &&
-                ("write".equals(this.getTokenDevuelto().getValor())
-                        || "prompt".equals(this.getTokenDevuelto().getValor())
-                        || "if".equals(this.getTokenDevuelto().getValor())
-                        || "return".equals(this.getTokenDevuelto().getValor())))
-                || "ID".equals(this.getTokenDevuelto().getId())) {
+        if (("PR".equals(this.getReturnToken().getId()) &&
+                ("write".equals(this.getReturnToken().getValor())
+                        || "prompt".equals(this.getReturnToken().getValor())
+                        || "if".equals(this.getReturnToken().getValor())
+                        || "return".equals(this.getReturnToken().getValor())))
+                || "ID".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "64 ");
 
             procedSfun();
@@ -1318,13 +1291,13 @@ public class AnalizadorSintactico {
             IOException {
 
         //Cfun -> Bfun ; C1fun = { id prompt write if var return }
-        if (("PR".equals(this.getTokenDevuelto().getId()) &&
-                ("write".equals(this.getTokenDevuelto().getValor())
-                        || "prompt".equals(this.getTokenDevuelto().getValor())
-                        || "if".equals(this.getTokenDevuelto().getValor())
-                        || "return".equals(this.getTokenDevuelto().getValor())
-                        || "var".equals(this.getTokenDevuelto().getValor())))
-                || "ID".equals(this.getTokenDevuelto().getId())) {
+        if (("PR".equals(this.getReturnToken().getId()) &&
+                ("write".equals(this.getReturnToken().getValor())
+                        || "prompt".equals(this.getReturnToken().getValor())
+                        || "if".equals(this.getReturnToken().getValor())
+                        || "return".equals(this.getReturnToken().getValor())
+                        || "var".equals(this.getReturnToken().getValor())))
+                || "ID".equals(this.getReturnToken().getId())) {
             this.setParse(this.getParse() + "66 ");
 
             flagReturn = procedBfun();
@@ -1332,7 +1305,7 @@ public class AnalizadorSintactico {
         }
         //Cfun -> lambda
         else {
-            //throw new FirstNoCoincideException("Error en linea: " + Integer.toString(analizador.linea) + " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < PR , for >, < ID , id >, < PR , if >, < PR , prompt>, < PR , return >,  <PR , var >) pero se ha detectado: " + this.getTokenDevuelto().toString());
+            //throw new FirstNoCoincideException("Error en linea: " + Integer.toString(analizador.linea) + " Se esperaba detectar uno de los siguientes tokens (< PR , write >, < PR , for >, < ID , id >, < PR , if >, < PR , prompt>, < PR , return >,  <PR , var >) pero se ha detectado: " + this.getReturnToken().toString());
             this.setParse(this.getParse() + "67 ");
         }
         return flagReturn;
@@ -1346,12 +1319,12 @@ public class AnalizadorSintactico {
         return tS;
     }
 
-    private Token getTokenDevuelto() {
-        return tokenDevuelto;
+    private Token getReturnToken() {
+        return returnToken;
     }
 
-    private void setTokenDevuelto(Token tokenDevuelto) {
-        this.tokenDevuelto = tokenDevuelto;
+    private void setReturnToken(Token returnToken) {
+        this.returnToken = returnToken;
     }
 
     private String getParse() {
@@ -1360,18 +1333,6 @@ public class AnalizadorSintactico {
 
     private void setParse(String parse) {
         this.parse = parse;
-    }
-
-    private BufferedWriter getTablasWriter() {
-        return tablasWriter;
-    }
-
-    private BufferedWriter getParseWriter() {
-        return parseWriter;
-    }
-
-    private BufferedWriter getErrorWriter() {
-        return errorWriter;
     }
 
 }

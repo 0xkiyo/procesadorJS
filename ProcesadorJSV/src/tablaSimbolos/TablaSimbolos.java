@@ -4,8 +4,6 @@ import analizadorLexico.AnalizadorLexico;
 import errores.ParserException;
 import token.Token;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -71,22 +69,24 @@ public class TablaSimbolos {
         this.addTipo(new Token("PR", "bool"), "PR");
     }
 
-    public void volcarTabla(BufferedWriter tablaWriter) throws IOException {
+    public String volcarTabla() {
+
+        StringBuilder result = new StringBuilder();
+
         TablaSimbolos tablaAVolcar;
-        if (this.tablaSimbolos.get(
-                contadorRegistros - 1)[0] instanceof TablaSimbolos) {
+        if (this.tablaSimbolos.get(contadorRegistros - 1)[0] instanceof TablaSimbolos) {
             //tabla local
             tablaAVolcar =
                     (TablaSimbolos) this.tablaSimbolos.get(contadorRegistros - 1)[0];
-            tablaWriter.newLine();
-            tablaWriter.newLine();
+            appendNewLine(result);
+            appendNewLine(result);
 
         } else {
             //tabla global
             tablaAVolcar = this;
-            tablaWriter.write("TABLA PRINCIPAL #1");
-            tablaWriter.newLine();
-            tablaWriter.newLine();
+            result.append("TABLA PRINCIPAL #1");
+            appendNewLine(result);
+            appendNewLine(result);
 
         }
 
@@ -100,50 +100,58 @@ public class TablaSimbolos {
             for (int j = 0; j < fila.length && fila[j] != null; j++) {
 
                 if (!inicio && !comentario) {
-                    tablaWriter.write("*");
+                    result.append("*");
                     inicio = true;
                 }
 
+                String str = fila[j].toString();
+
                 if (j == 0 && fila[1] == null) {
-                    tablaWriter.write(" ( " + fila[j].toString() + " ) ");
+                    result.append(" ( ").append(str).append(" ) ");
                     comentario = true;
                 } else if (j == 0) {
-                    tablaWriter.write(" LEXEMA : '" + fila[j].toString() + "'");
+                    result.append(" LEXEMA : '").append(str).append("'");
                     comentario = false;
                     inicio = true;
                 } else if (j == 1) {
-                    tablaWriter.newLine();
-                    tablaWriter.write("\tATRIBUTOS : ");
-                    tablaWriter.newLine();
-                    tablaWriter.write(
-                            "\t\t+ tipo : '" + fila[j].toString() + "'");
-                    tablaWriter.newLine();
+                    appendNewLine(result);
+                    appendTab(result);
+                    result.append("ATRIBUTOS : ");
+                    appendNewLine(result);
+                    appendElement(result, "+ tipo : '" + str + "'");
                 } else if (j == 2) {
-                    tablaWriter.write(
-                            "\t\t+ dirección : " + fila[j].toString());
-                    tablaWriter.newLine();
+                    appendElement(result, "+ dirección : " + str);
                 } else if (j == 3) {
-                    tablaWriter.write(
-                            "\t\t+ número de parámetros : " + fila[j].toString());
-                    tablaWriter.newLine();
+                    appendElement(result, "+ número de parámetros : " + str);
                 } else if (j == 4) {
-                    tablaWriter.write(
-                            "\t\t+ tipo devuelto : '" + fila[j].toString() + "'");
-                    tablaWriter.newLine();
+                    appendElement(result, "+ tipo devuelto : '" + str + "'");
                 } else if (j == 5) {
-                    tablaWriter.write(
-                            "\t\t+ etiqueta : '" + fila[j].toString() + "'");
-                    tablaWriter.newLine();
+                    appendElement(result, "+ etiqueta : '" + str + "'");
                 }
 
             }
             inicio = false;
 
         }
-        tablaWriter.newLine();
-        tablaWriter.write(
-                "---------------------------------------------------");
-        tablaWriter.newLine();
+        appendNewLine(result);
+        result.append("---------------------------------------------------");
+        appendNewLine(result);
+        return result.toString();
+    }
+
+    private void appendElement(StringBuilder result, String str) {
+        appendTab(result);
+        appendTab(result);
+        result.append(str);
+        appendNewLine(result);
+    }
+
+    private void appendTab(StringBuilder stringBuilder) {
+        stringBuilder.append("\t");
+    }
+
+    private void appendNewLine(StringBuilder stringBuilder) {
+        stringBuilder.append("\n");
     }
 
     public void addTs(Token token) {
